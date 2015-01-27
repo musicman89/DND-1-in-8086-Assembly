@@ -1,0 +1,21 @@
+{
+	"folders":
+	[
+		{
+			"follow_symlinks": true,
+			"path": "SourceFiles"
+		},
+		{
+			"follow_symlinks": true,
+			"path": "Test"
+		},
+		{
+			"follow_symlinks": true,
+			"path": "Scripts"
+		},
+		{
+			"follow_symlinks": true,
+			"path": "Documentation"
+		}
+	]
+}

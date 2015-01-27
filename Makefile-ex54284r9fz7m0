@@ -1,0 +1,12 @@
+NASM=nasm -f bin -i "Source Files/"
+
+all:	build
+
+build: "Compiled/Source/stage1.com" "Compiled/Source/stage2.com"
+	cat "Compiled/Source/stage1.com" "Compiled/Source/stage2.com" > "Compiled/Bin/OS.bin"
+
+"Compiled/Source/stage1.com":
+	$(NASM) "Source Files/stage1.asm" -o "Compiled/Source/stage1.com"
+
+"Compiled/Source/stage2.com":
+	$(NASM) "Source Files/stage2.asm" -o "Compiled/Source/stage2.com"
