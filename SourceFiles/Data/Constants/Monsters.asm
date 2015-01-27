@@ -21,6 +21,11 @@ endstruc
 		at monster.gold, dw %7
 	iend
 %endmacro
+CurrentMonster:
+	.status: db 0
+	.type: db 0
+	.x: db 0
+	.y: db 0
 
 Monsters:
 NewMonster 'MAN',1,13,26,1,1,500

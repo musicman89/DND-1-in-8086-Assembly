@@ -16,7 +16,7 @@ GetCharacterName:
 	call to_upper
 
 	StringCompare InputStringBuffer, PlayerNameShavs
-	jne .return 		
+	je .return 		
 		PrintString WhoSaidString
 		call get_key
 		jmp GetCharacterName
@@ -47,6 +47,7 @@ RollAttributes:
 		.not_gold:
 
 		mov bx, cx
+		sub bx, 1
 		shl bx, 1
 		mov [Character + player.str + bx], word ax
 		dec cx
@@ -66,6 +67,7 @@ PrintAttributes:
 
 		PrintString Space
 		mov bx, cx
+		sub bx, 1
 		shl bx, 1
 		mov bx, [Character + player.str + bx]
 		call print_dec
