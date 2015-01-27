@@ -1,3 +1,0 @@
-GetCommand:
-
-ret
