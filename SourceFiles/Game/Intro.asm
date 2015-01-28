@@ -6,6 +6,7 @@ Intro:
 	call new_line	
 
 	call get_seed
+
 	call Instructions
 	call NewOrOld
 	call GetDungeonNum
@@ -15,10 +16,10 @@ Intro:
 	call RollCharacter
 	call clear_screen
 
-	call WeaponShop
+	call ItemShop
 	call clear_screen
 
-	call PrintCharacteristics
+	call PrintCharacteristicsAndEquipment
 	call ReadDungeon
 	call GameLoop
 ret

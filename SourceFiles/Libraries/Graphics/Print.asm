@@ -107,8 +107,10 @@ print:
 	jle .return
 	mov byte [xpos], 0 				;Move the cursor back to the left
 	add byte [ypos], 1 				;Progress the cursor down a line
-	cmp byte [ypos], 26 			;Check if the cursor has hit the bottom
+	cmp byte [ypos], 25 			;Check if the cursor has hit the bottom
 	jle .return
+	cmp ah, 0x00
+	je .return
 	call clear_screen
 	.return:
 ret
@@ -243,8 +245,11 @@ ret
 new_line:
 	mov byte [xpos], 0 				;Move the cursor back to the left
 	add byte [ypos], 1 				;Progress the cursor down a line
-	cmp byte [ypos], 26 			;Check if the cursor has hit the bottom
+	cmp byte [ypos], 24 			;Check if the cursor has hit the bottom
 	jle .return
+	cmp ah, 0x00
+	je .return
+	call clear_screen
 	call clear_screen
 	.return:
 ret

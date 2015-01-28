@@ -26,7 +26,7 @@ boot:
 %include "Game/Setup.asm"
 %include "Game/Intro.asm"
 %include "Game/Roll Character.asm"
-%include "Game/Weapon Shop.asm"
+%include "Game/Shop.asm"
 %include "Game/Load Game.asm"
 %include "Game/Game Loop.asm"
 %include "Game/Game Loop/Instructions.asm"
@@ -55,7 +55,8 @@ boot:
 %include "Data/Strings/Common.asm"
 %include "Data/Constants/Attributes.asm"
 %include "Data/Constants/Monsters.asm"
-%include "Data/Constants/Weapons.asm"
+%include "Data/Constants/Items.asm"
+%include "Data/Constants/Spells.asm"
 %include "Data/Variables/Character.asm"
 %include "Data/Variables/Dungeon.asm"
 times 51688-($-$$) db 0

@@ -45,7 +45,6 @@ RollD12:
 	inc bx
 	pop cx
 
-
 RollD20:
 	push cx
 	mov cx, 20
@@ -53,3 +52,12 @@ RollD20:
 	inc bx
 	pop cx
 ret
+
+RollD100:
+	push cx
+	mov cx, 100
+	call random_int
+	inc bx
+	pop cx
+ret
+
