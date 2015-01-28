@@ -17,10 +17,16 @@
 ;			Prototype:
 ;				void disk_load(byte address, byte sectors, byte drive);
 ;			Algorithm:
-;				void print_string(byte string_address){
-;					while(string_address != 0){
-;						print(*string_address);
-;						string_address++;
+;				void disk_load(byte address, byte sectors, byte drive)
+;					try{
+;						int sectors_loaded = BIOS_INT_0X13(0x02, address, drive, sectors, 0, 0, 0);
+;						if(sectors_loaded != sectors){
+;							Disk_Error()
+;						}
+;					}
+;					catch
+;					{
+;						Disk_Error();
 ;					}
 ;				}
 ;				
