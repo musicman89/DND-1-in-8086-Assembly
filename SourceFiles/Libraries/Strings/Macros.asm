@@ -11,12 +11,10 @@
 %macro StringCompare 2 
 	push cx
 	push dx
-	push ax
 	mov cx, %1 
 	mov dx, %2
 	call string_compare
 	test ax, ax
-	pop ax
 	pop dx
 	pop cx
 %endmacro
@@ -24,12 +22,10 @@
 %macro StringCompareInsensitive 2 
 	push cx
 	push dx
-	push ax
 	mov cx, %1 
 	mov dx, %2
 	call string_compare_insensitive
 	test ax, ax
-	pop ax
 	pop dx
 	pop cx
 %endmacro

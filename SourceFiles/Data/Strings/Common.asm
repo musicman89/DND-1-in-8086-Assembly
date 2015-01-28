@@ -39,7 +39,6 @@ NewString 'CLASSIFICATION', 13, 10
 NewString 'WHICH DO YOU WANT TO BE', 13, 10
 NewString 'FIGHTER, CLERIC, OR WIZARD ', 13, 10
 
-
 Classes:
 NewString "none"
 NewString "Fighter"
@@ -52,7 +51,7 @@ NewString "YOU ARE AT ("
 NewString ","
 NewString ")", 13, 10
 
-WeaponStoreStrings:
+ItemShopString:
 NewString "BUYING WEAPONS",13,10
 NewString "FAST OR NORM",13,10
 
@@ -86,5 +85,14 @@ NewString 'OLD'
 
 Space: 
 NewString ' '
+
+YourCharacteristicsString:
+NewString "YOUR CHARACTERISTICS ARE: "
+
+HitPointsString:
+NewString "HIT POINTS: "
+
+EQListString:
+NewString "EQ List"
 
 StringBuffer times 256 db 0 

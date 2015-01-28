@@ -5,8 +5,8 @@ ret
 
 ShopWelcome:
 	call clear_screen
-	PrintString WeaponStoreStrings + 0 * string_size
-	PrintString WeaponStoreStrings + 1 * string_size
+	PrintString ItemShopString + 0 * string_size
+	PrintString ItemShopString + 1 * string_size
 	call get_user_input
 	StringCompareInsensitive InputStringBuffer, FastString
 	je .return
@@ -42,13 +42,17 @@ ret
 MakeItemSelection:
 	call get_user_input
 	call parse_int
-	dec bx
-	cmp bx, 0
+	dec bl
+	mov dl, bl
+	cmp bl, 0
 	jl .return
-	cmp bx, 14
+	cmp bl, 14
 	jg .return
 
+
+
 	call CheckItemCost
+	mov cx, ax
 	jg .insufficientFunds
 
 	StringCompareInsensitive Character + player.class, Classes + 2 * string_size
@@ -56,6 +60,7 @@ MakeItemSelection:
 
 	StringCompareInsensitive Character + player.class, Classes + 3 * string_size
 	je .wizard
+
 
 	jmp .purchase
 
@@ -77,11 +82,14 @@ MakeItemSelection:
 	jmp MakeItemSelection
 
 	.purchase:
-		mov dx, bx
 		add byte[Character + player.itemCount], 1
-		mov bx, [Character + player.itemCount]
-		mov [Character + player.inventory + bx], dx
-		sub word [Character + player.gold], ax
+		mov bl, byte [Character + player.itemCount]
+		mov bh, 0
+		mov byte[Character + player.inventory + bx], dl
+		mov bl, byte[Character + player.inventory + bx]
+		call print_dec
+		call new_line
+		sub word [Character + player.gold], cx
 
 		call ShowGold
 
@@ -120,6 +128,8 @@ ret
 
 CheckItemCost:
 	push bx
+	push cx
+	push dx
 	mov ax, bx
 	mov bx, item_size
 	mul bx
@@ -127,5 +137,7 @@ CheckItemCost:
 
 	mov ax, [bx + Items + item.price]
 	cmp ax, word [Character + player.gold]
+	pop dx
+	pop cx
 	pop bx
 ret

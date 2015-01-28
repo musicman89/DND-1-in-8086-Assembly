@@ -5,8 +5,8 @@
 %macro  PrintString 1 
 	push ax
 	push bx
-	mov ah, LightGrayOnBlack
 	mov bx, %1     		;load the pointer to our string
+	mov ah, LightGrayOnBlack
 	call print_string   ;print the string
 	pop bx
 	pop ax
@@ -14,8 +14,8 @@
 %macro  PrintGreenString 1 
 	push ax
 	push bx
-	mov ah, LightGreenOnBlack
 	mov bx, %1     		;load the pointer to our string
+	mov ah, LightGreenOnBlack
 	call print_string   ;print the string
 	pop bx
 	pop ax
@@ -23,8 +23,8 @@
 %macro  PrintRedString 1 
 	push ax
 	push bx
-	mov ah, LightRedOnBlack
 	mov bx, %1     		;load the pointer to our string
+	mov ah, LightRedOnBlack
 	call print_string   ;print the string
 	pop bx
 	pop ax

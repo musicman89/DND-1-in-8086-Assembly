@@ -19,7 +19,7 @@ Intro:
 	call ItemShop
 	call clear_screen
 
-	call PrintCharacteristics
+	call PrintCharacteristicsAndEquipment
 	call ReadDungeon
 	call GameLoop
 ret
