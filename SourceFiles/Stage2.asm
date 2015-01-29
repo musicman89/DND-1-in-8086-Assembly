@@ -10,10 +10,16 @@ boot:
 	mov ss, ax	;start the stack at 0
 	mov bp, 0x8000	;move the stack pointer to 0x2000 past the start
 	mov sp, bp
+	call get_seed
+
 	%ifdef DEBUG
 		call RunTests
 	%else
+		call clear_screen					;clear the screen
 		call Intro
+
+		call clear_screen
+		call GameLoop
 	%endif
 	jmp boot
 	cli								;Disable Interrupts
@@ -49,6 +55,7 @@ boot:
 	%include "Libraries/IO/KeyboardIO.asm"
 %endif
 %include "Libraries/Strings/StringFunctions.asm"
+%include "Libraries/Memory/MemoryFunctions.asm"
 %include "Libraries/Math/Int.asm"
 %include "Libraries/Math/Dice.asm"
 %include "Data/Strings/ErrorStrings.asm"
@@ -57,6 +64,7 @@ boot:
 %include "Data/Constants/Monsters.asm"
 %include "Data/Constants/Items.asm"
 %include "Data/Constants/Spells.asm"
+%include "Data/Constants/Dungeons.asm"
 %include "Data/Variables/Character.asm"
 %include "Data/Variables/Dungeon.asm"
 times 51688-($-$$) db 0

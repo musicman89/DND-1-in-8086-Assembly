@@ -214,6 +214,31 @@ string_compare:
 	pop bx
 ret
 
+;********************************************************************************
+;	string_compare_insensitive
+;	Purpose:
+;      To compare two strings case insensitively
+;			Prototype:
+;				word string_compare_insensitive(byte string_addressA, byte string_addressB);
+;			Algorithm: 
+;				word string_compare_insensitive(byte string_addressA, byte string_addressB){
+;					string_copy(string_addressA, StringCompareBuffer1);
+;					string_copy(string_addressA, StringCompareBuffer2);
+;					to_upper(StringCompareBuffer1);
+;					to_upper(StringCompareBuffer2);
+;					string_compare(StringCompareBuffer1, StringCompareBuffer2);
+;				}
+;
+;	Entry:
+;       string_addressA in register CX, string_addressB in register DX
+;	Exit:
+;       AX == 0 if stringA == stringB, AX == -1 if stringA < stringB, AX == 1 if stringA > stringB
+;	Uses:
+;		AX, BX, CX, DX
+;	Exceptions:
+;		None
+;*******************************************************************************
+
 string_compare_insensitive:
 	StringCopy cx, StringCompareBuffer1
 	StringCopy dx, StringCompareBuffer2
@@ -327,6 +352,34 @@ to_upper:
 		pop bx
 		pop ax
 ret
+
+
+;********************************************************************************
+;	string_copy
+;	Purpose:
+;      To copy a string from one address to another
+;			Prototype:
+;				word string_copy(byte string_addressA, byte string_addressB);
+;			Algorithm: 
+;				word string_copy(byte string_addressA, byte string_addressB){
+;					while(*string_addressA != 0){
+;						*string_addressB = *string_addressA;
+;						string_addressA++;
+;						string_addressB++;
+;					}
+;					*string_addressB = 0
+;				}
+;
+;	Entry:
+;       string_addressA in register CX, string_addressB in DX
+;	Exit:
+;       string_addressA in register CX, string_addressB in DX
+;	Uses:
+;		AX, BX, CX, DX
+;	Exceptions:
+;		None
+;*******************************************************************************
+
 string_copy:
 	push ax
 	push bx
@@ -356,28 +409,31 @@ string_copy:
 	pop bx
 	pop ax
 ret
-get_string_array:
-    mov dx, 1
 
-    cmp cx, dx
-    je .return
-
-    sub bx, 1
-    .loop:
-        inc bx
-        mov al, [bx]
-        test al, al
-        jnz .loop
-    .inc:
-        cmp al, [bx+3]
-        je .return
-
-        inc dx
-        cmp dx, cx
-        jl .loop
-        inc bx
-    .return:
-ret
+;********************************************************************************
+;	string_length
+;	Purpose:
+;      Make a string upper case
+;			Prototype:
+;				byte string_length(byte string_address);
+;			Algorithm: 
+;				byte string_length(byte string_address){
+;					byte count = 0;
+;					while(*string_address != 0){
+;						count ++;
+;					}
+;					return count;
+;				}
+;
+;	Entry:
+;       string_address in register BX
+;	Exit:
+;       string_address in register BX, count in register CX
+;	Uses:
+;		AX, BX, CX
+;	Exceptions:
+;		None
+;*******************************************************************************
 
 string_length:
 	push ax

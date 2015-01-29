@@ -43,4 +43,3 @@ Character:
 		at player.x, db 0
 		at player.y, db 0
 	iend
-	

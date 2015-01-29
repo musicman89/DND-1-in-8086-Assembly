@@ -61,19 +61,20 @@ MakeItemSelection:
 	StringCompareInsensitive Character + player.class, Classes + 3 * string_size
 	je .wizard
 
-
 	jmp .purchase
 
 	.cleric:
-	call CheckClericItem
-	jge .purchase
+		call CheckClericItem
+		test ax, ax
+		jz .purchase
 		PrintString ClericCannotUseString
 	jmp MakeItemSelection
 
 	.wizard:
-	call CheckWizardItem
-	jge .purchase
-		PrintString ClericCannotUseString
+		call CheckWizardItem
+		test ax, ax
+		jz .purchase
+		PrintString WizardCannotUseString
 	jmp MakeItemSelection
 
 	.insufficientFunds:
@@ -86,9 +87,6 @@ MakeItemSelection:
 		mov bl, byte [Character + player.itemCount]
 		mov bh, 0
 		mov byte[Character + player.inventory + bx], dl
-		mov bl, byte[Character + player.inventory + bx]
-		call print_dec
-		call new_line
 		sub word [Character + player.gold], cx
 
 		call ShowGold
@@ -105,24 +103,35 @@ ShowGold:
 ret
 
 CheckClericItem:
-	cmp bx, 4
+	mov ax, 0
+	cmp dl, 3
 	je .return
-	cmp bx, 8
+
+	cmp dl, 7
 	je .return
-	cmp bx, 9
+
+	cmp dl, 8
 	je .return
-	cmp bx, 10
-	jg .return
+
+	cmp dl, 9
+	jge .return
+
+	mov ax, -1
 	.return:
 ret
 
 CheckWizardItem:
-	cmp bx, 3
+	mov ax, 0
+	cmp dl, 2
 	je .return
-	cmp bx, 8
+
+	cmp dl, 7
 	je .return
-	cmp bx, 10
-	jg .return
+
+	cmp dl, 9
+	jge .return
+
+	mov ax, -1
 	.return:
 ret
 
