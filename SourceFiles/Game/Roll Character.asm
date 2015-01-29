@@ -1,6 +1,7 @@
 RollCharacter:
 	call GetCharacterName
 	.reroll:
+	call RollPlayerStartingPoint
 	call RollAttributes
 	call PrintAttributes
 	call SetCharacterClass
@@ -34,6 +35,15 @@ RollAttribute:
 		add ax, bx
 
 ret
+
+RollPlayerStartingPoint:
+	call RollD25
+	mov byte[Character + player.x], bl
+
+	call RollD25
+	mov byte[Character + player.y], bl
+ret
+
 RollAttributes:
 	mov cx, 7
 	.loop:

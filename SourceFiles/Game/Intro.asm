@@ -1,27 +1,12 @@
 Intro:
-	call clear_screen					;clear the screen
 	PrintString TitleString	+ 0 * string_size		
 	PrintString TitleString	+ 1 * string_size	
 	PrintString TitleString	+ 2 * string_size	
 	call new_line	
 
-	call get_seed
-
 	call Instructions
+
 	call NewOrOld
-	call GetDungeonNum
-	call GetContinues
-	call clear_screen
-
-	call RollCharacter
-	call clear_screen
-
-	call ItemShop
-	call clear_screen
-
-	call PrintCharacteristicsAndEquipment
-	call ReadDungeon
-	call GameLoop
 ret
 
 Instructions:
@@ -55,11 +40,27 @@ NewOrOld:
 	call get_user_input
 	StringCompareInsensitive InputStringBuffer, OldGameString
 	je .old
+		call clear_screen
+		call GetDungeonNum
 
+		call clear_screen
+		call GetContinues
+
+		call clear_screen
+		call RollCharacter
+
+		call clear_screen
+		call ItemShop
+
+		call clear_screen
+		call PrintCharacteristicsAndEquipment
+
+		call clear_screen
+		call read_dungeon
 	ret
 	.old:
-		call get_key
-		ret
+		call clear_screen
+		call load_game
 ret
 
 GetDungeonNum:

@@ -46,7 +46,7 @@ NewString "Cleric"
 NewString "Wizard"
 
 WelcomeStrings:
-NewString "WELCOME TO DUNGEON # ", 13, 10
+NewString "WELCOME TO DUNGEON # "
 NewString "YOU ARE AT ("
 NewString ","
 NewString ")", 13, 10
@@ -94,5 +94,14 @@ NewString "HIT POINTS: "
 
 EQListString:
 NewString "EQ List"
+
+CommandStrings:
+NewString "COMMANDS LIST "
+NewString "1=MOVE  2=OPEN DOOR  3=SEARCH FOR TRAPS AND SECRET DOORS"
+NewString "4=SWITCH WEAPON HN HAND  5=FIGHT"
+NewString "6=LOOK AROUND  7=SAVE GAME  8=USE MAGIC  9=BUY MAGIC"
+NewString "0=PASS  11=BUY H.P."
+NewString "COMMAND="
+NewString "COME ON "
 
 StringBuffer times 256 db 0 

@@ -8,9 +8,6 @@
 ;       To provide the functions needed for memory comparison and manipulation
 ;
 ;*******************************************************************************
-MemoryFunctionTests:
-	call test_mem_copy
-ret
 
 ;********************************************************************************
 ;	mem_copy
@@ -35,17 +32,41 @@ ret
 ;		None
 ;*******************************************************************************
 
-test_mem_copy:
-	PrintString TestingMemoryCopyString
-	mov ax, TestMemData
-	mov bx, TestMemDestination
-	mov cx, TestMemDestination - TestMemData
-	call mem_copy
+mem_copy:
+	push ax
+	push bx
+	push cx
+	push dx
 
-	mov cx, TestMemData
-	mov dx, TestMemDestination
-	call string_assert_equal
+    .loop:
+
+        cmp cx, 1
+        je .single
+        sub cx, 2 					;advance to the next characters
+        
+		mov di, cx
+		add di, ax
+        mov dx, [di]				;load the current byte of the string
+
+        mov di, cx
+        add di, bx
+        mov [di], dx
+        
+
+        jnz .loop
+        jmp .return
+        .single:
+        	dec cx
+			mov di, cx
+			add di, ax
+	        mov dl, [di]				;load the current byte of the string
+
+	        mov di, cx
+	        add di, bx
+	        mov [di], dl
+        .return:
+	pop dx
+	pop cx
+	pop bx
+	pop ax
 ret
-TestingMemoryCopyString db "Testing Memory Copy:", 10, 13, 0
-TestMemData db "This is a string used for testing memory copy data", 0
-TestMemDestination times 64 db 0
