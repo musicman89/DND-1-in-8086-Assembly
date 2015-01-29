@@ -1,11 +1,11 @@
-FlipCoin:
+flip_coin:
 	push cx
 	mov cx, 2
 	call random_int
 	pop cx
 ret
 
-RollD4:
+roll_d4:
 	push cx
 	mov cx, 4
 	call random_int
@@ -13,7 +13,7 @@ RollD4:
 	pop cx
 ret
 
-RollD7:
+roll_d7:
 	push cx
 	mov cx, 7
 	call random_int
@@ -21,7 +21,7 @@ RollD7:
 	pop cx
 ret
 
-RollD6:
+roll_d6:
 	push cx
 	mov cx, 6
 	call random_int
@@ -30,7 +30,7 @@ RollD6:
 ret
 
 
-RollD8:
+roll_d8:
 	push cx
 	mov cx, 8
 	call random_int
@@ -38,22 +38,15 @@ RollD8:
 	pop cx
 ret
 
-RollD12:
+roll_d12:
 	push cx
 	mov cx, 12
 	call random_int
 	inc bx
 	pop cx
-
-RollD25:
-	push cx
-	mov cx, 25
-	call random_int
-	inc bx
-	pop cx
 ret
 
-RollD20:
+roll_d20:
 	push cx
 	mov cx, 20
 	call random_int
@@ -61,7 +54,7 @@ RollD20:
 	pop cx
 ret
 
-RollD100:
+roll_d100:
 	push cx
 	mov cx, 100
 	call random_int

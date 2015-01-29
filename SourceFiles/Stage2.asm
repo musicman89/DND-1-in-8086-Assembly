@@ -16,10 +16,10 @@ boot:
 		call RunTests
 	%else
 		call clear_screen					;clear the screen
-		call Intro
+		call intro
 
 		call clear_screen
-		call GameLoop
+		call game_loop
 	%endif
 	jmp boot
 	cli								;Disable Interrupts

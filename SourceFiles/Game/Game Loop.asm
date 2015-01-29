@@ -1,11 +1,34 @@
-GameLoop:
-	call GameLoopWelcome
+game_loop:
+	call game_loop_welcome
 	.loop:
-		call GetCommand
+		call get_command
 	jmp .loop
 ret
 
-GameLoopWelcome:
+;********************************************************************************
+;   game_loop_welcome
+;   Purpose:
+;      To welcome the player to the dungeon
+;           Prototype:
+;               void game_loop_welcome();
+;           Algorithm:
+;               void game_loop_welcome(){
+;					Console.WriteLine(WelcomeStrings[0] + DungeonNumber);
+;
+;					Console.WriteLine(WelcomeStrings[1] + Character.x + WelcomeStrings[2] + Character.y + WelcomeStrings[3]);
+;					Console.Read();
+;               }
+;               
+;   Entry:
+;       None
+;   Exit:
+;       None
+;   Uses:
+;       BX
+;   Exceptions:
+;       
+;*******************************************************************************
+game_loop_welcome:
 	call new_line
 	call new_line
 	call new_line

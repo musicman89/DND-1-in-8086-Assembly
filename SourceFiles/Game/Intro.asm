@@ -1,15 +1,46 @@
-Intro:
+intro:
 	PrintString TitleString	+ 0 * string_size		
 	PrintString TitleString	+ 1 * string_size	
 	PrintString TitleString	+ 2 * string_size	
 	call new_line	
 
-	call Instructions
+	call instructions
 
-	call NewOrOld
+	call new_or_old
 ret
 
-Instructions:
+;********************************************************************************
+;   instructions
+;   Purpose:
+;      To see if the user needs instructions to play
+;           Prototype:
+;               void instructions();
+;           Algorithm:
+;               void instructions(){
+;					while(true){
+;                	    Console.Write(NeedInstructionString);
+;						string input = Console.Read().ToUpper();
+;						if(input[0] == 'Y' || input == 'YES'){
+;						Console.Write(WhoSaidString);
+;							return;
+;						}
+;						else if(input[0] == 'N' || input == 'NO'){
+;							return;
+;						}
+;						invalid_input();
+;					}
+;               }
+;               
+;   Entry:
+;       None
+;   Exit:
+;       None
+;   Uses:
+;       BX
+;   Exceptions:
+;       
+;*******************************************************************************
+instructions:
 	PrintString NeedInstructionsString	
 	call get_user_input
 	StringToUpper InputStringBuffer
@@ -26,7 +57,7 @@ Instructions:
 	je .no_instructions
 
 	call invalid_input
-	jmp Instructions
+	jmp instructions
 
 	.yes_instructions:
 		PrintString WhoSaidString
@@ -35,25 +66,57 @@ Instructions:
 	.no_instructions:  
 ret
 
-NewOrOld:
+;********************************************************************************
+;   new_or_old
+;   Purpose:
+;      To see if the user wants to continue a previous game
+;           Prototype:
+;               void new_or_old();
+;           Algorithm:
+;               void new_or_old(){
+;                	Console.Write(NoInstructionsString);
+;					string input = Console.Read().ToUpper();
+;					if(input == 'OLD'){
+;						load_game();
+;					}
+;					else
+;						get_dungeon_num();
+;						get_continues();
+;						roll_character();
+;						item_shop();
+;						print_characteristics_and_eq();
+;						read_dungeon();
+;					}
+;               }
+;               
+;   Entry:
+;       None
+;   Exit:
+;       None
+;   Uses:
+;       BX
+;   Exceptions:
+;       
+;*******************************************************************************
+new_or_old:
 	PrintString NoInstructionsString
 	call get_user_input
 	StringCompareInsensitive InputStringBuffer, OldGameString
 	je .old
 		call clear_screen
-		call GetDungeonNum
+		call get_dungeon_num
 
 		call clear_screen
-		call GetContinues
+		call get_continues
 
 		call clear_screen
-		call RollCharacter
+		call roll_character
 
 		call clear_screen
-		call ItemShop
+		call item_shop
 
 		call clear_screen
-		call PrintCharacteristicsAndEquipment
+		call print_characteristics_and_eq
 
 		call clear_screen
 		call read_dungeon
@@ -63,20 +126,74 @@ NewOrOld:
 		call load_game
 ret
 
-GetDungeonNum:
-	PrintString DungeonNumberString
+;********************************************************************************
+;   get_dungeon_num
+;   Purpose:
+;      To get the dungeon the user wants to play
+;           Prototype:
+;               void get_dungeon_num();
+;           Algorithm:
+;               void get_dungeon_num(){
+;					while(true){
+;                		Console.Write(DungeonNumberString);
+;						int input = int.Parse(Console.Read());
+;						if(input > 0){
+;							DungeonNumber = input;
+;							return;
+;						}
+;					}
+;               }
+;               
+;   Entry:
+;       None
+;   Exit:
+;       None
+;   Uses:
+;       BX
+;   Exceptions:
+;       
+;*******************************************************************************
+get_dungeon_num	PrintString DungeonNumberString
 	call get_user_input
 	call parse_int
 	test bx, bx
 	jnz .return
 	.fail:
 		call invalid_input
-		jmp GetDungeonNum
+		jmp get_dungeon_num
 	.return:
 	mov [DungeonNumber], bx
 ret
 
-GetContinues:
+;********************************************************************************
+;   get_continues
+;   Purpose:
+;      To see if the user wants to reset their continues
+;           Prototype:
+;               void get_continues();
+;           Algorithm:
+;               void get_continues(){
+;					while(true){
+;                		Console.Write(ResetContinuesString);
+;						int input = int.Parse(Console.Read());
+;						if(input = 1 || input == 2){
+;							Character.continues = input;
+;							return;
+;						}
+;						invalid_input();
+;					}
+;               }
+;               
+;   Entry:
+;       None
+;   Exit:
+;       None
+;   Uses:
+;       BX
+;   Exceptions:
+;       
+;*******************************************************************************
+get_continues:
 	PrintString ResetContinuesString
 	call get_user_input
 	call parse_int
@@ -90,6 +207,6 @@ GetContinues:
 	jmp .return
 	.fail:
 		call invalid_input
-		jmp GetContinues
+		jmp get_continues
 	.return:
 ret

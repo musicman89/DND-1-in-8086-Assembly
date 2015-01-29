@@ -1,4 +1,4 @@
-GetCommand:
+get_command:
 	PrintString CommandStrings + 0 * string_size
 	call get_user_input
 	StringCompareInsensitive YesString, bx
@@ -15,10 +15,10 @@ GetCommand:
 		PrintString CommandStrings + 4 * string_size
 		call new_line
 	.no:
-	call GetCommandFromUser
+	call get_command_from_user
 ret
 
-GetCommandFromUser:	
+get_command_from_user:	
 	PrintString CommandStrings + 5 * string_size
 	call get_user_input
 	cmp bx, 12
@@ -76,5 +76,5 @@ GetCommandFromUser:
 	.fail:
 		PrintString CommandStrings + 6 * string_size
 		call wait_key
-		jmp GetCommandFromUser
+		jmp get_command_from_user
 ret
