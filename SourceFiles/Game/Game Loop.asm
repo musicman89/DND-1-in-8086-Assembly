@@ -1,7 +1,8 @@
 game_loop:
 	call game_loop_welcome
+	call get_command
 	.loop:
-		call get_command
+		call get_command_from_user
 	jmp .loop
 ret
 

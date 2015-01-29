@@ -104,4 +104,41 @@ NewString "0=PASS  11=BUY H.P."
 NewString "COMMAND="
 NewString "COME ON "
 
+MoveStrings:
+NewString "YOU ARE AT "
+NewString " , "
+NewString "  DOWN  RIGHT  LEFT  OR  UP"
+
+DoneString:
+NewString "DONE"
+
+HitWallStrings:
+NewString "YOU RAN INTO A WALL"
+NewString "BUT NO DAMAGE WAS INFLICTED"
+NewString "AND LOOSE 1 HIT POINT"
+
+DirectionStrings:
+NewString "LEFT"
+NewString "RIGHT"
+NewString "UP"
+NewString "DOWN"
+
+TrapStrings:
+NewString "OOOOPS A TRAP AND YOU FELL IN "
+NewString "AND HIT POINTS LOOSE 1"
+NewString "I HOPE YOU HAVE SOME SPIKES AND PREFERABLY ROPE"
+NewString "LET ME SEE"
+NewString "NO SPIKES AH THATS TOO BAD CAUSE YOUR DEAD "
+NewString "GOOD BOTH"
+NewString "YOU MANAGE TO GET OUT EASY"
+NewString "YOUR STANDING NEXT TO THE EDGE THOUGH I'D MOVE"
+NewString "NO ROPE BUT AT LEAS SPIKES"
+NewString "YOU FALL HALF WAY UP"
+NewString "TRY AGAIN "
+NewString "OOPS H.P. LOOSE 1"
+
+SecretDoorStrings:
+NewString "YOU JUST RAN INTO A SECRET DOOR"
+NewString "AND OPENED IT"
+
 StringBuffer times 256 db 0 
