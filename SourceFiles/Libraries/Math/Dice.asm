@@ -5,6 +5,14 @@ flip_coin:
 	pop cx
 ret
 
+roll_d3:
+	push cx
+	mov cx, 3
+	call random_int
+	inc bx
+	pop cx
+ret
+
 roll_d4:
 	push cx
 	mov cx, 4

@@ -35,6 +35,7 @@ boot:
 %include "Game/Shop.asm"
 %include "Game/Load Game.asm"
 %include "Game/Game Loop.asm"
+%include "Game/Game Loop/Player.asm"
 %include "Game/Game Loop/Instructions.asm"
 %include "Game/Game Loop/Get Command.asm"
 %include "Game/Game Loop/Actions/Buy HP.asm"
