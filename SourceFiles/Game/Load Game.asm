@@ -1,7 +1,40 @@
+
+;********************************************************************************
+;   read_dungeon
+;   Purpose:
+;      To read in the selected dungeon and set it up
+;           Prototype:
+;               void read_dungeon();
+;           Algorithm:
+;               void read_dungeon(){
+;					MemCopy(Dungeons[DungeonNumber],CurrentDungeon, 525);
+;					for(int x = 0; x < 525; x++){
+;						if(CurrentDungeon[x] == 0){
+;							if(roll_d100 > 96){
+;								CurrentDungeon[x] = 7
+;							}
+;							if(roll_d100 > 96){
+;								CurrentDungeon[x] = 8
+;							}
+;						}
+;					}
+;               }
+;               
+;   Entry:
+;       None
+;   Exit:
+;       None
+;   Uses:
+;       AX, BX, CX
+;   Exceptions:
+;       
+;*******************************************************************************
 read_dungeon:
 	mov ax, 525
 	mov bx, DungeonNumber
 	mul bx
+	add ax, Dungeons
+
 	mov bx, CurrentDungeon
 	mov cx, 525
 	call mem_copy
@@ -10,13 +43,13 @@ read_dungeon:
 	.loop:
 		cmp cx, 0
 		jne .skip
-		call RollD100
+		call roll_d100
 		cmp bx, 97
 		jl .no_str
 			mov bx, cx
 			mov byte [CurrentDungeon + bx], 7
 		.no_str:
-		call RollD100
+		call roll_d100
 		cmp bx, 97
 			mov bx, cx
 			mov byte [CurrentDungeon + bx], 8
