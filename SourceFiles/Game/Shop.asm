@@ -112,8 +112,8 @@ ret
 ;						{
 ;							Character.itemCount++;
 ;							Character.inventory[Character.itemCount] = input;
-;							Character.gold -= Items[input].price;
-;							ShowGold();
+;							remove_gold(Items[input].price)
+;							show_gold();
 ;						}
 ;						input = int.Parse(Console.Read());	
 ;					}
@@ -175,39 +175,12 @@ make_item_selection:
 		mov bl, byte [Character + player.itemCount]
 		mov bh, 0
 		mov byte[Character + player.inventory + bx], dl
-		sub word [Character + player.gold], cx
-
+		mov ax, cx
+		call remove_gold
 		call show_gold
 
 	jmp make_item_selection
 	.return:
-ret
-
-;********************************************************************************
-;   show_gold
-;   Purpose:
-;      To show how much gold the player currently has
-;           Prototype:
-;               void show_gold();
-;           Algorithm:
-;               void show_gold(){
-;					Console.WriteLine(GPString + Character.gold);
-;               }
-;               
-;   Entry:
-;       None
-;   Exit:
-;       None
-;   Uses:
-;       AX, BX, CX, DX
-;   Exceptions:
-;       
-;*******************************************************************************
-show_gold:
-	PrintString GPString
-	mov bx, [Character + player.gold]
-	call print_dec
-	call new_line
 ret
 
 ;********************************************************************************
