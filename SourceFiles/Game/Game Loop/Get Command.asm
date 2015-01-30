@@ -23,46 +23,57 @@ get_command_from_user:
 	cmp bx, 12
 	jg .fail
 	jl .continue
+		call quit
 		jmp .return
 	.continue:
 	cmp bx, 11
 	jl .noHP
+		call buy_hp
 		jmp .return
 	.noHP:
 	cmp bx, 10
 	jl .goodBoy
+		call cheat
 		jmp .return
 	.goodBoy:
 	cmp bx, 9
 	jl .noNewMagic
+		call buy_magic
 		jmp .return
 	.noNewMagic:
 	cmp bx, 8
 	jl .noUseMagic
+		call use_magic
 		jmp .return
 	.noUseMagic:
 	cmp bx, 7
 	jl .noSave
+		call save_game
 		jmp .return
 	.noSave:
 	cmp bx, 6
 	jl .noLooking
+		call look_around
 		jmp .return
 	.noLooking:
 	cmp bx, 5
 	jl .noFighting
+		call fight
 		jmp .return
 	.noFighting:
 	cmp bx, 4
 	jl .noSwitch
+		call switch_hands
 		jmp .return
 	.noSwitch:
 	cmp bx, 3
 	jl .noSearch
+		call search
 		jmp .return
 	.noSearch:
 	cmp bx, 2
 	jl .noEntry
+		call open_door
 		jmp .return
 	.noEntry:
 	cmp bx, 1
@@ -72,6 +83,7 @@ get_command_from_user:
 	.stayPut:
 	cmp bx, 0
 	jl .fail
+		call pass
 		jmp .return
 	.fail:
 		PrintString CommandStrings + 6 * string_size

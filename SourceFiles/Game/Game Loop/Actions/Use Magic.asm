@@ -1,0 +1,3 @@
+use_magic:
+
+ret
