@@ -46,7 +46,6 @@ boot:
 %include "Game/Game Loop/Actions/Move.asm"
 %include "Game/Game Loop/Actions/Open Door.asm"
 %include "Game/Game Loop/Actions/Pass.asm"
-%include "Game/Game Loop/Actions/Save Game.asm"
 %include "Game/Game Loop/Actions/Search.asm"
 %include "Game/Game Loop/Actions/SwitchHands.asm"
 %include "Game/Game Loop/Actions/Use Magic.asm"

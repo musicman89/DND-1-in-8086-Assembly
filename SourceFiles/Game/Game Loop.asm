@@ -51,5 +51,6 @@ game_loop_welcome:
 	call wait_key
 ret
 
+quit:
 
-
+ret

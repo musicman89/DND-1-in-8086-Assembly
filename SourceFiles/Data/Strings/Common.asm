@@ -156,5 +156,23 @@ NewString "PIECES"
 PoisonString:
 NewString "       POISON      "
 
+OpenDoorStrings:
+NewString "DOOR LEFT RIGHT UP OR DOWN"
+NewString "THERE IS NOT A DOOR THERE"  
+NewString "PUSH"
+NewString "DIDNT BUDGE"
+NewString "ITS OPEN"
+
+SearchForTrapStrings:
+NewString "SEARCH.........SEARCH...........SEARCH..........."
+NewString "NO NOT THAT YOU CAN TELL"
+NewString "YES THERE IS A TRAP"
+NewString "IT IS "
+NewString "VERTICALY  "
+NewString "HORAZONTALY FROM YOU"
+NewString "YES A DOOR"
+NewString "IT IS AT "
+NewString "VERTICALY  "
+NewString "HORAZANTALY"
 
 StringBuffer times 256 db 0 

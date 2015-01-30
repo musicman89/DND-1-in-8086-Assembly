@@ -109,7 +109,7 @@ ret
 ;               void check_tile(int x, int y);
 ;           Algorithm:
 ;               void check_tile(int x, int y){
-;					var tile = CurrentDungeon[y * 25 + x];
+;					var tile = CurrentDungeon[get_tile_number(x,y)];
 ;					if(tile == 0){
 ;						advance_position(x,y);
 ;					}
@@ -146,12 +146,8 @@ ret
 ;       
 ;*******************************************************************************
 check_tile:
-	mov ax, dx
-	mov bx, 25
-	mul bx
-	add ax, cx
-	mov bx, ax
-	mov al, [CurrentDungeon + bx]
+	call get_tile_number
+	mov bx, [CurrentDungeon + bx]
 	cmp al, 8
 	jne .noCon
 		call increase_con
@@ -564,13 +560,13 @@ ret
 ;               void clear_tile(int x, int y);
 ;           Algorithm:
 ;               void clear_tile(int x, int y){
-;					CurrentDungeon[y * 25 + x] = 0;
+;					CurrentDungeon[get_tile_number(x,y)] = 0;
 ;					if(roll_d100() <= 20){
 ;						Console.WriteLine(PoisonString);
 ;						lose_hp(roll_d4());
 ;						show_hp();
 ;					}
-;					advance_position();
+;					advance_position(x,y);
 ;               }
 ;               
 ;   Entry:
@@ -583,11 +579,7 @@ ret
 ;       
 ;*******************************************************************************
 clear_tile:
-	mov ax, dx
-	mov bx, 25
-	mul bx
-	add ax, cx
-	mov bx, ax
+	call get_tile_number
 	mov byte [CurrentDungeon + bx], 0
 	call roll_d100
 	cmp bx, 20

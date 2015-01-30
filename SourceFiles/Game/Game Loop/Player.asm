@@ -38,6 +38,15 @@ remove_gold:
 	mov [Character + player.gold], bx
 ret
 
+get_tile_number:
+	mov ax, dx
+	mov bx, 25
+	mul bx
+	add ax, cx
+	mov bx, ax
+ret
+
+
 ;********************************************************************************
 ;   show_gold
 ;   Purpose:
