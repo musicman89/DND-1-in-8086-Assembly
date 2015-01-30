@@ -239,7 +239,7 @@ ret
 ;					Console.WriteLine(HitWallStrings[0]);
 ;					if(roll_d12 > 9){
 ;						Console.WriteLine(HitWallStrings[2]);
-;						Character.hp -= 1;
+;						lose_one_hp();
 ;					}
 ;					else{
 ;						Console.WriteLine(HitWallStrings[1]);
@@ -262,9 +262,7 @@ hit_wall:
 	cmp bx, 9
 	jg .noDamage
 		PrintString HitWallStrings + 2 * string_size
-		mov bx, [Character + player.hp]
-		dec bx
-		mov [Character + player.hp], bx
+		call lose_one_hp
 		jmp .return
 
 	.noDamage:
@@ -285,7 +283,7 @@ ret
 ;					Console.WriteLine(TrapStrings[0]);
 ;					if(roll_d3 <= 2){
 ;						Console.WriteLine(TrapStrings[1]);
-;						Character.hp -= 1;
+;						lose_one_hp();
 ;					}
 ;					Console.WriteLine(TrapStrings[2]);
 ;					Console.WriteLine(TrapStrings[3]);
@@ -308,7 +306,7 @@ ret
 ;						if(roll_d3 == 2){
 ;							Console.WriteLine(TrapStrings[10]);
 ;							Console.WriteLine(TrapStrings[11]);
-;							Character.hp -= 1;
+;							lose_one_hp();
 ;							spikes = check_inventory(12);
 ;							if(spikes < 0){
 ;								die();
@@ -316,6 +314,7 @@ ret
 ;						}
 ;					}
 ;					Console.WriteLine(TrapStrings[7]);
+;					move();
 ;               }
 ;               
 ;   Entry:
@@ -430,7 +429,13 @@ ret
 ;               void run_into_monster(int x, int y);
 ;           Algorithm:
 ;               void run_into_monster(int x, int y){
-;
+;					Console.WriteLine(RunIntoMonsterStrings[0]);
+;					Console.WriteLine(RunIntoMonsterStrings[1]);
+;					if(flip_coin = 0){
+;						Console.WriteLine(RunIntoMonsterStrings[2])
+;						lose_hp(6);
+;					}
+;					pass();
 ;               }
 ;               
 ;   Entry:
@@ -443,7 +448,17 @@ ret
 ;       
 ;*******************************************************************************
 run_into_monster:
+	PrintString RunIntoMonsterStrings + 0 * string_size
+	PrintString RunIntoMonsterStrings + 1 * string_size
+	call flip_coin
+	cmp bx, 0
+	jne .return
+		PrintString RunIntoMonsterStrings + 2 * string_size
+		mov ax, 6
+		call lose_hp
 
+	.return:
+		call pass
 ret
 
 ;********************************************************************************
@@ -454,7 +469,11 @@ ret
 ;               void find_gold(int x, int y);
 ;           Algorithm:
 ;               void find_gold(int x, int y){
-;
+;					Console.WriteLine(FoundGoldStrings[0]);
+;					var gp = random_int(500) + 10;
+;					Console.WriteLine(gp + FoundGoldStrings[1])
+;					add_gold(gp);
+;					hit_wall();
 ;               }
 ;               
 ;   Entry:
@@ -467,7 +486,18 @@ ret
 ;       
 ;*******************************************************************************
 find_gold:
+	PrintString FoundGoldStrings + 0 * string_size
 
+	mov cx, 500
+	call random_int
+	add bx, 10
+	call print_dec
+
+	mov ax, bx
+	call add_gold
+	PrintString FoundGoldStrings + 1 * string_size
+
+	call hit_wall
 ret
 
 ;********************************************************************************
@@ -478,7 +508,8 @@ ret
 ;               void increase_strength(int x, int y);
 ;           Algorithm:
 ;               void increase_strength(int x, int y){
-;
+;					Character.strength++;
+;					clear_tile(x,y);
 ;               }
 ;               
 ;   Entry:
@@ -486,12 +517,15 @@ ret
 ;   Exit:
 ;       None
 ;   Uses:
-;       CX, DX
+;       BX, CX, DX
 ;   Exceptions:
 ;       
 ;*******************************************************************************
 increase_strength:
-
+	mov bx, [Character + player.str]
+	inc bx
+	mov [Character + player.str], bx
+	call clear_tile
 ret
 
 ;********************************************************************************
@@ -502,7 +536,41 @@ ret
 ;               void increase_con(int x, int y);
 ;           Algorithm:
 ;               void increase_con(int x, int y){
-;
+;					Character.con++;
+;					clear_tile(x,y);
+;               }
+;               
+;   Entry:
+;       Int x in CX, Int y in DX
+;   Exit:
+;       None
+;   Uses:
+;       BX, CX, DX
+;   Exceptions:
+;       
+;*******************************************************************************
+increase_con:
+	mov bx, [Character + player.con]
+	inc bx
+	mov [Character + player.con], bx
+	call clear_tile
+ret
+
+;********************************************************************************
+;   clear_tile
+;   Purpose:
+;      To remove anything from the given tile
+;           Prototype:
+;               void clear_tile(int x, int y);
+;           Algorithm:
+;               void clear_tile(int x, int y){
+;					CurrentDungeon[y * 25 + x] = 0;
+;					if(roll_d100() <= 20){
+;						Console.WriteLine(PoisonString);
+;						lose_hp(roll_d4());
+;						show_hp();
+;					}
+;					advance_position();
 ;               }
 ;               
 ;   Entry:
@@ -514,6 +582,21 @@ ret
 ;   Exceptions:
 ;       
 ;*******************************************************************************
-increase_con:
-
+clear_tile:
+	mov ax, dx
+	mov bx, 25
+	mul bx
+	add ax, cx
+	mov bx, ax
+	mov byte [CurrentDungeon + bx], 0
+	call roll_d100
+	cmp bx, 20
+	jl .return
+		PrintString PoisonString
+		call roll_d4
+		mov ax, bx
+		call lose_hp
+		call show_hp
+	.return:
+	call advance_position
 ret

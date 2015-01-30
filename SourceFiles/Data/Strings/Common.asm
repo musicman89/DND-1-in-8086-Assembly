@@ -92,6 +92,9 @@ NewString "YOUR CHARACTERISTICS ARE: "
 HitPointsString:
 NewString "HIT POINTS: "
 
+HPString:
+NewString "HP="
+
 EQListString:
 NewString "EQ List"
 
@@ -140,5 +143,18 @@ NewString "OOPS H.P. LOOSE 1"
 SecretDoorStrings:
 NewString "YOU JUST RAN INTO A SECRET DOOR"
 NewString "AND OPENED IT"
+
+RunIntoMonsterStrings:
+NewString "YOU RAN INTO THE MONSTER "
+NewString "HE SHOVES YOU BACK"
+NewString "YOU LOOSE 6 HIT POINT "
+
+FoundGoldStrings:
+NewString "AH......GOLD......."
+NewString "PIECES"
+
+PoisonString:
+NewString "       POISON      "
+
 
 StringBuffer times 256 db 0 
