@@ -175,4 +175,9 @@ NewString "IT IS AT "
 NewString "VERTICALY  "
 NewString "HORAZANTALY"
 
+SwitchWeaponStrings:
+NewString "WHICH WEAPON WILL YOU HOLD, NUM OF WEAPON "
+NewString "SORRY YOU DONT HAVE THAT ONE"
+NewString "O.K. YOU ARE NOW HOLDING A ";I$(Y)
+
 StringBuffer times 256 db 0 

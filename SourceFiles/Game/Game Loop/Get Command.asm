@@ -63,7 +63,7 @@ get_command_from_user:
 	.noFighting:
 	cmp bx, 4
 	jl .noSwitch
-		call switch_hands
+		call switch_weapon
 		jmp .return
 	.noSwitch:
 	cmp bx, 3
