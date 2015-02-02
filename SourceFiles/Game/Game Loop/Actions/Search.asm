@@ -12,10 +12,11 @@
 ;						pass();
 ;					}
 ;					else{
-;						for(int y = -1; y < 2; y++){
-;							int row = (Character.y + y) * 25;
-;							for(int x = -1; x < 2; x++){
-;								int tile = CurrentDungeon[row + Character + player.x + x];
+;						get_y_bounds(1);
+;						get_x_bounds(1);
+;						for(int y = yMin; y <  yMax; y++){
+;							for(int x = xMin; x < xMax; x++){
+;								int tile = CurrentDungeon[y + x];
 ;								if(tile == 2){
 ;									Console.WriteLine(SearchForTrapStrings[2]);
 ;									Console.WriteLine(SearchForTrapStrings[3] + y + SearchForTrapStrings[4] + x + SearchForTrapStrings[5])
@@ -49,26 +50,31 @@ search:
 	mov bx, [Character + player.int]
 	add bx, [Character + player.wis]
 	cmp ax, bx
-	jl .letsCheck
+	jl .loopy
 		PrintString SearchForTrapStrings + 1 * string_size
 		call new_line
 		jmp .return
 
 	mov cx, 0
-	.letsCheck:
-		mov ax, [Character + player.y]
-		dec ax
-		add ax, cx
-		mov bx, 25
-		mul bx
-		mov dx, 0
-		.checkRow:
-			mov bx, ax
-			add bx, [Character + player.x]
-			add bx, dx
+	.loopy:
+		mov ch, 1
+		call get_y_bounds
+
+		mov dh, 1
+		call get_x_bounds
+		.loopx:
+			mov bh, 0
+
+			add bl, cl
+			shl bx, 1
+			mov bx, [rows + bx]
+
+			mov al, cl
+			mov ah, 0
+			add bx, ax
+
 			mov bx, [CurrentDungeon + bx]
-			mov ax, bx
-			cmp ax, 2
+			cmp bx, 2
 			jne .noTrap
 				PrintString SearchForTrapStrings + 2 * string_size
 				call new_line
@@ -78,13 +84,13 @@ search:
 				call print_dec
 
 				PrintString SearchForTrapStrings + 4 * string_size
-				mov bx, cx
+				mov bx, ax
 				call print_dec
 
 				PrintString SearchForTrapStrings + 5 * string_size
 				call new_line
 			.noTrap:
-			cmp ax, 3
+			cmp bx, 3
 			jne .noDoor
 				PrintString SearchForTrapStrings + 6 * string_size
 				call new_line
@@ -94,18 +100,19 @@ search:
 				call print_dec
 
 				PrintString SearchForTrapStrings + 8 * string_size
-				mov bx, cx
+				mov bx, ax
 				call print_dec
 
 				PrintString SearchForTrapStrings + 9 * string_size
 				call new_line
 			.noDoor:
-		inc dx
-		cmp dx, 3
-		jne .checkRow
-	inc cx
-	cmp cx, 3
-	jne .letsCheck
+			inc dl
+			cmp dl, dh
+			jl .loopx
+		pop dx
+	inc cl
+	cmp cl, ch
+	jl .loopy
 	.return:
 		call pass
 ret

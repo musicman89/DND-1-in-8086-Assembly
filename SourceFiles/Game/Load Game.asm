@@ -30,16 +30,16 @@
 ;       
 ;*******************************************************************************
 read_dungeon:
-	mov ax, 525
+	mov ax, 625
 	mov bx, DungeonNumber
 	mul bx
 	add ax, Dungeons
 
 	mov bx, CurrentDungeon
-	mov cx, 525
+	mov cx, 625
 	call mem_copy
 
-	mov cx, 525
+	mov cx, 625
 	.loop:
 		cmp cx, 0
 		jne .skip

@@ -171,10 +171,10 @@ make_item_selection:
 	jmp make_item_selection
 
 	.purchase:
-		add byte[Character + player.itemCount], 1
-		mov bl, byte [Character + player.itemCount]
-		mov bh, 0
-		mov byte[Character + player.inventory + bx], dl
+		push ax
+		mov al, dl
+		call add_to_inventory
+		pop ax
 		mov ax, cx
 		call remove_gold
 		call show_gold
