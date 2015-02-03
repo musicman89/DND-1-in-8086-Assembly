@@ -308,9 +308,21 @@ print_dec:
 	push bx
 	push ax
 
+	mov di, decOutput			;Store address of our output in the DI register
 	mov ax, bx					;Push our Value to the AX register
+
 	mov bx, 10
 	mov cx, 0
+
+	cmp ax, 0
+	jge .decloop
+		xor dx, dx
+		mov word[di], '-'
+		inc di
+		xor ax, 0xFFFF
+		inc ax
+		push dx
+		inc cx
 	.decloop: 	
 		xor dx, dx
 		div bx
@@ -322,7 +334,6 @@ print_dec:
 		cmp ax, 0 
 		jnz .decloop			;As long as AX is greater than 0, repeat
 
-	mov di, decOutput			;Store address of our output in the DI register
 	.flipLoop:
 		pop dx
 		mov [di], dx
@@ -330,6 +341,9 @@ print_dec:
 		dec cx
 		jnz .flipLoop
 		mov Word[di], 0
+		jmp .print
+
+	.print:
 	mov bx, decOutput
 	call print_string
 	pop ax
