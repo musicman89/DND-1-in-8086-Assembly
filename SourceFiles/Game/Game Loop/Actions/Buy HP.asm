@@ -37,7 +37,7 @@ buy_hp:
 	PrintString BuyHPStrings + 0 * string_size
 	call new_line
 	call get_user_input
-	call int_parse
+	call parse_int
 	mov ax, 200
 	mul bx
 	cmp bx, [Character + player.gold]

@@ -185,4 +185,33 @@ NewString "HOW MANY 200 GP. EACH "
 NewString "OK DONE"
 NewString "HP= "
 
+BuyMagicStrings:
+NewString "YOU CANT BUY ANY"
+
+BuyWizardSpellsStrings:
+NewString "DO YOU KNOW THE SPELLS"
+NewString "1-PUSH-75   6-M. M. #1-100"
+NewString "2-KIHL-500  7-M. M. #2-200"
+NewString "3-FIND TRAPS-200  8-M. M. #3-300"
+NewString "4-TELEPORT-750  9-FIND S.DOORS-200"
+NewString "5-CHANGE 1+0-600  10-CHANGE 0+1-600"
+NewString "#OF ONE YOU WANT  NEG.NUM.TO STOP"
+NewString "IT IS YOURS"
+NewString "COSTS TOO MUCH"
+NewString "YOU NOW HAVE"
+NewString "#"
+
+BuyClericSpellsStrings:
+NewString "DO YOU KNOW THE CHOICES"
+NewString "1-KILL-500  5-MAG. MISS. #1-100"
+NewString "2-MAG. MISS. #2-200  6-MAG. MISS. #3-300"
+NewString "3-CURE LHGHT #1-200  7-CURE LIGHT #2-1000"
+NewString "4-FIND ALL TRAPS-200  8-FIND ALL S.DOORS-200"
+NewString "INPUT # WANTED   NEG.NUM.TO STOP"
+NewString "IT IS YOURS"
+NewString "COSTS TOO MUCH"
+NewString "YOUR SPELLS "
+NewString "#"
+NewString "DONE"
+
 StringBuffer times 256 db 0 

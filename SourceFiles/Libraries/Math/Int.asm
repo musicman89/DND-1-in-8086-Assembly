@@ -88,6 +88,9 @@ ret
 ;       
 ;*******************************************************************************
 parse_int_from_char:
+        cmp al, '-'
+        je .negative
+
         cmp al, '0'
         jl .no
         
@@ -95,6 +98,9 @@ parse_int_from_char:
         jg .no
 
         sub al, '0'
+        jmp .return
+        .negative:
+        mov al, -0
         jmp .return
         .no:
             mov al, -1
