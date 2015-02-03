@@ -40,6 +40,53 @@ check_inventory:
 ret
 
 ;********************************************************************************
+;   print_attributes
+;   Purpose:
+;      To display the player's attributes
+;           Prototype:
+;               void print_attributes();
+;           Algorithm:
+;               void print_attributes(){
+;					for(int x = 0; x < 8; x++){
+;						Console.Write(CharacterAttributeNames[x] + " " + Character.attributes[x]);
+;						Console.NewLine();
+;					}
+;					Console.Read();
+;               }
+;               
+;   Entry:
+;       None
+;   Exit:
+;       None
+;   Uses:
+;       BX, CX
+;   Exceptions:
+;       
+;*******************************************************************************
+print_attributes:
+	mov cx, 7
+	.loop:
+
+		mov bx, cx
+		sub bx, 1
+		shl bx, 3
+		add bx, CharacterAttributeNames
+		call print_string
+
+		PrintString Space
+		mov bx, cx
+		sub bx, 1
+		shl bx, 1
+		mov bx, [Character + player.str + bx]
+		call print_dec
+		call new_line
+		dec cx
+		cmp cx, 0
+		jne .loop
+		call wait_key
+ret
+
+;********************************************************************************
 ;   remove_from_inventory
 ;   Purpose:
 ;      To remove an item from the player's inventory
@@ -115,6 +162,12 @@ ret
 lose_hp:
 	mov bx, [Character + player.hp]
 	sub bx, ax
+	mov [Character + player.hp], bx
+ret
+
+add_hp:
+	mov bx, [Character + player.hp]
+	add bx, ax
 	mov [Character + player.hp], bx
 ret
 

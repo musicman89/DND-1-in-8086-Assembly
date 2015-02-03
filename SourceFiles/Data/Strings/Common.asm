@@ -178,6 +178,11 @@ NewString "HORAZANTALY"
 SwitchWeaponStrings:
 NewString "WHICH WEAPON WILL YOU HOLD, NUM OF WEAPON "
 NewString "SORRY YOU DONT HAVE THAT ONE"
-NewString "O.K. YOU ARE NOW HOLDING A ";I$(Y)
+NewString "O.K. YOU ARE NOW HOLDING A "
+
+BuyHPStrings:
+NewString "HOW MANY 200 GP. EACH "
+NewString "OK DONE"
+NewString "HP= "
 
 StringBuffer times 256 db 0 
