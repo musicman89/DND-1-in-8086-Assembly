@@ -76,7 +76,7 @@ ret
 ;						}
 ;						else if(choice <= 10){
 ;							if(WizardSpells[choice].cost <= Character.gold){
-;								RemoveGold(WizardSpells[choice].cost);
+;								remove_gold(WizardSpells[choice].cost);
 ;								Character.wizardSpells[Character.wizardSpellCount] = choice;
 ;								Character.wizardSpellCount++;
 ;								Console.WriteLine(BuyWizardSpellsStrings[7]);
@@ -99,7 +99,47 @@ ret
 ;       
 ;*******************************************************************************
 buy_wizard_spells:
+	PrintString BuyWizardSpellsStrings + 0 * string_size
+	call new_line
+	call get_user_input
+	StringCompareInsensitive bx, YesString
+	jne .loop
+		PrintString BuyWizardSpellsStrings + 1 * string_size
+		call new_line
+		PrintString BuyWizardSpellsStrings + 2 * string_size
+		call new_line
+		PrintString BuyWizardSpellsStrings + 3 * string_size
+		call new_line
+		PrintString BuyWizardSpellsStrings + 4 * string_size	
+		call new_line
+		PrintString BuyWizardSpellsStrings + 5 * string_size	
+		call new_line
+		PrintString BuyWizardSpellsStrings + 6 * string_size	
+		call new_line
+	.loop:
+	call get_user_input
+	call parse_int
+	test bx, bx
+	jl .return
+	cmp bx, 10
+	jg .loop
+		mov ax, spell_size
+		mov dx, bx
+		mul dx
+		mov bx, ax
+		mov ax, [WizardSpells + bx + spell.cost]
+		cmp ax, [Character + player.gold]
+		jg .nope
+			call remove_gold
 
+			mov bl, [Character + player.wizardSpellCount]
+			mov [Character + player.wizardSpells + bx], dx
+			inc byte [Character + player.wizardSpellCount]
+			PrintString BuyWizardSpellsStrings + 7 * string_size
+
+		.nope:
+			PrintString BuyWizardSpellsStrings + 8 * string_size
+	.return:
 ret
 
 ;********************************************************************************
@@ -126,7 +166,18 @@ ret
 ;       
 ;*******************************************************************************
 show_wizard_spells:
-
+	PrintString BuyWizardSpellsStrings + 9 * string_size
+	call new_line
+	mov cl, [Character + player.wizardSpellCount]
+	mov bh, 0
+	.loop:
+		PrintString BuyWizardSpellsStrings + 10 * string_size
+		mov bl, cl
+		mov bl, [Character + player.wizardSpells + bx]
+		call print_dec
+		call new_line
+	dec cl
+	jg .loop
 ret
 
 ;********************************************************************************
@@ -176,7 +227,46 @@ ret
 ;       
 ;*******************************************************************************
 buy_cleric_spells:
+	PrintString BuyClericSpellsStrings + 0 * string_size
+	call new_line
+	call get_user_input
+	StringCompareInsensitive bx, YesString
+	jne .loop
+		PrintString BuyClericSpellsStrings + 1 * string_size
+		call new_line
+		PrintString BuyClericSpellsStrings + 2 * string_size
+		call new_line
+		PrintString BuyClericSpellsStrings + 3 * string_size
+		call new_line
+		PrintString BuyClericSpellsStrings + 4 * string_size	
+		call new_line
+		PrintString BuyClericSpellsStrings + 5 * string_size	
+		call new_line
+	.loop:
+	call get_user_input
+	call parse_int
+	test bx, bx
+	jl .return
+	cmp bx, 10
+	jg .loop
+		mov ax, spell_size
+		mov dx, bx
+		mul dx
+		mov bx, ax
+		mov ax, [ClericSpells + bx + spell.cost]
+		cmp ax, [Character + player.gold]
+		jg .nope
+			call remove_gold
 
+			mov bl, [Character + player.clericSpellCount]
+			mov [Character + player.clericSpells + bx], dx
+			inc byte [Character + player.clericSpellCount]
+			PrintString BuyClericSpellsStrings + 6 * string_size
+			call new_line
+		.nope:
+			PrintString BuyClericSpellsStrings + 7 * string_size
+			call new_line
+	.return:
 ret
 
 
@@ -205,5 +295,17 @@ ret
 ;       
 ;*******************************************************************************
 show_cleric_spells:
-
+	PrintString BuyClericSpellsStrings + 10 * string_size
+	call new_line
+	mov cl, [Character + player.clericSpells]
+	mov bh, 0
+	.loop:
+		PrintString BuyClericSpellsStrings + 9 * string_size
+		mov bl, cl
+		mov bl, [Character + player.clericSpells + bx]
+		call print_dec
+		call new_line
+	dec cl
+	jg .loop
+	PrintString BuyClericSpellsStrings + 10 * string_size
 ret
