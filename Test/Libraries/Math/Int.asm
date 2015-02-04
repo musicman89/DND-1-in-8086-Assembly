@@ -2,6 +2,7 @@ IntTests:
 	PrintString IntParseString
 	call test_parse_int_bad_num_string
 	call test_parse_int_good_num_string
+	call test_parse_int_good_negative_num_string
 	call test_parse_int_good_low_num_string
 	call test_parse_int_good_high_num_string
 
@@ -11,6 +12,13 @@ test_parse_int_good_num_string:
 	mov bx, TestGoodNumString
 	call parse_int
 	mov cx, 1052
+	call int_assert_equal
+ret
+
+test_parse_int_good_negative_num_string:
+	mov bx, TestGoodNegativeNumString
+	call parse_int
+	mov cx, -1052
 	call int_assert_equal
 ret
 
@@ -24,7 +32,7 @@ ret
 test_parse_int_good_high_num_string:
 	mov bx, TestGoodHighNumString
 	call parse_int
-	mov cx, 65535
+	mov cx, 32767
 	call int_assert_equal
 ret
 
@@ -60,6 +68,7 @@ int_assert_equal:
 ret
 IntParseString db "Testing Parse Int", 13,10,0
 TestGoodNumString db "1052", 0
+TestGoodNegativeNumString db "-1052", 0
 TestBadNumString db "1lw", 0
 TestGoodLowNumString db "1", 0
-TestGoodHighNumString db "65535", 0
+TestGoodHighNumString db "32767", 0

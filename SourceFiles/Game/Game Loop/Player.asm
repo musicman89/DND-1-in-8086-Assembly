@@ -40,6 +40,53 @@ check_inventory:
 ret
 
 ;********************************************************************************
+;   print_attributes
+;   Purpose:
+;      To display the player's attributes
+;           Prototype:
+;               void print_attributes();
+;           Algorithm:
+;               void print_attributes(){
+;					for(int x = 0; x < 8; x++){
+;						Console.Write(CharacterAttributeNames[x] + " " + Character.attributes[x]);
+;						Console.NewLine();
+;					}
+;					Console.Read();
+;               }
+;               
+;   Entry:
+;       None
+;   Exit:
+;       None
+;   Uses:
+;       BX, CX
+;   Exceptions:
+;       
+;*******************************************************************************
+print_attributes:
+	mov cx, 7
+	.loop:
+
+		mov bx, cx
+		sub bx, 1
+		shl bx, 3
+		add bx, CharacterAttributeNames
+		call print_string
+
+		PrintString Space
+		mov bx, cx
+		sub bx, 1
+		shl bx, 1
+		mov bx, [Character + player.str + bx]
+		call print_dec
+		call new_line
+		dec cx
+		cmp cx, 0
+		jne .loop
+		call wait_key
+ret
+
+;********************************************************************************
 ;   remove_from_inventory
 ;   Purpose:
 ;      To remove an item from the player's inventory
@@ -115,6 +162,12 @@ ret
 lose_hp:
 	mov bx, [Character + player.hp]
 	sub bx, ax
+	mov [Character + player.hp], bx
+ret
+
+add_hp:
+	mov bx, [Character + player.hp]
+	add bx, ax
 	mov [Character + player.hp], bx
 ret
 
@@ -197,6 +250,72 @@ show_hp:
 	mov bx, [Character + player.hp]
 	call print_dec
 	call new_line
+ret
+
+;********************************************************************************
+;   check_cleric_spell
+;   Purpose:
+;      To check if a player has a specific cleric spell
+;           Prototype:
+;               byte check_cleric_spell(byte spell);
+;           Algorithm:
+;               byte check_cleric_spell(byte spell){
+;					for(int x = 1; x < Character.clericSpellCount; x++){
+;						if(spell == Character.clericSpells[x]){
+;							return x;
+;						}
+;					}
+;					return -1
+;				}
+;               
+;   Entry:
+;       None
+;   Exit:
+;       None
+;   Uses:
+;       BX
+;   Exceptions:
+;       
+;*******************************************************************************
+check_cleric_spell:
+
+ret
+
+;********************************************************************************
+;   check_wizard_spell
+;   Purpose:
+;      To check if a player has a specific wizard spell
+;           Prototype:
+;               byte check_wizard_spell(byte spell);
+;           Algorithm:
+;               byte check_wizard_spell(byte spell){
+;					for(int x = 1; x < Character.wizardSpellCount; x++){
+;						if(spell == Character.wizardSpells[x]){
+;							return x;
+;						}
+;					}
+;					return -1
+;               }
+;               
+;   Entry:
+;       None
+;   Exit:
+;       None
+;   Uses:
+;       BX
+;   Exceptions:
+;       
+;*******************************************************************************
+check_wizard_spell:
+
+ret
+
+remove_cleric_spell:
+
+ret
+
+remove_wizard_spell:
+
 ret
 
 ;********************************************************************************

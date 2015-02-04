@@ -7,16 +7,22 @@
 ;           Algorithm:
 ;               int parse_int(byte address){
 ;                   int temp = 0
+;                   word flags = 0;
 ;                   while(*address != 0){
 ;                       int parsedChar = parse_int_from_char(*address);
 ;                       if(parsedChar < 0){
-;                           return 0;
+;                           if(parsedChar == -2){
+;                               flags xor 0xFFFF;
+;                           }
+;                           else{
+;                              return 0;
+;                           }
 ;                       }
 ;                       temp += parsedChar;
 ;                       temp *= 10;
 ;                       address++;
 ;                   }
-;                   return temp;
+;                   return flags != 0 ? (temp or flags) + 1: temp;
 ;               }
 ;               
 ;   Entry:
@@ -24,7 +30,7 @@
 ;   Exit:
 ;       Int value in register BX
 ;   Uses:
-;       AX, BX, CX
+;       AX, BX, CX, DX
 ;   Exceptions:
 ;       
 ;*******************************************************************************
@@ -32,6 +38,7 @@ parse_int:
 	push cx
 	push ax
     mov word [IntBuffer], 0
+    mov word[IntFlags], 0
     mov cx, 10
     .loop:
         mov al, [bx]
@@ -41,7 +48,7 @@ parse_int:
 
         call parse_int_from_char
         test al, al
-        jl .fail
+        jl .failCheck
 
         push ax
         mov ax, [IntBuffer]
@@ -51,14 +58,25 @@ parse_int:
 
         add word [IntBuffer], ax
 
-
         inc bx
         jmp .loop
 		jmp .return
-	.fail:
-		mov word [IntBuffer],0
+	.failCheck:
+        cmp al, -2
+        jne .fail
+            xor word[IntFlags], 0xFFFF
+            inc bx
+        jmp .loop
+    .fail:
+		mov word [IntBuffer], 0
     .return:
-		mov bx, [IntBuffer]
+        mov bx, word[IntFlags]
+        cmp bx, 0
+        jge .positive
+            xor word[IntBuffer], bx		
+            inc word[IntBuffer]
+        .positive:
+        mov bx, [IntBuffer]
 		
 	pop ax
 	pop cx
@@ -88,6 +106,9 @@ ret
 ;       
 ;*******************************************************************************
 parse_int_from_char:
+        cmp al, '-'
+        je .negative
+
         cmp al, '0'
         jl .no
         
@@ -96,6 +117,9 @@ parse_int_from_char:
 
         sub al, '0'
         jmp .return
+        .negative:
+            mov al, -2
+            jmp .return
         .no:
             mov al, -1
         .return:
@@ -216,3 +240,4 @@ ret
 
 RandSeed dw 0
 IntBuffer dw 0
+IntFlags dw 0

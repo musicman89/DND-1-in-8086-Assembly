@@ -178,6 +178,59 @@ NewString "HORAZANTALY"
 SwitchWeaponStrings:
 NewString "WHICH WEAPON WILL YOU HOLD, NUM OF WEAPON "
 NewString "SORRY YOU DONT HAVE THAT ONE"
-NewString "O.K. YOU ARE NOW HOLDING A ";I$(Y)
+NewString "O.K. YOU ARE NOW HOLDING A "
+
+BuyHPStrings:
+NewString "HOW MANY 200 GP. EACH "
+NewString "OK DONE"
+NewString "HP= "
+
+BuyMagicStrings:
+NewString "YOU CANT BUY ANY"
+
+BuyWizardSpellsStrings:
+NewString "DO YOU KNOW THE SPELLS"
+NewString "1-PUSH-75   6-M. M. #1-100"
+NewString "2-KIHL-500  7-M. M. #2-200"
+NewString "3-FIND TRAPS-200  8-M. M. #3-300"
+NewString "4-TELEPORT-750  9-FIND S.DOORS-200"
+NewString "5-CHANGE 1+0-600  10-CHANGE 0+1-600"
+NewString "#OF ONE YOU WANT  NEG.NUM.TO STOP"
+NewString "IT IS YOURS"
+NewString "COSTS TOO MUCH"
+NewString "YOU NOW HAVE"
+NewString "#"
+
+BuyClericSpellsStrings:
+NewString "DO YOU KNOW THE CHOICES"
+NewString "1-KILL-500  5-MAG. MISS. #1-100"
+NewString "2-MAG. MISS. #2-200  6-MAG. MISS. #3-300"
+NewString "3-CURE LHGHT #1-200  7-CURE LIGHT #2-1000"
+NewString "4-FIND ALL TRAPS-200  8-FIND ALL S.DOORS-200"
+NewString "INPUT # WANTED   NEG.NUM.TO STOP"
+NewString "IT IS YOURS"
+NewString "COSTS TOO MUCH"
+NewString "YOUR SPELLS "
+NewString "#"
+NewString "DONE"
+
+FailedString:
+NewString "FAILED"
+
+UseMagicStrings:
+NewString "MAGIC"
+NewString "YOU CANT TSE MAGIC YOUR NOT A M.U."
+NewString "YOU CANT USE MAGIC WITH WEAPON IN HAND"
+NewString "CLERICAL SPELL #"
+NewString "YOU DONT HAVE THAT SPELL"
+NewString "NO MORE"
+NewString "THERE IS ONE AT "
+NewString "LAT."
+NewString "LONG."
+NewString "SPELL #"
+NewString "DO NOT HAVE THAT ONE"
+NewString "M-HP="
+NewString "INPUT CO-ORDINATES"
+NewString "ARE YOU ABOVE,BELOW,RIGHT, OR LEFT OF IT"
 
 StringBuffer times 256 db 0 
