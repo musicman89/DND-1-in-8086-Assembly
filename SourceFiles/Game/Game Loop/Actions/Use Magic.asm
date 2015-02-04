@@ -7,6 +7,7 @@
 ;               void use_magic();
 ;           Algorithm:
 ;               void use_magic(){
+;					Console.WriteLine(useMagicStrings[0])
 ;					if(Character.weapon != 0){
 ;						Console.WriteLine(UseMagicStrings[1]);
 ;						pass();
@@ -34,7 +35,26 @@
 ;       
 ;*******************************************************************************
 use_magic:
-
+	PrintString UseMagicStrings + 0 * string_size
+	cmp [Character + player.weapon], 0
+	jne .hasWeapon
+	StringCompareInsensitive Character + player.class, Classes + 2 * string_size
+	jne .wizard
+		call use_cleric_spell
+		jmp .return
+	.wizard:
+	StringCompareInsensitive Character + player.class, Classes + 3 * string_size
+	jne .none
+		call user_wizard_spell
+		jmp .return
+	.none:
+		PrintString + 2 * string_size
+		call pass
+		jmp .return
+	.hasWeapon:
+		PrintString UseMagicStrings + 1 * string_size
+		call pass
+	.return:
 ret
 
 ;********************************************************************************

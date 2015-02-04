@@ -253,6 +253,72 @@ show_hp:
 ret
 
 ;********************************************************************************
+;   check_cleric_spell
+;   Purpose:
+;      To check if a player has a specific cleric spell
+;           Prototype:
+;               byte check_cleric_spell(byte spell);
+;           Algorithm:
+;               byte check_cleric_spell(byte spell){
+;					for(int x = 1; x < Character.clericSpellCount; x++){
+;						if(spell == Character.clericSpells[x]){
+;							return x;
+;						}
+;					}
+;					return -1
+;				}
+;               
+;   Entry:
+;       None
+;   Exit:
+;       None
+;   Uses:
+;       BX
+;   Exceptions:
+;       
+;*******************************************************************************
+check_cleric_spell:
+
+ret
+
+;********************************************************************************
+;   check_wizard_spell
+;   Purpose:
+;      To check if a player has a specific wizard spell
+;           Prototype:
+;               byte check_wizard_spell(byte spell);
+;           Algorithm:
+;               byte check_wizard_spell(byte spell){
+;					for(int x = 1; x < Character.wizardSpellCount; x++){
+;						if(spell == Character.wizardSpells[x]){
+;							return x;
+;						}
+;					}
+;					return -1
+;               }
+;               
+;   Entry:
+;       None
+;   Exit:
+;       None
+;   Uses:
+;       BX
+;   Exceptions:
+;       
+;*******************************************************************************
+check_wizard_spell:
+
+ret
+
+remove_cleric_spell:
+
+ret
+
+remove_wizard_spell:
+
+ret
+
+;********************************************************************************
 ;   get_y_bounds
 ;   Purpose:
 ;      To limit the bounds to the vertical range of the map
