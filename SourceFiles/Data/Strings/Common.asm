@@ -214,4 +214,23 @@ NewString "YOUR SPELLS "
 NewString "#"
 NewString "DONE"
 
+FailedString:
+NewString "FAILED"
+
+UseMagicStrings:
+NewString "MAGIC"
+NewString "YOU CANT TSE MAGIC YOUR NOT A M.U."
+NewString "YOU CANT USE MAGIC WITH WEAPON IN HAND"
+NewString "CLERICAL SPELL #"
+NewString "YOU DONT HAVE THAT SPELL"
+NewString "NO MORE"
+NewString "THERE IS ONE AT "
+NewString "LAT."
+NewString "LONG."
+NewString "SPELL #"
+NewString "DO NOT HAVE THAT ONE"
+NewString "M-HP="
+NewString "INPUT CO-ORDINATES"
+NewString "ARE YOU ABOVE,BELOW,RIGHT, OR LEFT OF IT"
+
 StringBuffer times 256 db 0 

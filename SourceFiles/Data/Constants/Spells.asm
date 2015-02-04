@@ -16,12 +16,12 @@ NewSpell "PUSH", 75
 NewSpell "KIHL", 500
 NewSpell "FIND TRAPS", 200
 NewSpell "TELEPORT", 750
-NewSpell "CHANGE", 600
+NewSpell "CHANGE 1+0", 600
 NewSpell "M. M. #1", 100
 NewSpell "M. M. #2", 200
 NewSpell "M. M. #3", 300
 NewSpell "FIND S.DOORS", 200
-NewSpell "CHANGE", 600
+NewSpell "CHANGE 0+1", 600
 
 ClericSpells:
 NewSpell "", 0
