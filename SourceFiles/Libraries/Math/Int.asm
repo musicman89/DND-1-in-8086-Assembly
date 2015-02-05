@@ -35,51 +35,51 @@
 ;       
 ;*******************************************************************************
 parse_int:
+    push dx
 	push cx
 	push ax
-    mov word [IntBuffer], 0
-    mov word[IntFlags], 0
-    mov cx, 10
+    mov word [IntBuffer], 0                 ;Clear our buffer
+    mov word [IntFlags], 0                   ;Clear our flags
     .loop:
-        mov al, [bx]
-        mov ah, 0
+        mov al, [bx]                        ;Take the current character of the string into al
+        mov ah, 0                           ;Ensure we have not hit the end of the string
         test al, al
         jz .return
 
-        call parse_int_from_char
-        test al, al
+        call parse_int_from_char            ;Parse the character
+        test al, al                         ;If it isn't a number test if we have an invalid string
         jl .failCheck
 
-        push ax
-        mov ax, [IntBuffer]
-        mul cx
-        mov [IntBuffer], ax
-        pop ax
+        mov dx, [IntBuffer]                 ;Push the buffer into dx
+        mov cl, 3                           ;Set cl to 3 to do our left shift (dx * 8)
+        shl dx, cl                          
+        shl word [IntBuffer], 1             ;Shift our buffer by one byte (buffer * 2)
+        add [IntBuffer], dx                 ;Add dx to our buffer (buffer * 10)
 
-        add word [IntBuffer], ax
+        add [IntBuffer], ax                 ;Add the value of the character to the buffer
 
-        inc bx
+        inc bx                              ;advance to the next character
         jmp .loop
-		jmp .return
 	.failCheck:
-        cmp al, -2
+        cmp al, -2                          ;If the value is -2 that signals we have a negative number
         jne .fail
-            xor word[IntFlags], 0xFFFF
-            inc bx
+            xor word[IntFlags], 0xFFFF      ;Set our flags to negative
+            inc bx                          ;Advance to the next character and return to the loop
         jmp .loop
     .fail:
-		mov word [IntBuffer], 0
+		mov word [IntBuffer], 0             ;Set our value to 0 and return
     .return:
-        mov bx, word[IntFlags]
-        cmp bx, 0
+        mov bx, word[IntFlags]              ;Move our flags into bx 
+        cmp bx, 0                           ;Check if the flags have been set 
         jge .positive
-            xor word[IntBuffer], bx		
-            inc word[IntBuffer]
+            xor word[IntBuffer], bx		    ;Flip the bytes to their opposite
+            inc word[IntBuffer]             ;Increment the buffer to compensate for twos complement
         .positive:
-        mov bx, [IntBuffer]
+        mov bx, [IntBuffer]                 ;Set bx to the value of our buffer
 		
 	pop ax
 	pop cx
+    pop dx
 ret
 
 ;********************************************************************************
@@ -106,22 +106,22 @@ ret
 ;       
 ;*******************************************************************************
 parse_int_from_char:
-        cmp al, '-'
+        cmp al, '-'             ;Check if the number is negative
         je .negative
 
-        cmp al, '0'
+        cmp al, '0'             ;If the character is less than 0 it is not a number
         jl .no
         
-        cmp al, '9'
+        cmp al, '9'             ;If the character is greater than 9 it also is not a number
         jg .no
 
-        sub al, '0'
+        sub al, '0'             ;Offset the byte to get the value of the character
         jmp .return
         .negative:
-            mov al, -2
+            mov al, -2          ;Flag a negative number
             jmp .return
         .no:
-            mov al, -1
+            mov al, -1          ;Flag an invalid number
         .return:
 ret
 
@@ -134,7 +134,7 @@ ret
 ;           Algorithm:
 ;               int get_seed(){
 ;                   int ticks = BIOS_INT_0x1A(0x00)
-;                   return ticks % 0xABBA
+;                   return ticks % 65000
 ;               }
 ;               
 ;   Entry:
@@ -155,7 +155,7 @@ get_seed:
 
     mov  ax, dx              ;move the number of ticks to ax
     xor  dx, dx              ;clear dx
-    mov  cx, 0xABBA          ;set our base for the seed
+    mov  cx, 65000           ;set our base for the seed
     div cx                   ;divide the number of ticks by our base
     mov [RandSeed], dx       ;set the remainder which is any number between 0 and our base as the seed
     pop ax
@@ -188,12 +188,12 @@ random_int:
 	push dx
 	push cx
 	push ax
-    call get_random
-	xor  dx, dx
+    call get_random            ;Get a random number
+	xor  dx, dx                ;Clear dx
 
-    mov ax, bx
-    div cx
-    mov bx, dx
+    mov ax, bx                 ;Move our random number into ax
+    div cx                     ;Divide by our base
+    mov bx, dx                 ;Move the remainder (A number between 0 and our base) into bx
 	pop ax
 	pop cx
 	pop dx
@@ -207,7 +207,7 @@ ret
 ;               int get_random();
 ;           Algorithm:
 ;               int get_random(){
-;                   seed = (seed * 0x001F + 0x000D) % 0x4CE3
+;                   seed = (seed * 31 + 13) % 19683
 ;                   return seed
 ;               }
 ;               
@@ -223,17 +223,17 @@ ret
 get_random:
 	push dx
 	push ax
-    xor  dx, dx
-    mov ax, [RandSeed]   ; set new initial value z 
-    mov bx, 0x001F       ; 31D 
-    mul bx               ; 31 * z
-                         ; result dx:ax, higher value in dx, lower value in ax
-    add ax, 0x000D       ; +13
-    mov bx, 0x4CE3       ; 19683D
-    div bx              ; div by 19683D
-                        ; result ax:dx, quotient in ax, remainder in dx 
-    mov [RandSeed], dx
-    mov bx, dx
+    xor  dx, dx          ;Clear dx
+    mov ax, [RandSeed]   ;Set ax to our initial seed value
+    mov bx, 31           ;Set bx to 31 and multiply our seed by it
+    mul bx               
+                         ;Our result is in dx:ax, higher value in dx, lower value in ax
+    add ax, 13           ;Add 13 to our result
+    mov bx, 19683        ;Set bx to 19683 and divide our result by it
+    div bx               
+                         ;Our result is in ax:dx, quotient in ax, remainder in dx 
+    mov [RandSeed], dx   ;Set our seed value to the remainder of our result
+    mov bx, dx           ;Set bx to the remainder of our result
 	pop ax
 	pop dx
 ret

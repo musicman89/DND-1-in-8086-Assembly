@@ -19,7 +19,12 @@
 ;				void print_string(byte* string_address){
 ;					while(string_address != 0){
 ;						if(*string_address == 10){
-;							yposition = 1;
+;							if(yposition < 23){
+;								yposition++;
+;							}
+;							else{
+;								scroll();
+;							}
 ;						}
 ;						else if(*string_address == 13){
 ;							xposition = 0;
@@ -89,9 +94,11 @@ ret
 ;					xposition++;
 ;					if(xposition > 80){
 ;						xposition = 0;
-;						yposition++;
-;						if(yposition > 25){
-;							clear_screen();
+;						if(yposition < 23){
+;							yposition++;
+;						}
+;						else{
+;							scroll();
 ;						}
 ;					}
 ;				}
@@ -112,7 +119,7 @@ print:
 	jle .return
 	mov byte [xpos], 0 				;Move the cursor back to the left
 	cmp byte [ypos], 23 			;Check if the cursor has hit the bottom
-	je .scroll
+	jge .scroll
 		add byte [ypos], 1 				;Progress the cursor down a line
 	jmp .return
 	.scroll:
@@ -180,16 +187,15 @@ ret
 ;********************************************************************************
 ;	clear_screen
 ;	Purpose:
-;      To push a character into video memory
+;      To clear the screen
 ;			Prototype:
 ;				void clear_screen();
 ;			Algorithm:
 ;				void clear_screen(){
-;					character = ' '
-;					xposition = 0;
-;					yposition = 0;
-;					while(yposition <= 25){
-;						print(character);
+;					int* memory = VideoMemory
+;					for(int x = 0; x < 4000; x++){
+;						memory = 0;
+;						*memory++;
 ;					}
 ;					xposition = 0;
 ;					yposition = 0;
@@ -200,41 +206,35 @@ ret
 ;	Exit:
 ;       None
 ;	Uses:
-;		AX
+;		ES, DI
 ;	Exceptions:
 ;		None
 ;*******************************************************************************
 clear_screen:						;Clear Screen
-	push ax
-	push bx
-	push cx
-	push dx
-	mov di, 4000
-    mov es, [VideoMemory]
+	mov di, 4000 					;Set the offset to the size of text video memory
+    mov es, [VideoMemory] 			;Move our segment into video memory
 
     .loop:
-        mov word[es:di], 0
-        sub di, 2 					;advance to the next characters
-        jnz .loop
+        mov word[es:di], 0 			;Set the data at our segment and offset to 0
+        sub di, 2 					;advance to the next word
+        jg .loop 					;Repeat until we hit the start of bideo memory
 	mov byte [xpos], 0 				;Move the cursor back to the left
 	mov byte [ypos], 0 				;Move the cursor back to the top
-	pop dx
-	pop cx
-	pop bx
-	pop ax
 ret
 
 ;********************************************************************************
 ;	new_line
 ;	Purpose:
-;      To push a character into video memory
+;      To advance the cursor to a new line
 ;			Prototype:
 ;				void new_line();
 ;			Algorithm:
 ;				void new_line(){
 ;					xposition = 0;
-;					yposition++;
-;					if(yposition > 25)
+;					if(yposition < 23)
+;						yposition++;
+;					}
+;					else{
 ;						scroll();
 ;					}
 ;				}
@@ -249,9 +249,9 @@ ret
 ;		None
 ;*******************************************************************************
 new_line:
-	mov byte [xpos], 0 				;Move the cursor back to the left
-	cmp byte [ypos], 23 			;Check if the cursor has hit the bottom
-	jge .scroll
+	mov byte [xpos], 0 					;Move the cursor back to the left
+	cmp byte [ypos], 23 				;Check if the cursor has hit the bottom
+	jge .scroll 						;If we are the second to last row scroll the screen
 		add byte [ypos], 1 				;Progress the cursor down a line
 	jmp .return
 	.scroll:
@@ -267,6 +267,7 @@ ret
 ;				void scroll();
 ;			Algorithm:
 ;				void scroll(){
+;					extended_mem_copy(VideoMemory + 10, VideoMemory, 3840);
 ;				}
 ;				
 ;	Entry:
@@ -274,7 +275,7 @@ ret
 ;	Exit:
 ;       None
 ;	Uses:
-;		None
+;		AX, BX, CX
 ;	Exceptions:
 ;		None
 ;*******************************************************************************
@@ -282,24 +283,31 @@ scroll:
 	push ax
 	push bx
 	push cx
-		mov cx, 3840
-		mov ax, [VideoMemory] 
-		add ax, 10
-		mov bx, [VideoMemory]
-		call extended_mem_copy
+		mov cx, 3840 				;Set our length to all but one row of the screen
+		mov ax, [VideoMemory]  		;Set address a to the video memory
+		add ax, 10 					;Advance address a by 160 (It is offset by 16bits)
+		mov bx, [VideoMemory] 		;Set address b to the video memory
+		call extended_mem_copy 		;Copy from address a into address b moving the screen up one row
 	pop cx
 	pop bx
 	pop ax
 ret
 
 ;********************************************************************************
-;	scroll
+;	print_hex
 ;	Purpose:
-;      Scroll the screen
+;      Print a number in hex to the screen
 ;			Prototype:
-;				void scroll();
+;				void print_hex(byte number);
 ;			Algorithm:
-;				void scroll(){
+;				void print_hex(byte number){
+;					string output = "";
+;					for(int x = 0; x < 4; x++){
+;						number = ROL(number,4);		Roll to the last half byte
+;						temp = number and 0x0F;		Mask the previous half byte
+;						output += hexStr[temp];		Add the character for the half byte value
+;					}
+;					print_string(output);
 ;				}
 ;				
 ;	Entry:
@@ -307,7 +315,7 @@ ret
 ;	Exit:
 ;       None
 ;	Uses:
-;		None
+;		AX, BX, CX, DI
 ;	Exceptions:
 ;		None
 ;*******************************************************************************
@@ -336,6 +344,39 @@ print_hex:
 	pop bx
 ret
 
+;********************************************************************************
+;	print_hex
+;	Purpose:
+;      Print a number in hex to the screen
+;			Prototype:
+;				void print_hex(byte number);
+;			Algorithm:
+;				void print_hex(byte number){
+;					string output = "";
+;					string reversed = "";
+;					if(number < 0){
+;						number *= -1;
+;						output += "-";
+;					}
+;					while(number > 0){
+;						reversed = number % 10 + ' ';
+;						number = number / 10;
+;					}
+;					for(int x = 0; x < number.length; x++){
+;						output += reversed[x];
+;					}
+;					print_string(output);
+;				}
+;				
+;	Entry:
+;       None
+;	Exit:
+;       None
+;	Uses:
+;		AX, BX, CX, DX, DI
+;	Exceptions:
+;		None
+;*******************************************************************************
 print_dec:
 	push dx
 	push cx
@@ -381,11 +422,9 @@ print_dec:
 	pop dx
 ret
 
-ypos        dw 0
-xpos        dw 0
-hexStr      db '0123456789ABCDEF'
-decOutput 	times 10 db 0
-hexOutput   db '0000 ', 0  			;register value string
-VideoMemory dw 0xb800
-
-BlankMemory times 4000 dw 0
+ypos        dw 0 					;The current cursor y position
+xpos        dw 0 					;The current cursor x position
+hexStr      db '0123456789ABCDEF'  	;The characters for the values in Hex
+decOutput 	times 10 db 0 			;Our buffer for decimal output
+hexOutput   db '0000 ', 0  			;Our buffer for hexidecimal output
+VideoMemory dw 0xb800 				;The location of text video memory offset by 16bits (0xb8000)

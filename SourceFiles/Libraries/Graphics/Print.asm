@@ -109,9 +109,7 @@ print:
 	add byte [ypos], 1 				;Progress the cursor down a line
 	cmp byte [ypos], 25 			;Check if the cursor has hit the bottom
 	jle .return
-	cmp ah, 0x00
-	je .return
-	call clear_screen
+		call clear_screen
 	.return:
 ret
 
@@ -175,19 +173,19 @@ push_character:						;Character Print
 	pop ax
 ret
 
+
 ;********************************************************************************
 ;	clear_screen
 ;	Purpose:
-;      To push a character into video memory
+;      To clear the screen
 ;			Prototype:
 ;				void clear_screen();
 ;			Algorithm:
 ;				void clear_screen(){
-;					character = ' '
-;					xposition = 0;
-;					yposition = 0;
-;					while(yposition <= 25){
-;						print(character);
+;					int* memory = VideoMemory
+;					for(int x = 0; x < 4000; x++){
+;						memory = 0;
+;						*memory++;
 ;					}
 ;					xposition = 0;
 ;					yposition = 0;
@@ -198,30 +196,26 @@ ret
 ;	Exit:
 ;       None
 ;	Uses:
-;		AX
+;		ES, DI
 ;	Exceptions:
 ;		None
 ;*******************************************************************************
 clear_screen:						;Clear Screen
-	push ax
-	cld
-	mov ah, 0x00 					;set the color to black on black
-	mov al, ' '  					;set the character to print to be a space
-	mov byte [xpos], 0  			;set the cursor to the left
-	mov byte [ypos], 0 				;set the cursor to the top
-	.loop:
-		call print
-		cmp byte [ypos], 25 		;Check if the cursor has hit the bottom
-		jle .loop
-		mov byte [xpos], 0 			;reset the cursor to the left
-		mov byte [ypos], 0 			;reset the cursor to the top
-	pop ax
+	mov di, 4000
+    mov es, [VideoMemory]
+
+    .loop:
+        mov word[es:di], 0
+        sub di, 2 					;advance to the next characters
+        jnz .loop
+	mov byte [xpos], 0 				;Move the cursor back to the left
+	mov byte [ypos], 0 				;Move the cursor back to the top
 ret
 
 ;********************************************************************************
 ;	new_line
 ;	Purpose:
-;      To push a character into video memory
+;      To advance the cursor to a new line
 ;			Prototype:
 ;				void new_line();
 ;			Algorithm:
@@ -247,9 +241,7 @@ new_line:
 	add byte [ypos], 1 				;Progress the cursor down a line
 	cmp byte [ypos], 24 			;Check if the cursor has hit the bottom
 	jle .return
-	cmp ah, 0x00
-	je .return
-	call clear_screen
+		call clear_screen
 	.return:
 ret
 
