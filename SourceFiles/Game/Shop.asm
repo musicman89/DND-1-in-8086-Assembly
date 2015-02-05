@@ -143,10 +143,10 @@ make_item_selection:
 	jg .insufficientFunds
 	mov cx, ax
 
-	StringCompareInsensitive Character + player.class, Classes + 2 * string_size
+	StringCompareInsensitive Character.class, Classes + 2 * string_size
 	je .cleric
 
-	StringCompareInsensitive Character + player.class, Classes + 3 * string_size
+	StringCompareInsensitive Character.class, Classes + 3 * string_size
 	je .wizard
 
 	jmp .purchase
@@ -286,7 +286,7 @@ check_item_cost:
 	mov bx, ax
 
 	mov ax, [bx + Items + item.price]
-	cmp ax, word [Character + player.gold]
+	cmp ax, word [Character.gold]
 	pop dx
 	pop cx
 	pop bx

@@ -203,7 +203,7 @@ get_continues:
 	cmp bx, 2
 	jg .fail
 
-	mov [Character + player.continues], bx
+	mov [Character.continues], bx
 	jmp .return
 	.fail:
 		call invalid_input

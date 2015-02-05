@@ -45,8 +45,8 @@
 ;       
 ;*******************************************************************************
 open_door:
-	mov cl, [Character + player.x]
-	mov dl, [Character + player.y]
+	mov cl, [Character.x]
+	mov dl, [Character.y]
 	.loop:
 		PrintString OpenDoorStrings + 0 * string_size
 		call to_upper
@@ -135,7 +135,7 @@ check_door:
 	.door:
 		PrintString OpenDoorStrings + 2 * string_size
 		call roll_d20
-		cmp bx, [Character + player.str]
+		cmp bx, [Character.str]
 		jl .advance
 			PrintString OpenDoorStrings + 3 * string_size
 			call pass

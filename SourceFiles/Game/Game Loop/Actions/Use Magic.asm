@@ -36,14 +36,14 @@
 ;*******************************************************************************
 use_magic:
 	PrintString UseMagicStrings + 0 * string_size
-	cmp [Character + player.weapon], 0
+	cmp byte [Character.weapon], 0
 	jne .hasWeapon
-	StringCompareInsensitive Character + player.class, Classes + 2 * string_size
+	StringCompareInsensitive Character.class, Classes + 2 * string_size
 	jne .wizard
 		call use_cleric_spell
 		jmp .return
 	.wizard:
-	StringCompareInsensitive Character + player.class, Classes + 3 * string_size
+	StringCompareInsensitive Character.class, Classes + 3 * string_size
 	jne .none
 		call user_wizard_spell
 		jmp .return
@@ -119,37 +119,52 @@ ret
 ;       
 ;*******************************************************************************
 use_cleric_spell:
-
-ret
-
-
-;********************************************************************************
-;   check_cleric_spell
-;   Purpose:
-;      To check if a player has a specific cleric spell
-;           Prototype:
-;               byte check_cleric_spell(byte spell);
-;           Algorithm:
-;               byte check_cleric_spell(byte spell){
-;					for(int x = 1; x < Character.clericSpellCount; x++){
-;						if(spell == Character.clericSpells[x]){
-;							return x;
-;						}
-;					}
-;					return -1
-;				}
-;               
-;   Entry:
-;       None
-;   Exit:
-;       None
-;   Uses:
-;       BX
-;   Exceptions:
-;       
-;*******************************************************************************
-check_cleric_spell:
-
+	PrintString UseMagicStrings + 3 * string_size
+	call new_line
+	call get_user_input
+	call parse_int
+	call check_cleric_spell
+	cmp ax, 0
+	jle .nope
+	cmp bx, 1
+	jne .no_kill
+		call cleric_kill
+	.no_kill:
+	cmp bx, 2
+	jne .no_mm2
+		call cleric_magic_missile_2
+	.no_mm2:
+	cmp bx, 3
+	jne .no_cl1
+		call cleric_cure_light_1
+	.no_cl1:
+	cmp bx, 4
+	jne .no_fat
+		call find_all_traps
+	.no_fat:
+	cmp bx, 5
+	jne .no_mm1
+		call cleric_magic_missile_1
+	.no_mm1:
+	cmp bx, 6
+	jne .no_mm3
+		call cleric_magic_missile_3
+	.no_mm3:
+	cmp bx, 7
+	jne .no_cl2
+		call cleric_cure_light_2
+	.no_cl2:
+	cmp bx, 8
+	jne .no_fasd
+		call find_all_secret_doors
+	.no_fasd:
+	cmp bx, 9
+	jne .nope
+		call cleric_repel_undead
+	.nope:
+		PrintString UseMagicStrings + 4 * string_size
+		call pass
+	.return:
 ret
 
 ;********************************************************************************
@@ -180,7 +195,25 @@ ret
 ;       
 ;*******************************************************************************
 cleric_repel_undead:
-
+	cmp byte [CurrentMonster.type], 4
+	je .undead
+	cmp byte [CurrentMonster.type], 10
+	jne .not
+	.undead:
+		PrintString DoneString
+		mov bl, [CurrentMonster.x]
+		add bl, [Character.x]
+		mov bh, 0
+		mov ax, bx
+		div bx
+		mov bx, ax
+		call move_monster
+		call wait_key
+		call pass
+	.not:
+		PrintString FailedString
+		call wait_key
+	.return:
 ret
 
 ;********************************************************************************
@@ -212,7 +245,18 @@ ret
 ;       
 ;*******************************************************************************
 cleric_kill:
-
+	mov cx, 3
+	call random_int
+	cmp bx, 2
+	jg .fail
+		PrintString DoneString
+		mov byte [CurrentMonster.status], -1
+		call wait_key
+		call pass
+	.fail:
+		PrintString FailedString
+		call wait_key
+		call pass
 ret
 
 ;********************************************************************************
@@ -238,7 +282,14 @@ ret
 ;       
 ;*******************************************************************************
 cleric_magic_missile_1:
-
+	PrintString DoneString
+	mov ax, CurrentMonster.type
+	mov bx, monster_size
+	mul bx
+	mov bx, ax
+	sub word [Monsters + bx + monster.hp], 2
+	call wait_key
+	call pass
 ret
 
 ;********************************************************************************
@@ -264,7 +315,14 @@ ret
 ;       
 ;*******************************************************************************
 cleric_magic_missile_2:
-
+	PrintString DoneString
+	mov ax, CurrentMonster.type
+	mov bx, monster_size
+	mul bx
+	mov bx, ax
+	sub word [Monsters + bx + monster.hp], 4
+	call wait_key
+	call pass
 ret
 
 ;********************************************************************************
@@ -290,7 +348,14 @@ ret
 ;       
 ;*******************************************************************************
 cleric_magic_missile_3:
-
+	PrintString DoneString
+	mov ax, CurrentMonster.type
+	mov bx, monster_size
+	mul bx
+	mov bx, ax
+	sub word [Monsters + bx + monster.hp], 6
+	call wait_key
+	call pass
 ret
 
 ;********************************************************************************
@@ -316,7 +381,10 @@ ret
 ;       
 ;*******************************************************************************
 cleric_cure_light_1:
-
+	PrintString DoneString
+	add word [Character.hp], 3
+	call wait_key
+	call pass
 ret
 
 ;********************************************************************************
@@ -342,7 +410,10 @@ ret
 ;       
 ;*******************************************************************************
 cleric_cure_light_2:
-
+	PrintString DoneString
+	add word [Character.hp], 3
+	call wait_key
+	call pass
 ret
 
 ;********************************************************************************
@@ -366,7 +437,8 @@ ret
 ;       
 ;*******************************************************************************
 find_all_traps:
-
+	mov ax, 2
+	call find
 ret
 
 ;********************************************************************************
@@ -390,7 +462,8 @@ ret
 ;       
 ;*******************************************************************************
 find_all_secret_doors:
-
+	mov ax, 3
+	call find
 ret
 
 ;********************************************************************************
@@ -425,7 +498,41 @@ ret
 ;       
 ;*******************************************************************************
 find:
+	mov ch, 3
+	mov dh, 3
+	call get_x_bounds
+	call get_y_bounds
+	.y_loop:
+		mov bh, 0
+		mov bl, cl
+		shl bx, 1
+		mov bx, [rows + bx]
+		push dx
+		.x_loop:
+		push bx
+		push dx
+		mov dh, 0
+		add bx, dx
+		pop dx
+		cmp [CurrentDungeon + bx], ax
+		jne .no_match
+			PrintString UseMagicStrings + 6 * string_size
+			mov bl, dl
+			call print_dec
 
+			PrintString UseMagicStrings + 7 * string_size
+			mov bl, cl
+			call print_dec
+
+			PrintString UseMagicStrings + 8 * string_size
+		.no_match:
+		inc dl
+		cmp dl, dh
+		jl .x_loop
+		pop dx
+	inc cl
+	cmp cl, ch
+	jl .y_loop
 ret
 
 ;********************************************************************************
@@ -452,7 +559,7 @@ ret
 ;							wizard_kill();
 ;						}
 ;						else if(input == 3) {
-;							find_traps();
+;							find_all_traps();
 ;						}
 ;						else if(input == 4) {
 ;							wizard_teleport();
@@ -493,37 +600,58 @@ ret
 ;       
 ;*******************************************************************************
 user_wizard_spell:
-
+	PrintString UseMagicStrings + 9 * string_size
+	call new_line
+	call get_user_input
+	call parse_int
+	call check_wizard_spell
+	cmp ax, 0
+	jle .nope
+	cmp bx, 1
+	jne .no_push
+		call wizard_push
+	.no_push:
+	cmp bx, 2
+	jne .no_kill
+		call wizard_kill
+	.no_kill:
+	cmp bx, 3
+	jne .no_fat
+		call find_all_traps
+	.no_fat:
+	cmp bx, 4
+	jne .no_teleport
+		call wizard_teleport
+	.no_teleport:
+	cmp bx, 5
+	jne .no_change_1
+		call wizard_change_1_0
+	.no_change_1:
+	cmp bx, 6
+	jne .no_mm1
+		call wizard_magic_missile_1
+	.no_mm1:
+	cmp bx, 7
+	jne .no_mm2
+		call wizard_magic_missile_2
+	.no_mm2:
+	cmp bx, 8
+	jne .no_mm3
+		call wizard_magic_missile_3
+	.no_mm3:
+	cmp bx, 9
+	jne .no_fasd
+		call find_all_secret_doors
+	.no_fasd:
+	cmp bx, 10
+	jne .nope
+		call wizard_change_0_1
+	.nope:
+		PrintString UseMagicStrings + 10 * string_size
+		call pass
+	.return:
 ret
 
-;********************************************************************************
-;   check_wizard_spell
-;   Purpose:
-;      To check if a player has a specific wizard spell
-;           Prototype:
-;               byte check_wizard_spell(byte spell);
-;           Algorithm:
-;               byte check_wizard_spell(byte spell){
-;					for(int x = 1; x < Character.wizardSpellCount; x++){
-;						if(spell == Character.wizardSpells[x]){
-;							return x;
-;						}
-;					}
-;					return -1
-;               }
-;               
-;   Entry:
-;       None
-;   Exit:
-;       None
-;   Uses:
-;       BX
-;   Exceptions:
-;       
-;*******************************************************************************
-check_wizard_spell:
-
-ret
 
 ;********************************************************************************
 ;   wizard_magic_missile_1
@@ -549,7 +677,20 @@ ret
 ;       
 ;*******************************************************************************
 wizard_magic_missile_1:
+	PrintString DoneString
+	mov cx, 11
+	call random_int
+	mov dx, bx
+	add dx, 3
 
+	mov ax, CurrentMonster.type
+	mov bx, monster_size
+	mul bx
+	mov bx, ax
+	sub word [Monsters + bx + monster.hp], dx
+	PrintString UseMagicStrings + 11 * string_size
+	call wait_key
+	call pass
 ret
 
 ;********************************************************************************
@@ -576,7 +717,20 @@ ret
 ;       
 ;*******************************************************************************
 wizard_magic_missile_2:
+	PrintString DoneString
+	mov cx, 11
+	call random_int
+	mov dx, bx
+	add dx, 6
 
+	mov ax, CurrentMonster.type
+	mov bx, monster_size
+	mul bx
+	mov bx, ax
+	sub word [Monsters + bx + monster.hp], dx
+	PrintString UseMagicStrings + 11 * string_size
+	call wait_key
+	call pass
 ret
 
 ;********************************************************************************
@@ -603,7 +757,20 @@ ret
 ;       
 ;*******************************************************************************
 wizard_magic_missile_3:
+	PrintString DoneString
+	mov cx, 11
+	call random_int
+	mov dx, bx
+	add dx, 9
 
+	mov ax, CurrentMonster.type
+	mov bx, monster_size
+	mul bx
+	mov bx, ax
+	sub word [Monsters + bx + monster.hp], dx
+	PrintString UseMagicStrings + 11 * string_size
+	call wait_key
+	call pass
 ret
 
 ;********************************************************************************
@@ -632,7 +799,16 @@ ret
 ;       
 ;*******************************************************************************
 wizard_teleport:
-
+	PrintString UseMagicStrings + 12 * string_size
+	PrintString UseMagicStrings + 7 * string_size
+	call get_user_input
+	call parse_int
+	mov byte [Character.x], bl
+	PrintString UseMagicStrings + 8 * string_size
+	call get_user_input
+	call parse_int
+	mov byte [Character.x], bl
+	call pass
 ret
 
 ;********************************************************************************
@@ -656,7 +832,8 @@ ret
 ;       
 ;*******************************************************************************
 wizard_change_0_1:
-
+	mov al, 1
+	call wizard_change
 ret
 
 ;********************************************************************************
@@ -680,7 +857,8 @@ ret
 ;       
 ;*******************************************************************************
 wizard_change_1_0:
-
+	mov al, 0
+	call wizard_change
 ret
 
 ;********************************************************************************
@@ -716,7 +894,28 @@ ret
 ;       
 ;*******************************************************************************
 wizard_change:
-
+	PrintString UseMagicStrings + 12 * string_size
+	PrintString UseMagicStrings + 7 * string_size
+	call get_user_input
+	call parse_int
+	mov cx, bx
+	PrintString UseMagicStrings + 8 * string_size
+	call get_user_input
+	call parse_int
+	shl bx, 1
+	mov bx, [rows + bx]
+	add bx, cx
+	mov cx, [CurrentDungeon + bx]
+	cmp cx, 1
+	jg .fail
+		PrintString DoneString
+		mov [CurrentDungeon + bx], al
+		jmp .return
+	.fail:
+		PrintString FailedString
+	.return:
+	call pass		
+	call wait_key
 ret
 
 ;********************************************************************************
@@ -747,19 +946,30 @@ ret
 ;       
 ;*******************************************************************************
 wizard_kill:
-
+	mov cx, 3
+	call random_int
+	cmp bx, 1
+	jg .fail
+		mov byte[CurrentMonster.status], -1
+		PrintString DoneString
+		jmp .return;
+	.fail:
+		PrintString FailedString
+	.return:
+	call wait_key
+	call pass
 ret
 
 ;********************************************************************************
 ;   wizard_push
 ;   Purpose:
-;      To allow a player to cast the wizard kill spell
+;      To allow a player to cast the wizard push spell
 ;           Prototype:
 ;               void wizard_push();
 ;           Algorithm:
 ;               void wizard_push(){
 ;					bool force = false;
-;					if(CurrentMonster.x - Character.x != 0 && CurrentMonster.y - Character.y != 0){
+;					if(CurrentMonster.x == Character.x && CurrentMonster.y == Character.y){
 ;						force = true;
 ;					}
 ;					Console.WriteLine(UseMagicStrings[13]);
@@ -776,5 +986,15 @@ ret
 ;       
 ;*******************************************************************************
 wizard_push:
-
+	mov ax, 0
+	mov dl, [Character.x]
+	cmp dl, [CurrentMonster.x]
+	jne .no_force
+		mov dl, [Character.y]
+		cmp dl, [CurrentMonster.y]
+		jne .no_force
+		mov ax, 1
+	.no_force:
+		PrintString UseMagicStrings + 13 * string_size
+		call push_monster
 ret

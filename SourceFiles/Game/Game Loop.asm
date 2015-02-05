@@ -41,10 +41,10 @@ game_loop_welcome:
 	call new_line
 	PrintString WelcomeStrings + 1 * string_size
 	mov bh, 0
-	mov bl, [Character + player.x]
+	mov bl, [Character.x]
 	call print_dec
 	PrintString WelcomeStrings + 2 * string_size
-	mov bl, [Character + player.y]
+	mov bl, [Character.y]
 	call print_dec
 	PrintString WelcomeStrings + 3 * string_size
 	call new_line
