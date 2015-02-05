@@ -24,9 +24,9 @@
 check_inventory:
 	push bx
 	mov bh, 0
-	mov bl, byte[Character + player.itemCount]
+	mov bl, byte[Character.itemCount]
 	.loop:
-		cmp al, byte[Character + player.inventory + bx]
+		cmp al, byte[Character.inventory + bx]
 		je .yes
 	dec bx
 	jnz .loop
@@ -77,7 +77,7 @@ print_attributes:
 		mov bx, cx
 		sub bx, 1
 		shl bx, 1
-		mov bx, [Character + player.str + bx]
+		mov bx, [Character.str + bx]
 		call print_dec
 		call new_line
 		dec cx
@@ -112,12 +112,12 @@ remove_from_inventory:
 	push bx
 	mov bh, 0
 	push cx
-		mov bl, [Character + player.itemCount]
+		mov bl, [Character.itemCount]
 		dec bl
-		mov cl, [Character + player.inventory + bx]
+		mov cl, [Character.inventory + bx]
 		mov bl, al
-		mov [Character + player.inventory + bx], cl
-		mov [Character + player.itemCount], bl
+		mov [Character.inventory + bx], cl
+		mov [Character.itemCount], bl
 	pop cx
 	pop bx
 ret
@@ -147,10 +147,10 @@ add_to_inventory:
 	push bx
 	mov bh, 0
 	push cx
-		mov bl, [Character + player.itemCount]
+		mov bl, [Character.itemCount]
 		inc bl
-		mov [Character + player.inventory + bx], al
-		mov [Character + player.itemCount], bl
+		mov [Character.inventory + bx], al
+		mov [Character.itemCount], bl
 	pop cx
 	pop bx
 ret
@@ -160,33 +160,33 @@ die:
 ret
 
 lose_hp:
-	mov bx, [Character + player.hp]
+	mov bx, [Character.hp]
 	sub bx, ax
-	mov [Character + player.hp], bx
+	mov [Character.hp], bx
 ret
 
 add_hp:
-	mov bx, [Character + player.hp]
+	mov bx, [Character.hp]
 	add bx, ax
-	mov [Character + player.hp], bx
+	mov [Character.hp], bx
 ret
 
 lose_one_hp:
-	mov bx, [Character + player.hp]
+	mov bx, [Character.hp]
 	dec bx
-	mov [Character + player.hp], bx
+	mov [Character.hp], bx
 ret
 
 add_gold:
-	mov bx, [Character + player.gold]
+	mov bx, [Character.gold]
 	add bx, ax
-	mov [Character + player.gold], bx
+	mov [Character.gold], bx
 ret
 
 remove_gold:
-	mov bx, [Character + player.gold]
+	mov bx, [Character.gold]
 	sub bx, ax
-	mov [Character + player.gold], bx
+	mov [Character.gold], bx
 ret
 
 get_tile_number:
@@ -220,7 +220,7 @@ ret
 ;*******************************************************************************
 show_gold:
 	PrintString GPString
-	mov bx, [Character + player.gold]
+	mov bx, [Character.gold]
 	call print_dec
 	call new_line
 ret
@@ -247,7 +247,7 @@ ret
 ;*******************************************************************************
 show_hp:
 	PrintString HPString
-	mov bx, [Character + player.hp]
+	mov bx, [Character.hp]
 	call print_dec
 	call new_line
 ret
@@ -269,9 +269,9 @@ ret
 ;				}
 ;               
 ;   Entry:
-;       None
+;       Byte spell in BX
 ;   Exit:
-;       None
+;       Byte location in AX
 ;   Uses:
 ;       BX
 ;   Exceptions:
@@ -298,9 +298,9 @@ ret
 ;               }
 ;               
 ;   Entry:
-;       None
+;       Byte spell in BX
 ;   Exit:
-;       None
+;       Byte location in AX
 ;   Uses:
 ;       BX
 ;   Exceptions:
@@ -354,7 +354,7 @@ ret
 ;       
 ;*******************************************************************************
 get_y_bounds:
-	mov cl, [Character + player.y]
+	mov cl, [Character.y]
 	mov bl, cl
 	sub bl, ch
 	cmp bl, 0
@@ -416,7 +416,7 @@ ret
 ;       
 ;*******************************************************************************
 get_x_bounds:
-	mov dl, [Character + player.x]
+	mov dl, [Character.x]
 	mov bl, dl
 	sub bl, dh
 	cmp bl, 0

@@ -40,7 +40,7 @@ buy_hp:
 	call parse_int
 	mov ax, 200
 	mul bx
-	cmp bx, [Character + player.gold]
+	cmp bx, [Character.gold]
 	jg .no
 		call remove_gold
 		mov ax, bx

@@ -54,7 +54,7 @@ get_character_name:
 		call get_key
 		jmp get_character_name
 	.return:
-		StringCopy InputStringBuffer, Character + player.name
+		StringCopy InputStringBuffer, Character.name
 ret
 
 ;********************************************************************************
@@ -118,14 +118,14 @@ roll_character_starting_point:
 
 	call roll_d12
 	mov ax, bx
-	mov byte[Character + player.x], al
+	mov byte[Character.x], al
 
 	call roll_d12
 	mov ax, bx
 
 	call roll_d12
 	mov ax, bx
-	mov byte[Character + player.y], al
+	mov byte[Character.y], al
 ret
 
 
@@ -170,7 +170,7 @@ roll_attributes:
 		mov bx, cx
 		sub bx, 1
 		shl bx, 1
-		mov [Character + player.str + bx], word ax
+		mov [Character.str + bx], word ax
 		dec cx
 		cmp cx, 0
 		jne .loop
@@ -238,24 +238,24 @@ set_character_class:
 	je .wizard
 	jmp set_character_class
 	.cleric:
-		StringCopy InputStringBuffer, Character + player.class
+		StringCopy InputStringBuffer, Character.class
 		call roll_d4
 		mov ax, bx
-		mov [Character + player.hp], word ax
+		mov [Character.hp], word ax
 	jmp .return
 
 	.fighter:
-		StringCopy InputStringBuffer, Character + player.class
+		StringCopy InputStringBuffer, Character.class
 		call roll_d8
 		mov ax, bx
-		mov [Character + player.hp], word ax
+		mov [Character.hp], word ax
 	jmp .return
 
 	.wizard:
-		StringCopy InputStringBuffer, Character + player.class
+		StringCopy InputStringBuffer, Character.class
 		call roll_d6
 		mov ax, bx
-		mov [Character + player.hp], word ax
+		mov [Character.hp], word ax
 	jmp .return
 
 	.reroll:
@@ -323,13 +323,13 @@ list_equipment:
 	call get_user_input
 	StringCompareInsensitive InputStringBuffer, NoString
 	je .return
-		mov cl, byte[Character + player.itemCount]
+		mov cl, byte[Character.itemCount]
 		mov ch, 0
 		cmp cx, 0
 		je .return
 		.loop:
 			mov bx, cx 
-			mov al, byte[Character + player.inventory + bx]
+			mov al, byte[Character.inventory + bx]
 			mov ah, 0
 
 			mov bx, item_size
@@ -372,12 +372,12 @@ ret
 print_characteristics:
 	call clear_screen
 	PrintString YourCharacteristicsString
-	PrintString Character + player.name
+	PrintString Character.name
 	call new_line
-	mov bx, word[Character + player.hp]
+	mov bx, word[Character.hp]
 	cmp bx, 1
 	jg .healthy
-		mov word[Character + player.hp], 2
+		mov word[Character.hp], 2
 		mov bx, 2
 	.healthy:
 	PrintString HitPointsString

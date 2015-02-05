@@ -44,5 +44,5 @@ switch_weapon:
 		jmp .loop
 	.switch:
 		PrintString SwitchWeaponStrings + 2 * string_size
-		mov byte [Character + player.weapon], bl
+		mov byte [Character.weapon], bl
 ret

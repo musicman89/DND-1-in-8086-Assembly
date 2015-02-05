@@ -47,8 +47,8 @@ search:
 	mov ax, bx 
 	call roll_d20
 	add ax, bx
-	mov bx, [Character + player.int]
-	add bx, [Character + player.wis]
+	mov bx, [Character.int]
+	add bx, [Character.wis]
 	cmp ax, bx
 	jl .loopy
 		PrintString SearchForTrapStrings + 1 * string_size

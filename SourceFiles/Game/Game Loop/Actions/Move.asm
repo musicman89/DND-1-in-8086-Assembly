@@ -47,18 +47,18 @@
 ;*******************************************************************************
 move:
 	PrintString MoveStrings + 0 * string_size
-	mov bx, [Character + player.x]
+	mov bx, [Character.x]
 	call print_dec
 
 	PrintString MoveStrings + 1 * string_size
-	mov bx, [Character + player.y]
+	mov bx, [Character.y]
 	call print_dec
 
 	PrintString MoveStrings + 2 * string_size
 	call new_line
 
-	mov cl, [Character + player.x]
-	mov dl, [Character + player.y]
+	mov cl, [Character.x]
+	mov dl, [Character.y]
 	.loop:
 		PrintString MoveStrings + 3 * string_size
 		call to_upper
@@ -218,8 +218,8 @@ ret
 ;       
 ;*******************************************************************************
 advance_position:
-	mov [Character + player.x], cl
-	mov [Character + player.y], dl
+	mov [Character.x], cl
+	mov [Character.y], dl
 	PrintString DoneString
 	call pass
 ret
@@ -518,9 +518,9 @@ ret
 ;       
 ;*******************************************************************************
 increase_strength:
-	mov bx, [Character + player.str]
+	mov bx, [Character.str]
 	inc bx
-	mov [Character + player.str], bx
+	mov [Character.str], bx
 	call clear_tile
 ret
 
@@ -546,9 +546,9 @@ ret
 ;       
 ;*******************************************************************************
 increase_con:
-	mov bx, [Character + player.con]
+	mov bx, [Character.con]
 	inc bx
-	mov [Character + player.con], bx
+	mov [Character.con], bx
 	call clear_tile
 ret
 

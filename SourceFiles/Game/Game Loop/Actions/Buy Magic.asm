@@ -31,10 +31,10 @@
 ;       
 ;*******************************************************************************
 buy_magic:
-	StringCompare Character + player.class, Classes + 2 * string_size
+	StringCompare Character.class, Classes + 2 * string_size
 	je .cleric
 	
-	StringCompare Character + player.class, Classes + 3 * string_size
+	StringCompare Character.class, Classes + 3 * string_size
 	je .wizard
 
 	PrintString BuyMagicStrings * 0 * string_size
@@ -128,13 +128,13 @@ buy_wizard_spells:
 		mul dx
 		mov bx, ax
 		mov ax, [WizardSpells + bx + spell.cost]
-		cmp ax, [Character + player.gold]
+		cmp ax, [Character.gold]
 		jg .nope
 			call remove_gold
 
-			mov bl, [Character + player.wizardSpellCount]
-			mov [Character + player.wizardSpells + bx], dx
-			inc byte [Character + player.wizardSpellCount]
+			mov bl, [Character.wizardSpellCount]
+			mov [Character.wizardSpells + bx], dx
+			inc byte [Character.wizardSpellCount]
 			PrintString BuyWizardSpellsStrings + 7 * string_size
 
 		.nope:
@@ -168,12 +168,12 @@ ret
 show_wizard_spells:
 	PrintString BuyWizardSpellsStrings + 9 * string_size
 	call new_line
-	mov cl, [Character + player.wizardSpellCount]
+	mov cl, [Character.wizardSpellCount]
 	mov bh, 0
 	.loop:
 		PrintString BuyWizardSpellsStrings + 10 * string_size
 		mov bl, cl
-		mov bl, [Character + player.wizardSpells + bx]
+		mov bl, [Character.wizardSpells + bx]
 		call print_dec
 		call new_line
 	dec cl
@@ -254,13 +254,13 @@ buy_cleric_spells:
 		mul dx
 		mov bx, ax
 		mov ax, [ClericSpells + bx + spell.cost]
-		cmp ax, [Character + player.gold]
+		cmp ax, [Character.gold]
 		jg .nope
 			call remove_gold
 
-			mov bl, [Character + player.clericSpellCount]
-			mov [Character + player.clericSpells + bx], dx
-			inc byte [Character + player.clericSpellCount]
+			mov bl, [Character.clericSpellCount]
+			mov [Character.clericSpells + bx], dx
+			inc byte [Character.clericSpellCount]
 			PrintString BuyClericSpellsStrings + 6 * string_size
 			call new_line
 		.nope:
@@ -297,12 +297,12 @@ ret
 show_cleric_spells:
 	PrintString BuyClericSpellsStrings + 10 * string_size
 	call new_line
-	mov cl, [Character + player.clericSpells]
+	mov cl, [Character.clericSpells]
 	mov bh, 0
 	.loop:
 		PrintString BuyClericSpellsStrings + 9 * string_size
 		mov bl, cl
-		mov bl, [Character + player.clericSpells + bx]
+		mov bl, [Character.clericSpells + bx]
 		call print_dec
 		call new_line
 	dec cl
