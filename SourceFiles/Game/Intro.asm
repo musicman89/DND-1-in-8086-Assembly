@@ -103,26 +103,19 @@ new_or_old:
 	call get_user_input
 	StringCompareInsensitive InputStringBuffer, OldGameString
 	je .old
-		call clear_screen
 		call get_dungeon_num
 
-		call clear_screen
 		call get_continues
 
-		call clear_screen
 		call roll_character
 
-		call clear_screen
 		call item_shop
 
-		call clear_screen
 		call print_characteristics_and_eq
 
-		call clear_screen
 		call read_dungeon
 	ret
 	.old:
-		call clear_screen
 		call load_game
 ret
 

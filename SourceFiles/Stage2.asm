@@ -1,25 +1,26 @@
 [BITS 16]
 [ORG 0x9000]
-;%define DEBUG
+[CPU 8086]
+%define DEBUG
 
 %include "Libraries/Graphics/Macros.asm"
 %include "Libraries/Strings/Macros.asm"
 boot:
-	xor ax, ax	;clear ax
-	mov ds, ax	;clear ds
-	mov ss, ax	;start the stack at 0
-	mov bp, 0x8000	;move the stack pointer to 0x2000 past the start
+	xor ax, ax								;clear ax
+	mov ds, ax								;clear ds
+	mov ss, ax								;start the stack at 0
+	mov bp, 0x8FFF							;move the stack pointer to 1 before the start
 	mov sp, bp
-	call get_seed
+	call get_seed 							;Initialize our random seed
 
 	%ifdef DEBUG
-		call RunTests
+		call RunTests 						;If we are compiling in debug run our tests
 	%else
 		call clear_screen					;clear the screen
-		call intro
+		call intro 							;Go to the introduction
 
 		call clear_screen
-		call game_loop
+		call game_loop 						;Begin the game loop
 	%endif
 	jmp boot
 	cli								;Disable Interrupts
@@ -49,8 +50,7 @@ boot:
 %include "Game/Game Loop/Actions/Search.asm"
 %include "Game/Game Loop/Actions/SwitchWeapon.asm"
 %include "Game/Game Loop/Actions/Use Magic.asm"
-
-%include "Libraries/Graphics/Print.asm"
+%include "Libraries/Graphics/ExtendedPrint.asm"
 %ifndef DEBUG
 	%include "Libraries/IO/KeyboardIO.asm"
 %endif

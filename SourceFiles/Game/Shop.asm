@@ -29,7 +29,6 @@ ret
 ;       
 ;*******************************************************************************
 shop_welcome:
-	call clear_screen
 	PrintString ItemShopString + 0 * string_size
 	PrintString ItemShopString + 1 * string_size
 	call get_user_input

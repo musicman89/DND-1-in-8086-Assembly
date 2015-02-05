@@ -109,9 +109,7 @@ print:
 	add byte [ypos], 1 				;Progress the cursor down a line
 	cmp byte [ypos], 25 			;Check if the cursor has hit the bottom
 	jle .return
-	cmp ah, 0x00
-	je .return
-	call clear_screen
+		call clear_screen
 	.return:
 ret
 
@@ -175,19 +173,19 @@ push_character:						;Character Print
 	pop ax
 ret
 
+
 ;********************************************************************************
 ;	clear_screen
 ;	Purpose:
-;      To push a character into video memory
+;      To clear the screen
 ;			Prototype:
 ;				void clear_screen();
 ;			Algorithm:
 ;				void clear_screen(){
-;					character = ' '
-;					xposition = 0;
-;					yposition = 0;
-;					while(yposition <= 25){
-;						print(character);
+;					int* memory = VideoMemory
+;					for(int x = 0; x < 4000; x++){
+;						memory = 0;
+;						*memory++;
 ;					}
 ;					xposition = 0;
 ;					yposition = 0;
@@ -198,30 +196,26 @@ ret
 ;	Exit:
 ;       None
 ;	Uses:
-;		AX
+;		ES, DI
 ;	Exceptions:
 ;		None
 ;*******************************************************************************
 clear_screen:						;Clear Screen
-	push ax
-	cld
-	mov ah, 0x00 					;set the color to black on black
-	mov al, ' '  					;set the character to print to be a space
-	mov byte [xpos], 0  			;set the cursor to the left
-	mov byte [ypos], 0 				;set the cursor to the top
-	.loop:
-		call print
-		cmp byte [ypos], 25 		;Check if the cursor has hit the bottom
-		jle .loop
-		mov byte [xpos], 0 			;reset the cursor to the left
-		mov byte [ypos], 0 			;reset the cursor to the top
-	pop ax
+	mov di, 4000
+    mov es, [VideoMemory]
+
+    .loop:
+        mov word[es:di], 0
+        sub di, 2 					;advance to the next characters
+        jnz .loop
+	mov byte [xpos], 0 				;Move the cursor back to the left
+	mov byte [ypos], 0 				;Move the cursor back to the top
 ret
 
 ;********************************************************************************
 ;	new_line
 ;	Purpose:
-;      To push a character into video memory
+;      To advance the cursor to a new line
 ;			Prototype:
 ;				void new_line();
 ;			Algorithm:
@@ -247,109 +241,8 @@ new_line:
 	add byte [ypos], 1 				;Progress the cursor down a line
 	cmp byte [ypos], 24 			;Check if the cursor has hit the bottom
 	jle .return
-	cmp ah, 0x00
-	je .return
-	call clear_screen
-	call clear_screen
+		call clear_screen
 	.return:
-ret
-
-;********************************************************************************
-;	scroll
-;	Purpose:
-;      Scroll the screen
-;			Prototype:
-;				void scroll();
-;			Algorithm:
-;				void scroll(){
-;				}
-;				
-;	Entry:
-;       None
-;	Exit:
-;       None
-;	Uses:
-;		None
-;	Exceptions:
-;		None
-;*******************************************************************************
-scroll:
-
-ret
-
-print_hex:
-	push bx
-	push dx
-	push ax
-	mov di, hexOutput			;Store address of our output in the DI register
-	mov ax, bx					;Push our Value to the AX register
-	mov ch, 0x04   				;Set CH to 4 since we have 2 bytes in our register
-	.hexloop: 		
-		mov cl, 0x04			;We want to shift our register by 4
-		rol ax, cl 				;Shift the BX register by the Value in CL to reverse the order
-		mov bx, ax       		;Push the value back to BX
-		and bx, 0x0f     		;Logical AND the value of BX with 0x0F to filter to one Value
-		mov bl, [hexStr + bx]	;Push the character at the offset of the value of BX in the Hex String
-		mov [di], bl			;Store this character in our output string buffer
-		inc di					;Increment the address of the string buffer
-		dec ch					;Decrement the value in CH
-		jnz .hexloop			;As long as CX is greater than 0, repeat
-
-	mov bx, hexOutput
-	call print_string
-	pop ax
-	pop dx
-	pop bx
-ret
-
-print_dec:
-	push dx
-	push cx
-	push bx
-	push ax
-
-	mov di, decOutput			;Store address of our output in the DI register
-	mov ax, bx					;Push our Value to the AX register
-
-	mov bx, 10
-	mov cx, 0
-
-	cmp ax, 0
-	jge .decloop
-		xor dx, dx
-		mov word[di], '-'
-		inc di
-		xor ax, 0xFFFF
-		inc ax
-		push dx
-		inc cx
-	.decloop: 	
-		xor dx, dx
-		div bx
-
-		add dx, '0'
-		push dx			
-		inc cx
-		
-		cmp ax, 0 
-		jnz .decloop			;As long as AX is greater than 0, repeat
-
-	.flipLoop:
-		pop dx
-		mov [di], dx
-		inc di
-		dec cx
-		jnz .flipLoop
-		mov Word[di], 0
-		jmp .print
-
-	.print:
-	mov bx, decOutput
-	call print_string
-	pop ax
-	pop bx
-	pop cx
-	pop dx
 ret
 
 ypos        dw 0

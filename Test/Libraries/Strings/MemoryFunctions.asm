@@ -40,7 +40,7 @@ test_mem_copy:
 	mov ax, TestMemData
 	mov bx, TestMemDestination
 	mov cx, TestMemDestination - TestMemData
-	call mem_copy
+	call extended_mem_copy
 
 	mov cx, TestMemData
 	mov dx, TestMemDestination

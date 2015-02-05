@@ -1,16 +1,23 @@
 
 RunTests:
+	call clear_screen
+	call MemoryFunctionTests
+	call wait_key
+	call clear_screen
+
+	call PrintTest
+	call wait_key
+	call clear_screen
+
 	call IntTests
 	call wait_key
 	call clear_screen
 
+
 	call StringFunctionTests
 	call wait_key
-	call clear_screen
 
-	call MemoryFunctionTests
-	call wait_key
-	call clear_screen
+
 
 ret
 	
