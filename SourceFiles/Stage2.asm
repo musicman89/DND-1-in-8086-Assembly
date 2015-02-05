@@ -1,5 +1,6 @@
 [BITS 16]
 [ORG 0x9000]
+[CPU 8086]
 ;%define DEBUG
 
 %include "Libraries/Graphics/Macros.asm"
@@ -49,8 +50,7 @@ boot:
 %include "Game/Game Loop/Actions/Search.asm"
 %include "Game/Game Loop/Actions/SwitchWeapon.asm"
 %include "Game/Game Loop/Actions/Use Magic.asm"
-
-%include "Libraries/Graphics/Print.asm"
+%include "Libraries/Graphics/ExtendedPrint.asm"
 %ifndef DEBUG
 	%include "Libraries/IO/KeyboardIO.asm"
 %endif

@@ -24,7 +24,7 @@ main:
 
 	cli			;Disable Interrupts
 	hlt			;Halt the Processor
-
+	
 %include "Libraries/Graphics/Print.asm"
 %include "Libraries/IO/DiskIO.asm"
 

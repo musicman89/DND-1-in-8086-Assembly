@@ -221,7 +221,6 @@ ret
 ;       
 ;*******************************************************************************
 set_character_class:
-	call clear_screen
 	PrintString ClassStrings + 0 * string_size
 	PrintString ClassStrings + 1 * string_size
 	PrintString ClassStrings + 2 * string_size
@@ -318,7 +317,6 @@ ret
 ;       
 ;*******************************************************************************
 list_equipment:
-	call clear_screen
 	PrintString EQListString
 	call get_user_input
 	StringCompareInsensitive InputStringBuffer, NoString
@@ -370,7 +368,6 @@ ret
 ;       
 ;*******************************************************************************
 print_characteristics:
-	call clear_screen
 	PrintString YourCharacteristicsString
 	PrintString Character.name
 	call new_line

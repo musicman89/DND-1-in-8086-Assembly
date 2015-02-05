@@ -69,7 +69,10 @@ print_attributes:
 
 		mov bx, cx
 		sub bx, 1
-		shl bx, 3
+		push cx
+		mov cl, 3
+		shl bx, cl
+		pop cx
 		add bx, CharacterAttributeNames
 		call print_string
 

@@ -62,7 +62,12 @@ print_string:
 		call print						;Print the character
 		jmp .loop
 	.line_feed:
-		add byte [ypos], 1 				;Move down a row on the screen
+		cmp byte [ypos], 23 			;Check if the cursor has hit the bottom
+		je .scroll
+			add byte [ypos], 1 				;Progress the cursor down a line
+			jmp .loop
+		.scroll:
+			call scroll
 		jmp .loop
 	.carriage_return:
 		mov byte [xpos], 0     			;Restart at the left
@@ -106,12 +111,12 @@ print:
 
 	jle .return
 	mov byte [xpos], 0 				;Move the cursor back to the left
-	add byte [ypos], 1 				;Progress the cursor down a line
-	cmp byte [ypos], 25 			;Check if the cursor has hit the bottom
-	jle .return
-	cmp ah, 0x00
-	je .return
-	call clear_screen
+	cmp byte [ypos], 23 			;Check if the cursor has hit the bottom
+	je .scroll
+		add byte [ypos], 1 				;Progress the cursor down a line
+	jmp .return
+	.scroll:
+		call scroll
 	.return:
 ret
 
@@ -132,7 +137,7 @@ ret
 ;	Exit:
 ;       None
 ;	Uses:
-;		AX, BX, CX, DX, ES
+;		AX, BX, CX, DX, ES, DI
 ;	Exceptions:
 ;		None
 ;*******************************************************************************
@@ -141,10 +146,10 @@ push_character:						;Character Print
 	push bx
 	push cx
 	push dx
-	mov bx, [VideoMemory]  			;text video memory
-	mov es, bx 						;move es to the video memory
+	mov cx, [VideoMemory]  			;text video memory
+	mov es, cx 						;move es to the video memory
 									;setting the cursor position
-	push ax   						;store the character in ax
+	mov bx, ax   					;store the character in ax in the register BX
 
 									;get the row
 	mov ax, word [ypos] 			;get the current yposition
@@ -160,15 +165,12 @@ push_character:						;Character Print
 	add ax, dx 						;then add ax and dx 
 
 									;get the column
-	mov bx, word [xpos]				;get the current xposition
-	shl bx, 1
+	mov di, word [xpos]				;get the current xposition
+	shl di, 1
 
-	add bx, ax						;Set the offset location to bx
+	add di, ax						;Set the offset location to di
 
-
-
-	pop ax							;restore the character in ax
-	mov [es:bx], ax					;push our character to memory
+	mov [es:di], bx					;push our character to memory
 	pop dx
 	pop cx
 	pop bx
@@ -204,17 +206,21 @@ ret
 ;*******************************************************************************
 clear_screen:						;Clear Screen
 	push ax
-	cld
-	mov ah, 0x00 					;set the color to black on black
-	mov al, ' '  					;set the character to print to be a space
-	mov byte [xpos], 0  			;set the cursor to the left
-	mov byte [ypos], 0 				;set the cursor to the top
-	.loop:
-		call print
-		cmp byte [ypos], 25 		;Check if the cursor has hit the bottom
-		jle .loop
-		mov byte [xpos], 0 			;reset the cursor to the left
-		mov byte [ypos], 0 			;reset the cursor to the top
+	push bx
+	push cx
+	push dx
+	mov di, 4000
+    mov es, [VideoMemory]
+
+    .loop:
+        mov word[es:di], 0
+        sub di, 2 					;advance to the next characters
+        jnz .loop
+	mov byte [xpos], 0 				;Move the cursor back to the left
+	mov byte [ypos], 0 				;Move the cursor back to the top
+	pop dx
+	pop cx
+	pop bx
 	pop ax
 ret
 
@@ -229,7 +235,7 @@ ret
 ;					xposition = 0;
 ;					yposition++;
 ;					if(yposition > 25)
-;						clear_screen();
+;						scroll();
 ;					}
 ;				}
 ;				
@@ -244,13 +250,135 @@ ret
 ;*******************************************************************************
 new_line:
 	mov byte [xpos], 0 				;Move the cursor back to the left
-	add byte [ypos], 1 				;Progress the cursor down a line
-	cmp byte [ypos], 24 			;Check if the cursor has hit the bottom
-	jle .return
-	cmp ah, 0x00
-	je .return
-	call clear_screen
+	cmp byte [ypos], 23 			;Check if the cursor has hit the bottom
+	jge .scroll
+		add byte [ypos], 1 				;Progress the cursor down a line
+	jmp .return
+	.scroll:
+		call scroll
 	.return:
+ret
+
+;********************************************************************************
+;	scroll
+;	Purpose:
+;      Scroll the screen
+;			Prototype:
+;				void scroll();
+;			Algorithm:
+;				void scroll(){
+;				}
+;				
+;	Entry:
+;       None
+;	Exit:
+;       None
+;	Uses:
+;		None
+;	Exceptions:
+;		None
+;*******************************************************************************
+scroll:
+	push ax
+	push bx
+	push cx
+		mov cx, 3840
+		mov ax, [VideoMemory] 
+		add ax, 10
+		mov bx, [VideoMemory]
+		call extended_mem_copy
+	pop cx
+	pop bx
+	pop ax
+ret
+
+;********************************************************************************
+;	scroll
+;	Purpose:
+;      Scroll the screen
+;			Prototype:
+;				void scroll();
+;			Algorithm:
+;				void scroll(){
+;				}
+;				
+;	Entry:
+;       None
+;	Exit:
+;       None
+;	Uses:
+;		None
+;	Exceptions:
+;		None
+;*******************************************************************************
+print_hex:
+	push bx
+	push dx
+	push ax
+	mov di, hexOutput			;Store address of our output in the DI register
+	mov ax, bx					;Push our Value to the AX register
+	mov ch, 0x04   				;Set CH to 4 since we have 2 bytes in our register
+	.hexloop: 		
+		mov cl, 0x04			;We want to shift our register by 4
+		rol ax, cl 				;Shift the BX register by the Value in CL to reverse the order
+		mov bx, ax       		;Push the value back to BX
+		and bx, 0x0f     		;Logical AND the value of BX with 0x0F to filter to one Value
+		mov bl, [hexStr + bx]	;Push the character at the offset of the value of BX in the Hex String
+		mov [di], bl			;Store this character in our output string buffer
+		inc di					;Increment the address of the string buffer
+		dec ch					;Decrement the value in CH
+		jnz .hexloop			;As long as CX is greater than 0, repeat
+
+	mov bx, hexOutput
+	call print_string
+	pop ax
+	pop dx
+	pop bx
+ret
+
+print_dec:
+	push dx
+	push cx
+	push bx
+	push ax
+
+	mov di, decOutput			;Store address of our output in the DI register
+	mov ax, bx					;Push our Value to the AX register
+
+	mov bx, 10 					;Push 10 into our BX register for multiplication later
+	mov cx, 0 					;Set CX to 0 we are going to store our length in it for flipping the string
+
+	cmp ax, 0 					;Check if our number is positive
+	jge .decloop
+		xor dx, dx  			;Clear DX
+		mov word[di], '-'	 	;Prepend our string with a -
+		inc di 					;Increment our string
+		xor ax, 0xFFFF 			;Make our number positive
+		inc ax 					;Adjust for the twos compliment switch
+	.decloop: 	
+		xor dx, dx 				;Clear DX
+		div bx 					;Divide our value by 10
+
+		add dx, '0' 			;Adjust the remainder to be the character representation of our number
+		push dx					;Push the character to the stack
+		inc cx 					;Increment our counter
+		
+		cmp ax, 0 				
+		jnz .decloop			;As long as AX is greater than 0, repeat
+
+	.flipLoop:					;Our number is backwards lets flip it
+		pop dx 					;Pull the first number from the stack
+		mov [di], dx 			;Push it into the current position in our string
+		inc di 					;Increment our string pointer 
+		dec cx 					;Decrement the number of remaining characters
+		jnz .flipLoop     		;If there are remaining characters repeat
+		mov Word[di], 0 		;Append a 0 as the null terminator of the string
+	mov bx, decOutput			;Move BX to point to our string
+	call print_string			;Print our string
+	pop ax
+	pop bx
+	pop cx
+	pop dx
 ret
 
 ypos        dw 0
@@ -259,3 +387,5 @@ hexStr      db '0123456789ABCDEF'
 decOutput 	times 10 db 0
 hexOutput   db '0000 ', 0  			;register value string
 VideoMemory dw 0xb800
+
+BlankMemory times 4000 dw 0
