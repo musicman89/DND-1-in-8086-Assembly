@@ -238,6 +238,50 @@ get_random:
 	pop dx
 ret
 
+get_root:
+    push ax
+    push cx
+    push dx
+    mov ax, bx
+    mov cx, 0
+    .est_loop:
+        inc cx
+        mov dx, 10
+        div dx
+        cmp ax, 100
+        jg .est_loop
+    push ax
+    mov ax, 10
+    mul cx
+    mov cx, 10
+    div cx
+    pop dx
+    cmp dx, 10
+    jl .2x
+    mov dx, 6
+    jmp .end_estimate
+    .2x:
+    mov dx, 2
+    .end_estimate:
+    mul dx
+    mov cx, 5
+    .babylonian:
+        push ax
+        mov dx, ax
+        mov ax, bx
+        div dx
+        pop dx
+        add ax, dx
+        mov dx, 2
+        div dx
+    dec cx
+    jnz .babylonian
+    mov bx, ax
+    pop dx
+    pop cx
+    pop ax
+ret
+
 RandSeed dw 0
 IntBuffer dw 0
 IntFlags dw 0

@@ -5,7 +5,25 @@ IntTests:
 	call test_parse_int_good_negative_num_string
 	call test_parse_int_good_low_num_string
 	call test_parse_int_good_high_num_string
+	PrintString GetRootTestString
+	call test_get_root
+ret
 
+test_get_root:
+	mov bx, 25
+	call get_root
+	mov cx, 5
+	call int_assert_equal
+
+	mov bx, 31012
+	call get_root
+	mov cx, 176
+	call int_assert_equal
+
+	mov bx, 712
+	call get_root
+	mov cx, 27
+	call int_assert_equal
 ret
 
 test_parse_int_good_num_string:
@@ -66,6 +84,7 @@ int_assert_equal:
 	.fail:
 		call PrintFail
 ret
+GetRootTestString db "Testing Get Root", 13,10,0
 IntParseString db "Testing Parse Int", 13,10,0
 TestGoodNumString db "1052", 0
 TestGoodNegativeNumString db "-1052", 0
