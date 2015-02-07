@@ -1,16 +1,16 @@
 [BITS 16]
 [ORG 0x9000]
 [CPU 8086]
-%define DEBUG
-
-%include "Libraries/Graphics/Macros.asm"
-%include "Libraries/Strings/Macros.asm"
+;%define DEBUG
+%define Stage2
 boot:
+	mov [boot_drive], dl
 	xor ax, ax								;clear ax
 	mov ds, ax								;clear ds
 	mov ss, ax								;start the stack at 0
 	mov bp, 0x8FFF							;move the stack pointer to 1 before the start
 	mov sp, bp
+	mov es, ax
 	call get_seed 							;Initialize our random seed
 
 	%ifdef DEBUG
@@ -25,6 +25,10 @@ boot:
 	jmp boot
 	cli								;Disable Interrupts
 	hlt								;Halt the Processor
+boot_drive db 0
+
+%include "Libraries/Graphics/Macros.asm"
+%include "Libraries/Strings/Macros.asm"
 
 %ifdef DEBUG 
 	%include "../Test/Tests.asm"
@@ -54,6 +58,7 @@ boot:
 %ifndef DEBUG
 	%include "Libraries/IO/KeyboardIO.asm"
 %endif
+%include "Libraries/IO/DiskIO.asm"
 %include "Libraries/Strings/StringFunctions.asm"
 %include "Libraries/Memory/MemoryFunctions.asm"
 %include "Libraries/Math/Int.asm"

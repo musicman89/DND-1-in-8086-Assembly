@@ -153,6 +153,8 @@ push_character:						;Character Print
 	push bx
 	push cx
 	push dx
+	push es
+	push di
 	mov cx, [VideoMemory]  			;text video memory
 	mov es, cx 						;move es to the video memory
 									;setting the cursor position
@@ -178,6 +180,8 @@ push_character:						;Character Print
 	add di, ax						;Set the offset location to di
 
 	mov [es:di], bx					;push our character to memory
+	pop di
+	pop es
 	pop dx
 	pop cx
 	pop bx
@@ -211,15 +215,19 @@ ret
 ;		None
 ;*******************************************************************************
 clear_screen:						;Clear Screen
+	push es
+	push di
 	mov di, 4000 					;Set the offset to the size of text video memory
     mov es, [VideoMemory] 			;Move our segment into video memory
 
     .loop:
         mov word[es:di], 0 			;Set the data at our segment and offset to 0
         sub di, 2 					;advance to the next word
-        jg .loop 					;Repeat until we hit the start of bideo memory
+        jge .loop 					;Repeat until we hit the start of bideo memory
 	mov byte [xpos], 0 				;Move the cursor back to the left
 	mov byte [ypos], 0 				;Move the cursor back to the top
+	pop di
+	pop es
 ret
 
 ;********************************************************************************
@@ -338,6 +346,7 @@ print_hex:
 		jnz .hexloop			;As long as CX is greater than 0, repeat
 
 	mov bx, hexOutput
+	mov ah, 0x07
 	call print_string
 	pop ax
 	pop dx

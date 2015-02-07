@@ -58,9 +58,13 @@ read_dungeon:
 	dec cx
 	jnz .loop
 ret
-load_game:
 
+load_game:
+	
 ret
+
 save_game:
 
 ret
+
+game_save times 512 db 0

@@ -1,6 +1,10 @@
 
 RunTests:
 	call clear_screen
+	call test_disk_save
+	call wait_key
+
+	call clear_screen
 	call MemoryFunctionTests
 	call wait_key
 	call clear_screen
@@ -28,3 +32,4 @@ Fail db "Fail",13,10,0
 %include "../Test/Libraries/Memory/MemoryFunctions.asm"
 %include "../Test/Libraries/Graphics/Print.asm"
 %include "../Test/Libraries/IO/KeyboardIO.asm"
+%include "../Test/Libraries/IO/DiskIO.asm"

@@ -1,3 +1,4 @@
+align 16
 struc string
 	.value resb 64
 endstruc
