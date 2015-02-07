@@ -154,6 +154,10 @@ SaveCurrentMonster:
 	.type: db 0
 	.x: db 0
 	.y: db 0
+	.distance_x:db 0
+	.distance_y:db 0
+	.range: dw 0
+	.hit:db 0
 SaveDungeonNumber db 5
 SaveDifficulty db 0
 SaveMonsters: 
