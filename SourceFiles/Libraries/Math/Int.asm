@@ -238,6 +238,88 @@ get_random:
 	pop dx
 ret
 
+;********************************************************************************
+;   get_root
+;   Purpose:
+;      To get the integer portion of a square root
+;           Prototype:
+;               int get_root(int number);
+;           Algorithm:
+;               int get_root(int number){
+;                   int result = 0;                     //Initialize the result to 0
+;                   int bit = 16384;                    //Initialize to the highest power of 4 in range
+;
+;                   while(bit > number){
+;                       bit /= 4;                       //Find the lowest power of 4 below our number
+;                   }
+;
+;                   while(bit != 0){
+;                       if(number >= result + bit){     
+;                           number -= result + bit;
+;                           result = result / 2 + bit;
+;                       }
+;                       else{
+;                           result /= 2;
+;                       }
+;                       bit /= 4;
+;                   }
+;                   return result;
+;               }
+;               
+;   Entry:
+;       Int number in register bx
+;   Exit:
+;       Int result in register BX
+;   Uses:
+;       AX, BX, CX, DX
+;   Exceptions:
+;       
+;*******************************************************************************
+get_root:
+    push ax
+    push cx
+    push dx
+
+    mov ax, 0                       ;Initialize our result
+
+    mov dx, 16384                   ;Set our bit
+
+    cmp dx, bx                      ;Check if our bit is greater than our number
+    jle .loop
+
+    mov cl, 2
+    .highest4Power:
+        shr dx, cl                  ;Move to the next lowest power of 4
+        cmp dx, bx                  ;Check our bit again
+        jg .highest4Power           ;If it is still greater repeat
+
+    .loop:
+        mov cx, ax                  ;We are going put our result in cx
+        add cx, dx                  ;Add our bit to it
+        cmp cx, bx                  ;Compare our bit to our number
+
+        jg .right_shift             ;If it is less than or equal we continue
+            sub bx, cx              ;We subtract our bit and result combination from our number
+            shr ax, 1               ;We divide our result by 2
+            add ax, dx              ;Now add our bit to the result
+            jmp .check              ;Lets go check if we are done
+
+        .right_shift:               ;If the combination was greater than our number
+            shr ax, 1               ;We simply divide the result by 2
+            
+        .check:
+            mov cl, 2               
+            shr dx, cl              ;Lets move to the next lowest power of 4
+            cmp dx, 0               ;Make sure we have not hit 0
+            jne .loop               ;If we have not hit 0 go for another round
+
+    mov bx, ax                      ;Now that we have finished lets move the result into bx
+
+    pop dx
+    pop cx
+    pop ax
+ret
+
 RandSeed dw 0
 IntBuffer dw 0
 IntFlags dw 0
