@@ -75,13 +75,13 @@ range_and_hit_check:
 		mov ah, 0
 		mov al, [CurrentMonster.distance_y]
 		mov dx, ax
-		mul ax
+		mul dx
 		mov dx, ax
 
 		mov ah, 0
 		mov al, [CurrentMonster.distance_x]
 		mov cx, ax
-		mul ax
+		mul cx
 		mov cx, ax
 
 		mov bx, dx
@@ -102,20 +102,20 @@ range_and_hit_check:
 			jmp .return
 
 		.no_crit:
-			push bx
-			mov ax, [CurrentMonster.type]
-			mov bx, monster_size
-			mul bx
-			mov bx, ax
-			mov bx, [Monsters + bx + monster.dex]
+			push bx 									;We need to get the current monsters attributes
+			mov ax, [CurrentMonster.type] 				;Lets load the monster type into ax
+			mov bx, monster_size 						;The size of a monster object goest into bx
+			mul bx 										;We will get the offset of where our monster is 
+			mov bx, ax 									;Lets move that offset into bx for addressing
+			mov bx, [Monsters + bx + monster.dex]  		;Now we can get the dextarity of the monster
 
-			mov ax, [Character.dex]
-			mov dx, 3
-			div dx
-			sub bx, ax
-			mov dx, bx
+			mov ax, [Character.dex] 					;In ax we will load our character's dextarity
+			mov dx, 3 									;Put 3 in dx 
+			div dx 										;Divide our dextarity by 3
+			sub bx, ax 									;Now subtract this from the monster's dextarity
+			mov dx, bx 									;Move the final value into dx
 			pop bx
-		cmp bx, dx
+		cmp bx, dx 										;Check if our chance roll was greater than the value we just calculated
 		jl .no_hit
 			mov byte [CurrentMonster.hit], 2
 			jmp .return
