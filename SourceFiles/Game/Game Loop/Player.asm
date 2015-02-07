@@ -281,7 +281,21 @@ ret
 ;       
 ;*******************************************************************************
 check_cleric_spell:
-
+	push bx
+	mov bh, 0
+	mov bl, byte[Character.clericSpellCount]
+	.loop:
+		cmp al, byte[Character.clericSpells + bx]
+		je .yes
+	dec bx
+	jnz .loop
+	.no:
+		mov ax, -1
+		jmp .return
+	.yes:
+		mov ax, bx
+	.return:
+		pop bx
 ret
 
 ;********************************************************************************
@@ -310,15 +324,49 @@ ret
 ;       
 ;*******************************************************************************
 check_wizard_spell:
-
+	push bx
+	mov bh, 0
+	mov bl, byte[Character.wizardSpellCount]
+	.loop:
+		cmp al, byte[Character.wizardSpells + bx]
+		je .yes
+	dec bx
+	jnz .loop
+	.no:
+		mov ax, -1
+		jmp .return
+	.yes:
+		mov ax, bx
+	.return:
+		pop bx
 ret
 
 remove_cleric_spell:
-
+	push bx
+	mov bh, 0
+	push cx
+		mov bl, [Character.clericSpellCount]
+		dec bl
+		mov cl, [Character.clericSpells + bx]
+		mov bl, al
+		mov [Character.clericSpells + bx], cl
+		mov [Character.clericSpellCount], bl
+	pop cx
+	pop bx
 ret
 
 remove_wizard_spell:
-
+	push bx
+	mov bh, 0
+	push cx
+		mov bl, [Character.wizardSpellCount]
+		dec bl
+		mov cl, [Character.wizardSpells + bx]
+		mov bl, al
+		mov [Character.wizardSpells + bx], cl
+		mov [Character.wizardSpellCount], bl
+	pop cx
+	pop bx
 ret
 
 ;********************************************************************************
@@ -445,6 +493,7 @@ get_x_bounds:
 	.return:
 ret
 
+align 16
 rows:
 dw 25 * 0
 dw 25 * 1

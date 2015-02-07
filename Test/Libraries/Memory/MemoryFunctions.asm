@@ -46,6 +46,8 @@ test_mem_copy:
 	mov dx, TestMemDestination
 	call string_assert_equal
 ret
+align 16
 TestingMemoryCopyString db "Testing Memory Copy:", 10, 13, 0
+align 16
 TestMemData db "This is a string used for testing memory copy data", 0
 TestMemDestination times 64 db 0

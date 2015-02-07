@@ -1,6 +1,7 @@
 [BITS 16]
 [ORG 0x7c00]
 [CPU 8086]
+%define Stage1
 %include "../SourceFiles/Libraries/Graphics/Macros.asm"
 main:
 	mov [BOOT_DRIVE], dl
@@ -20,6 +21,7 @@ main:
 	mov bx, SectorsLoaded
 	call print_string
 
+	mov dl, [BOOT_DRIVE]
 	jmp 0x9000 						;Jump to our newly loaded code
 
 	cli								;Disable Interrupts

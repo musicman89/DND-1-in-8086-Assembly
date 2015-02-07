@@ -1,6 +1,15 @@
+align 16
 DungeonNumber db 0
 Difficulty db 0
 
+align 16
+CurrentMonster:
+	.status: db 0
+	.type: db 0
+	.x: db 0
+	.y: db 0
+
+align 16
 CurrentDungeon:
 db 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
 db 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1

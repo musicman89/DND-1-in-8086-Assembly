@@ -39,32 +39,38 @@ mem_copy:
 	push cx
 	push dx
 
+	mov di, 0 						;Set our starting offset to 0
+    cmp cx, 1 						;Test for the case of only 1 byte to move
+    je .single		
+
+    cmp di, cx 						;Ensure our length is greater than 0
+    je .return
+	
+	mov dx, bx
     .loop:
-
-        cmp cx, 1 					;Test for the case of only one byte to move
-        je .single 					
-        sub cx, 2 					;Advance to the next word
+		mov bx, ax 					;Set our address segment to address a
+		add bx, di
+        push word [bx]				;load the current word of data into dx
         
-		mov di, cx 					;Push our offset into di
-		add di, ax 					;Add address a to our offset
-        mov dx, [di]				;Load the current word at our offset into dx
-
-        mov di, cx 					;Push our offset into di
-        add di, bx 					;Add address b to our offset
-        mov [di], dx 				;Store the word in dx at our offset
+        mov bx, dx 					;Set our address segment to address b
+        add bx, di
+        pop word [bx]				;Push the word from dx to address b with offset di
         
+        add di, 2 					;advance to the next word
+        cmp di, cx 					;Check if we are at the end
 
-        jnz .loop
-        jmp .return
+        jl .loop					;If we are less than the end there is at least one more 
+        je .return 					;If they are equal we have hit the end
+       	dec di						;Otherwise we passed the end so there must have only been one byte remaining
+
         .single:
-        	dec cx 					;Advance to the next byte
-			mov di, cx 				;Push our offset into di
-			add di, ax 				;Add address a to our offset
-	        mov dl, [di]			;Load the current byte at our offset into dl
+			mov bx, ax 				;Set our address segment to address a
+			add bx, di
+	        mov cl, [bx]			;load the current byte of data into dl
 
-	        mov di, cx 				;Push our offset into di
-	        add di, bx 				;Add address b to our offset
-	        mov [di], dl 			;Store the byte in dl at our offset
+	        mov bx, dx 				;Set our address segment to address b
+	        add bx, di
+	        mov [bx], cl	 		;Push the bye from dl to address b with offset di
         .return:
 	pop dx
 	pop cx
@@ -100,6 +106,7 @@ extended_mem_copy:
 	push bx
 	push cx
 	push dx
+	push es
 	mov di, 0 						;Set our starting offset to 0
     cmp cx, 1 						;Test for the case of only 1 byte to move
     je .single		
@@ -128,6 +135,7 @@ extended_mem_copy:
 	        mov es, bx 				;Set our address segment to address b
 	        mov [es:di], dl 		;Push the bye from dl to address b with offset di
         .return:
+    pop es
 	pop dx
 	pop cx
 	pop bx

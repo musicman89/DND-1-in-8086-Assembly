@@ -1,3 +1,4 @@
+align 16
 Character:
 	.name times 32 db 0
 	.class times 32 db 0

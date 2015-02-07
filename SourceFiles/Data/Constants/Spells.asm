@@ -1,15 +1,3 @@
-struc spell
-	.name resw 32
-	.cost resw 1
-endstruc
-
-%macro NewSpell 2
-	istruc spell
-		at spell.name, dw %1
-		at spell.cost, dw %2
-	iend
-%endmacro
-
 WizardSpells:
 NewSpell "", 0
 NewSpell "PUSH", 75
