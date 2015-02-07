@@ -1,4 +1,5 @@
 game_loop:
+	call save_game
 	call game_loop_welcome
 	call get_command
 	.loop:
