@@ -33,6 +33,7 @@ endstruc
 		at monster.initGold, dw %7
 		at monster.gold, dw %7
 	iend
+	align 16
 %endmacro
 
 %macro NewItem 2
@@ -40,6 +41,7 @@ endstruc
 		at item.name, db %1
 		at item.price, db %2
 	iend
+	align 8
 %endmacro
 
 %macro NewSpell 2
@@ -47,10 +49,12 @@ endstruc
 		at spell.name, dw %1
 		at spell.cost, dw %2
 	iend
+	align 8
 %endmacro
 
 %macro NewAttribute 1
 	istruc CharacterAttribute
 		at CharacterAttribute.name, db %1
 	iend
+	align 16
 %endmacro
