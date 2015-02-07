@@ -1,14 +1,3 @@
-struc item
-	.name: resb 32
-	.price: resw 1
-endstruc
-%macro NewItem 2
-	istruc item
-		at item.name, db %1
-		at item.price, db %2
-	iend
-%endmacro
-
 Items: 
 NewItem 'SWORD', 10
 NewItem '2-H-SWORD', 15

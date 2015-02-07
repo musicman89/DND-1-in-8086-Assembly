@@ -1,32 +1,3 @@
-
-struc monster
-	.name resb 32
-	.str resw 1
-	.dex resw 1
-	.hp resw 1
-	.initHP resw 1
-	.initGold resw 1
-	.gold resw 1
-	.int resw 1
-endstruc
-
-%macro NewMonster 7
-	istruc monster
-		at monster.name, db %1
-		at monster.str, dw %2
-		at monster.dex, dw %3
-		at monster.hp, dw %4
-		at monster.initHP, dw %4
-		at monster.initGold, dw %7
-		at monster.gold, dw %7
-	iend
-%endmacro
-CurrentMonster:
-	.status: db 0
-	.type: db 0
-	.x: db 0
-	.y: db 0
-
 Monsters:
 NewMonster 'MAN',1,13,26,1,1,500
 NewMonster 'GOBLIN',2,13,24,1,1,600

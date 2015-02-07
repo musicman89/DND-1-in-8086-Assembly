@@ -76,6 +76,11 @@ load_game:
 	mov bl, [SaveDifficulty]
 	mov [Difficulty], bl
 
+	mov ax, SaveMonsters
+	mov bx, Monsters
+	mov cx, SaveCurrentDungeon - SaveMonsters
+	call mem_copy
+
 	mov ax, SaveCurrentDungeon
 	mov bx, CurrentDungeon
 	mov cx, 625
@@ -99,6 +104,11 @@ save_game:
 	mov bl, [Difficulty]
 	mov [SaveDifficulty], bl
 
+	mov ax, Monsters
+	mov bx, SaveMonsters
+	mov cx, SaveCurrentDungeon - SaveMonsters
+	call mem_copy
+
 	mov ax, CurrentDungeon
 	mov bx, SaveCurrentDungeon
 	mov cx, 625
@@ -109,6 +119,7 @@ save_game:
 	mov dl, [boot_drive]
 	call disk_save
 ret
+
 align 512
 game_save:
 SaveCharacter:
@@ -139,6 +150,17 @@ SaveCurrentMonster:
 	.y: db 0
 SaveDungeonNumber db 0
 SaveDifficulty db 0
+SaveMonsters: 
+NewMonster 'MAN',1,13,26,1,1,500
+NewMonster 'GOBLIN',2,13,24,1,1,600
+NewMonster 'TROLL',3,15,35,1,1,1000
+NewMonster 'SKELETON',4,22,12,1,1,50
+NewMonster 'BALROG',5,18,110,1,1,5000
+NewMonster 'OCHRE JELLY',6,11,20,1,1,0
+NewMonster 'GREY OOZE',7,11,13,1,1,0
+NewMonster 'GNOME',8,13,30,1,1,100
+NewMonster 'KOBOLD',9,15,16,1,1,500
+NewMonster 'MUMMY',10,16,30,1,1,100
 SaveCurrentDungeon:
 db 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1
 db 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1

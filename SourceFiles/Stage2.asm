@@ -26,7 +26,7 @@ boot:
 	cli								;Disable Interrupts
 	hlt								;Halt the Processor
 boot_drive db 0
-
+%include "Data/Constants/Macros.asm"
 %include "Libraries/Graphics/Macros.asm"
 %include "Libraries/Strings/Macros.asm"
 
