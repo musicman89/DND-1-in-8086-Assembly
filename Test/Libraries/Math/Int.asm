@@ -15,6 +15,11 @@ test_get_root:
 	mov cx, 5
 	call int_assert_equal
 
+	mov bx, 81
+	call get_root
+	mov cx, 9
+	call int_assert_equal
+
 	mov bx, 31012
 	call get_root
 	mov cx, 176
@@ -22,7 +27,7 @@ test_get_root:
 
 	mov bx, 712
 	call get_root
-	mov cx, 27
+	mov cx, 26
 	call int_assert_equal
 ret
 
