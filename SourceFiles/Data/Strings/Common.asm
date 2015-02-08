@@ -234,4 +234,14 @@ NewString "M-HP="
 NewString "INPUT CO-ORDINATES"
 NewString "ARE YOU ABOVE,BELOW,RIGHT, OR LEFT OF IT"
 
+MonsterKilledStrings:
+NewString "GOOD WORK YOU JUST KILLED A "
+NewString "AND GET "
+NewString "GOLD PIECES"
+NewString "YOU HAVE"
+NewString " GOLD "
+
+DeadString:
+NewString "SORRY YOUR DEAD"
+
 StringBuffer times 256 db 0 
