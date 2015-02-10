@@ -244,4 +244,15 @@ NewString " GOLD "
 DeadString:
 NewString "SORRY YOUR DEAD"
 
+MonsterHitNoDamageString:
+NewString "HE HIT YOU BUT NOT GOOD ENOUGH"
+
+MonsterMissedString:
+NewString "HE MISSED"
+
+WatchItString:
+NewString " WATCH IT"
+
+HPCheckString:
+NewString "H.P.=0 BUT CONST. HOLDS"
 StringBuffer times 256 db 0 
