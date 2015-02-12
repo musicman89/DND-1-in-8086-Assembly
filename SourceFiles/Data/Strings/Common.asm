@@ -255,4 +255,18 @@ NewString " WATCH IT"
 
 HPCheckString:
 NewString "H.P.=0 BUT CONST. HOLDS"
+
+HPLowString:
+NewString "WATCH IT H.P.="
+
+CheckForMonstersStrings:
+NewString "ALL MONSTERS DEAD"
+NewString "RESET"
+
+MonsterHitStrings:
+NewString "MONSTER SCORES A HIT"
+NewString "H.P.="
+
+MonsterTrappedString:
+NewString "GOOD WORK YOU LED HIM INTO A TRAP"
 StringBuffer times 256 db 0 
