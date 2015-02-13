@@ -269,4 +269,9 @@ NewString "H.P.="
 
 MonsterTrappedString:
 NewString "GOOD WORK YOU LED HIM INTO A TRAP"
+
+PassStrings:
+NewString "SO YOU HAVE RETURNED"
+NewString "WANT TO BUY MORE EQUIPMENT"
+
 StringBuffer times 256 db 0 
