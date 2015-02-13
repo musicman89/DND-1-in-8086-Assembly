@@ -234,4 +234,44 @@ NewString "M-HP="
 NewString "INPUT CO-ORDINATES"
 NewString "ARE YOU ABOVE,BELOW,RIGHT, OR LEFT OF IT"
 
+MonsterKilledStrings:
+NewString "GOOD WORK YOU JUST KILLED A "
+NewString "AND GET "
+NewString "GOLD PIECES"
+NewString "YOU HAVE"
+NewString " GOLD "
+
+DeadString:
+NewString "SORRY YOUR DEAD"
+
+MonsterHitNoDamageString:
+NewString "HE HIT YOU BUT NOT GOOD ENOUGH"
+
+MonsterMissedString:
+NewString "HE MISSED"
+
+WatchItString:
+NewString " WATCH IT"
+
+HPCheckString:
+NewString "H.P.=0 BUT CONST. HOLDS"
+
+HPLowString:
+NewString "WATCH IT H.P.="
+
+CheckForMonstersStrings:
+NewString "ALL MONSTERS DEAD"
+NewString "RESET"
+
+MonsterHitStrings:
+NewString "MONSTER SCORES A HIT"
+NewString "H.P.="
+
+MonsterTrappedString:
+NewString "GOOD WORK YOU LED HIM INTO A TRAP"
+
+PassStrings:
+NewString "SO YOU HAVE RETURNED"
+NewString "WANT TO BUY MORE EQUIPMENT"
+
 StringBuffer times 256 db 0 

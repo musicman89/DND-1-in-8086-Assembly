@@ -8,6 +8,10 @@ CurrentMonster:
 	.type: db 0
 	.x: db 0
 	.y: db 0
+	.distance_x:db 0
+	.distance_y:db 0
+	.range: dw 0
+	.hit:db 0
 
 align 16
 CurrentDungeon:

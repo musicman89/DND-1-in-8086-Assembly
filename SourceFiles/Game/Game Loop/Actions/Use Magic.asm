@@ -283,7 +283,7 @@ ret
 ;*******************************************************************************
 cleric_magic_missile_1:
 	PrintString DoneString
-	mov ax, CurrentMonster.type
+	mov ax, [CurrentMonster.type]
 	mov bx, monster_size
 	mul bx
 	mov bx, ax
@@ -316,7 +316,7 @@ ret
 ;*******************************************************************************
 cleric_magic_missile_2:
 	PrintString DoneString
-	mov ax, CurrentMonster.type
+	mov ax, [CurrentMonster.type]
 	mov bx, monster_size
 	mul bx
 	mov bx, ax
@@ -349,7 +349,7 @@ ret
 ;*******************************************************************************
 cleric_magic_missile_3:
 	PrintString DoneString
-	mov ax, CurrentMonster.type
+	mov ax, [CurrentMonster.type]
 	mov bx, monster_size
 	mul bx
 	mov bx, ax
@@ -683,7 +683,7 @@ wizard_magic_missile_1:
 	mov dx, bx
 	add dx, 3
 
-	mov ax, CurrentMonster.type
+	mov ax, [CurrentMonster.type]
 	mov bx, monster_size
 	mul bx
 	mov bx, ax
@@ -723,7 +723,7 @@ wizard_magic_missile_2:
 	mov dx, bx
 	add dx, 6
 
-	mov ax, CurrentMonster.type
+	mov ax, [CurrentMonster.type]
 	mov bx, monster_size
 	mul bx
 	mov bx, ax
@@ -763,7 +763,7 @@ wizard_magic_missile_3:
 	mov dx, bx
 	add dx, 9
 
-	mov ax, CurrentMonster.type
+	mov ax, [CurrentMonster.type]
 	mov bx, monster_size
 	mul bx
 	mov bx, ax

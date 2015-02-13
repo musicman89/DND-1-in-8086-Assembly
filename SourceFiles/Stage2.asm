@@ -47,6 +47,7 @@ boot_drive db 0
 %include "Game/Game Loop/Actions/Buy Magic.asm"
 %include "Game/Game Loop/Actions/Cheat.asm"
 %include "Game/Game Loop/Actions/Fight.asm"
+%include "Game/Game Loop/Actions/Battle.asm"
 %include "Game/Game Loop/Actions/Look Around.asm"
 %include "Game/Game Loop/Actions/Move.asm"
 %include "Game/Game Loop/Actions/Open Door.asm"

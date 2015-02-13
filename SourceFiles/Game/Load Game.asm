@@ -123,32 +123,42 @@ ret
 align 512
 game_save:
 SaveCharacter:
-	.name times 32 db 0
-	.class times 32 db 0
-	.hp dw 0
-	.str dw 0
-	.dex dw 0
-	.con dw 0
-	.char dw 0
-	.wis dw 0
-	.int dw 0
-	.gold dw 0
-	.continues db 0
-	.weapon db 0
-	.itemCount db 0
-	.inventory times 100 db 0
+	.name db "SHAVS", 0
+	times 32 - 6 db 0
+	.class db "FIGHTER", 0
+	times 32-8 db 0
+	.hp dw 5
+	.str dw 17
+	.dex dw 12
+	.con dw 19
+	.char dw 13
+	.wis dw 16
+	.int dw 18
+	.gold dw 150
+	.continues db 1
+	.weapon db 1
+	.itemCount db 3
+	.inventory:
+	db 1
+	db 2 
+	db 3
+	times 97 db 0
 	.clericSpellCount db 0
 	.clericSpells times 100 db 0
 	.wizardSpellCount db 0
 	.wizardSpells times 100 db 0
-	.x db 0
-	.y db 0
+	.x db 12
+	.y db 6
 SaveCurrentMonster:
 	.status: db 0
 	.type: db 0
 	.x: db 0
 	.y: db 0
-SaveDungeonNumber db 0
+	.distance_x:db 0
+	.distance_y:db 0
+	.range: dw 0
+	.hit:db 0
+SaveDungeonNumber db 5
 SaveDifficulty db 0
 SaveMonsters: 
 NewMonster 'MAN',1,13,26,1,1,500
