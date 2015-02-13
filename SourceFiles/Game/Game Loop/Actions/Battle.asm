@@ -480,7 +480,7 @@ monster_moves:
 
 		mov dl, [CurrentDungeon + bx]
 		cmp dl, 0
-		je .closer
+		je .closer 
 
 		cmp dl, 6
 		jge .closer
@@ -490,6 +490,11 @@ monster_moves:
 
 		cmp dl, 4
 		je .door
+
+
+		cmp dl, 2
+		je .return
+			call monster_trapped
 		jmp .return
 		.closer:
 			mov byte [bx], 0
