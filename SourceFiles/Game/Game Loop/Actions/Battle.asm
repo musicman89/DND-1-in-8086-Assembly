@@ -48,38 +48,24 @@ range_and_hit_check:
 	mov dl, [CurrentMonster.x]
 
 	.monster:
-	cmp dl, [Character.x]
-	jl .lessX
 		sub dl, [Character.x]
 		mov [CurrentMonster.distance_x], dl
-		jmp .getY
-
-	.lessX:
-		mov al, [Character.x]
-		sub al, dl
-		mov [CurrentMonster.distance_x], al
 
 	.getY:
-	cmp cl, [Character.y]
-	jl .lessX
 		sub cl, [Character.y]
 		mov [CurrentMonster.distance_y], cl
-		jmp .getRange
-
-	.lessY:
-		mov al, [Character.y]
-		sub al, cl
-		mov [CurrentMonster.distance_y], al
 
 	.getRange:
 		mov ah, 0
 		mov al, [CurrentMonster.distance_y]
+		call abs_int
 		mov dx, ax
 		mul dx
 		mov dx, ax
 
 		mov ah, 0
 		mov al, [CurrentMonster.distance_x]
+		call abs_int
 		mov cx, ax
 		mul cx
 		mov cx, ax
@@ -130,6 +116,7 @@ range_and_hit_check:
 			mov byte [CurrentMonster.hit], 0
 	.return:
 ret
+
 
 monster_attack:
 	push bx 													;We need to get the current monsters attributes
@@ -207,6 +194,7 @@ monster_killed:
 	PrintString MonsterKilledStrings + 1 * string_size
 	call print_dec
 	PrintString MonsterKilledStrings + 2 * string_size
+
 	mov bx, [CurrentMonster.y]
 	mov bx, [rows + bx]
 	add bx, [CurrentMonster.x]
@@ -214,30 +202,32 @@ monster_killed:
 	mov byte[CurrentMonster.x], 0
 	mov byte[CurrentMonster.y], 0
 	mov bx, [Character.gold]
+
 	PrintString MonsterKilledStrings + 3 * string_size
 	call print_dec
 	PrintString MonsterKilledStrings + 4 * string_size
 	pop bx
+
 	cmp byte [Character.continues],1
 	je .continue
 		mov byte [bx + monster.initGold], 0
+
 	.continue:
 		mov byte [bx + monster.gold], 0
+
 	cmp byte [Character.continues], 1
 	jg .no_revive
-	mov cx, [bx + monster.str]
-	mov ax, [bx + monster.initHP]
-	mul cx
-	mov [bx + monster.hp], ax
+		mov cx, [bx + monster.str]
+		mov ax, [bx + monster.initHP]
+		mul cx
+		mov [bx + monster.hp], ax
 
-	mov cx, [bx + monster.str]
-	mov ax, [bx + monster.initGold]
-	mul cx
-	mov [bx + monster.gold], cx
+		mov cx, [bx + monster.str]
+		mov ax, [bx + monster.initGold]
+		mul cx
+		mov [bx + monster.gold], cx
 	.no_revive:
-	mov byte [CurrentMonster.type], 0
-
-	call pass
+		mov byte [CurrentMonster.type], 0
 ret
 
 survive_with_constitution:
@@ -447,45 +437,85 @@ monster_battle:
 	jge .outOfRange
 		call monster_attack
 	.outOfRange:
+		call monster_moves
+ret
 
-; 07200 REM HE IS COMMING
-; 07210 IF ABS(R8)>ABS(R9) THEN 07260
-; 07220 LET F5=0
-; 07230 IF M=1 THEN 07270
-; 07240 LET F6=-(R9/ABS(R9))
-; 07250 GO TO 07280
+monster_moves:
+	mov cl, [CurrentMonster.distance_x]
+	mov ch, [CurrentMonster.distance_y]
+	cmp cx, 0
+	je .return
 
-; 07260 LET F5=-(R8/ABS(R8))
-; 07270 LET F6=0
-; 07280 FOR Q=0 TO 8
-; 07290 IF Q=1 OR Q=5 THEN 07320
-; 07300 IF F1+F5<0 OR F1+F5>25 OR F2+F6<0 OR F2+F6>25 THEN 07320
-; 07310 IF D(F1+F5,F2+F6)=Q THEN 07340
-; 07320 NEXT Q
-; 07330 GO TO 07510
+	cmp cl, ch
+	jg .move_x
+		mov ah, 0
+		mov al, ch
+		mov bx, ax
+		call abs_int
+		div bx
+		mov dl, 0
+		mov dh, al
 
-; 07340 IF Q=0 THEN 07430
-; 07345 IF Q=6 OR Q=7 OR Q=8 THEN 07430
-; 07350 IF Q=2 THEN 07530
-; 07360 IF Q=3 OR Q=4 THEN 07380
-; 07370 GO TO 07510
+	.move_x:
+		mov ah, 0
+		mov al, cl 
+		mov bx, ax 
+		call abs_int
+		div bx
+		mov dh, 0
+		mov dl, al
 
-; 07380 REM "THROUGH THE DOOR"
-; 07390 IF D(F1+2*F5,F2+2*F6)<>0 THEN 07510
-; 07400 LET F5=F5*2
-; 07410 LET F6=F6*2
-; 07420 GO TO 07440
+	.check:
+		mov cl, [CurrentMonster.x]
+		mov ch, [CurrentMonster.y]
+		add cl, dl
+		add ch, dh
 
+		mov bh, 0
+		mov bl, ch 
+		mov bx, [rows + bx]
+		mov dh, 0
+		mov dl, cl
+		add bx, dx
 
-; 07430 REM "CLOSER"
-; 07440 LET D(F1,F2)=0
-; 07450 LET F1=F1+F5
-; 07460 LET F2=F2+F6
-; 07470 LET D(F1,F2)=5
-; 07480 GOSUB 08410
-; 07490 REM
-; 07500 GO TO 01590
+		mov dl, [CurrentDungeon + bx]
+		cmp dl, 0
+		je .closer
 
-; 07510 REM "NOWHERE"
-; 07520 GO TO 07490
+		cmp dl, 6
+		jge .closer
+
+		cmp dl, 3
+		je .door
+
+		cmp dl, 4
+		je .door
+		jmp .return
+		.closer:
+			mov byte [bx], 0
+			mov bh, 0
+			mov bl, [CurrentMonster.y]
+			mov bx, [rows + bx]
+			add bx, [CurrentMonster.x]
+
+			mov byte [CurrentDungeon + bx], 0
+
+			mov [CurrentMonster.x], cl
+			mov [CurrentMonster.y], ch
+			jmp .return
+
+		.door:
+			mov bx, 2
+			mov ah, 0
+
+			mov al, dl
+			mul bx
+			mov dl, al
+
+			mov al, dh
+			mul bx
+			mov dh, al
+
+			jmp .check
+		.return:
 ret

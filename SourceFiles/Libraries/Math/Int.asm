@@ -320,6 +320,13 @@ get_root:
     pop ax
 ret
 
+abs_int:
+    cmp ax, 0
+    jge .return
+        xor ax, 0xFFFF          ;Make our number positive
+        inc ax                  ;Adjust for the twos compliment switch
+    .return:
+ret
 RandSeed dw 0
 IntBuffer dw 0
 IntFlags dw 0
