@@ -15,6 +15,7 @@ fight:
 	mov ax, monster_size
 	mul bx
 	PrintString [Monsters + bx + monster.name]
+	call new_line
 
 	PrintString FightStrings + 1 * string_size
 	mov bx, [Character.hp]
@@ -161,6 +162,7 @@ ret
 
 monster_trapped_and_killed:
 	PrintString MonsterTrappedKilledString
+	call new_line
 
 	mov byte[CurrentMonster.status], -1
 	mov bh, 0
@@ -176,13 +178,14 @@ check_hit:
 	cmp bx, 20
 	jne .no_crit
 		PrintString CheckHitStrings + 1 * string_size
+		call new_line
 		mov ax, [Character.str]
 		mov bx, 6
 		div bx
 		call get_current_monster
 		sub [Monsters + bx + monster.hp], ax
 		jmp .return
-		
+
 	.no_crit:
 		mov cx, bx
 		call get_current_monster
@@ -198,7 +201,8 @@ check_hit:
 	cmp bx, cx
 	jle .no_damage
 
-		PrintString CheckHitStrings + 2 * string_size		
+		PrintString CheckHitStrings + 2 * string_size	
+		call new_line	
 		mov ax, [Character.str]
 		mov dx, 8
 		div dx
@@ -212,40 +216,51 @@ check_hit:
 	jle .total_miss
 
 		PrintString CheckHitStrings + 3 * string_size
+		call new_line
 		jmp .return
 
 	.total_miss:
 		PrintString CheckHitStrings + 0 * string_size
-
+		call new_line
 	.return:
 ret 
 
 fist_fight:
-; Fist Fighting
-; 04460 REM FISTS
-; 04470 PRINT "DO YOU REALIZE YOU ARE BARE HANDED"
-; 04480 PRINT "DO YOU WANT TO MAKE ANOTHER CHOICE";
-; 04490 INPUT Q$
-; 04500 IF Q$="NO" THEN 04520
-; 04510 GO TO 01590
+	PrintString FistFightStrings + 0 * string_size
+	call new_line
 
-; 04520 PRINT "O.K. PUNCH BITE SCRATCH HIT ........"
-; 04530 FOR M=-1 TO 1
-; 04540 FOR N=-1 TO 1
-; 04550 IF D(G+M,H+N)=5 THEN 04610
-; 04560 NEXT N
-; 04570 NEXT M
-; 04580 PRINT "NO GOOD ONE"
-; 04590 GO TO 01590
+	PrintString FistFightStrings + 1 * string_size
+	call new_line
 
-; 04600 REM
-; 04610 IF INT(RND(0)*20)+1>B(K,2) THEN 04640
-; 04620 PRINT "TERRIBLE NO GOOD"
-; 04630 GO TO 07000
+	call get_user_input
+	StringCompareInsensitive bx, NoString
+	je .return
 
-; 04640 PRINT "GOOD A HIT"
-; 04650 LET B(K,3)=B(K,3)-INT(C(1)/6)
-; 04660 GO TO 01590
+	PrintString FistFightStrings + 2 * string_size
+	call new_line
+
+	cmp word [CurrentMonster.range], 1
+	jg .no_good
+		call roll_d20
+		mov cx, bx
+
+		call get_current_monster
+		cmp [Monsters + bx + monster.dex], cx
+		jg .hit
+			PrintString FistFightStrings + 4 * string_size
+			call new_line
+			jmp .return
+		.hit:
+			PrintString FistFightStrings + 5 * string_size
+			mov ax, [Character.str]
+			mov dx, 6
+			div dx
+
+			sub [Monsters + bx + monster.hp], ax
+	.no_good:
+		PrintString FistFightStrings + 3 * string_size
+		call new_line
+	.return:
 ret
 
 attack_with_sword:

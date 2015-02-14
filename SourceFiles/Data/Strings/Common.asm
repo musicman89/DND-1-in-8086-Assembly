@@ -299,5 +299,13 @@ NewString "DIRECT HIT"
 NewString "HIT"
 NewString "YOU HIT HIM BUT NOT GOOD ENOUGH"
 
+FistFightStrings:
+NewString "DO YOU REALIZE YOU ARE BARE HANDED"
+NewString "DO YOU WANT TO MAKE ANOTHER CHOICE"
+NewString "O.K. PUNCH BITE SCRATCH HIT ........"
+NewString "NO GOOD ONE"
+NewString "TERRIBLE NO GOOD"
+NewString "GOOD A HIT"
+
 
 StringBuffer times 256 db 0 
