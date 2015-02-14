@@ -281,4 +281,23 @@ NewString "HP="
 MoveMonsterString: 
 NewString "MONSTER MOVED BACK"
 
+DidntWorkString:
+NewString "DIDN’T WORK"
+
+FoodFightStrings:
+NewString "FOOD ???.... WELL O.K."
+NewString "IS IT TO HIT OR DISTRACT"
+NewString "HIT" 
+NewString "THROW A-ABOVE,B-BELOW,L-LEFT,OR R-RIGHT OF THE MONSTER"
+
+MonsterTrappedKilledString:
+NewString "GOOD WORK THE MONSTER FELL INTO A TRAP AND IS DEAD"
+
+CheckHitStrings:
+NewString "TOTAL MISS"
+NewString "DIRECT HIT"
+NewString "HIT"
+NewString "YOU HIT HIM BUT NOT GOOD ENOUGH"
+
+
 StringBuffer times 256 db 0 

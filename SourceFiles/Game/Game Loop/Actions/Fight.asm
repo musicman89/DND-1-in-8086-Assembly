@@ -6,6 +6,7 @@ fight:
 	mul bx
 	mov bx, ax
 	PrintString [Items + bx + item.name]
+	call new_line
 
 	mov bh, 0
 	mov bl, [CurrentMonster.type]
@@ -15,9 +16,10 @@ fight:
 	mul bx
 	PrintString [Monsters + bx + monster.name]
 
-	PrintString FightString + 1 * string_size
+	PrintString FightStrings + 1 * string_size
 	mov bx, [Character.hp]
 	call print_dec
+	call new_line
 
 	mov bl, [Character.weapon]
 	cmp bl, 0
@@ -48,88 +50,174 @@ fight:
 ret
 
 move_monster:
-; Monster Moved
-; 04220 PRINT "MONSTER MOVED BACK"
-; 04230 LET D(F1,F2)=0
-; 04240 LET F1=F1+S
-; 04250 LET F2=F2+T
-; 04260 LET D(F1,F2)=5
-; 04270 GO TO 04150
+	PrintString MoveMonsterString
+	call new_line
+	mov bl, [CurrentMonster.y]
+	mov bh, 0
+	mov ax, [rows + bx]
+	mov bl, [CurrentMonster.x]
+	add bx, ax
+
+	mov byte [CurrentDungeon + bx], 0
+
+	add [CurrentMonster.x], cl 
+	add [CurrentMonster.y], dl
+
+	mov bl, [CurrentMonster.y]
+	mov bh, 0
+	mov ax, [rows + bx]
+	mov bl, [CurrentMonster.x]
+	add bx, ax
+
+	mov byte [CurrentDungeon + bx], 5
 ret
 
 push_monster:
-; Try Push
-; 04100 IF Z5=1 THEN 04120
-; 04110 IF RND(0)>.5 THEN 04140
-; 04120 IF D(F1+S,F2+T)=0 THEN 04220
-; 04130 IF D(F1+S,F2+T)=2 THEN 04280
-; 04140 PRINT "DIDN’T WORK"
-; 04150 FOR M=1 TO X
-; 04160 IF Z5=Q THEN 07000
-; 04170 IF W(M)=15 THEN 04190
-; 04180 NEXT M
-; 04190 LET W(M)=0
-; 04200 LET J=0
-; 04210 GO TO 07000
+	call get_user_input
+	call to_upper
+	mov al, [bx]
+	cmp al, 'B'
+	je .below
+
+	cmp al, 'A'
+	je .above
+
+	cmp al, 'L'
+	je .left
+		mov dl, 0
+		mov cl, 1
+		jmp .check_tile
+
+	.below:
+		mov dl, -1
+		mov cl, 0
+		jmp .check_tile
+
+	.above:
+		mov dl, 1
+		mov cl, 0
+		jmp .check_tile
+
+	.left:
+		mov dl, 0
+		mov cl, -1
+
+	.check_tile:
+		mov bl, [CurrentMonster.y]
+		add bl, dl
+		mov bh, 0
+		mov ax, [rows + bx]
+		mov bl, [CurrentMonster.x]
+		add bl, cl
+		add bx, ax
+		mov ax, [CurrentDungeon + bx]
+		cmp ax, 0
+		jne .try_trap
+			call move_monster
+			jmp .return
+
+		.try_trap:
+		cmp ax, 2
+		jne .did_not_work
+			call monster_trapped_and_killed
+			jmp .return
+
+		.did_not_work:
+			PrintString DidntWorkString
+			call new_line
+		.return:
 ret
 
 food_fight:
-; Food Fight
-; 03880 PRINT "FOOD ???.... WELL O.K."
-; 03890 PRINT "IS IT TO HIT OR DISTRACT";
-; 03900 INPUT Q$
-; 03910 IF Q$="HIT" THEN 04330
-; 03920 PRINT "THROW A-ABOVE,B-BELOW,L-LEFT,OR R-RIGHT OF THE MONSTER";
-; 03930 LET Z5=0
-; Push Monster
-; 03940 INPUT Q$
-; 03950 IF Q$="B" THEN 04010
-; 03960 IF Q$="A" THEN 04040
-; 03970 IF Q$="L" THEN 04070
-; 03980 LET S=0
-; 03990 LET T=1
-; 04000 GO TO 04120
+	PrintString FoodFightStrings + 0 * string_size
+	call new_line
 
-; 04010 LET S=-1
-; 04020 LET T=0
-; 04030 GO TO 04120
+	PrintString FoodFightStrings + 1 * string_size
+	call new_line
 
-; 04040 LET S=1
-; 04050 LET T=0
-; 04060 GO TO 04120
+	call get_user_input
+	StringCompareInsensitive bx, FoodFightStrings + 2 * string_size
+	jne .distract
+		call check_hit
+		jmp .remove_food
+	.distract:
+		PrintString FoodFightStrings + 3 * string_size
+		call new_line
 
-; 04070 LET S=0
-; 04080 LET T=-1
-; 04090 GO TO 04120
+		call push_monster
+
+	.remove_food:
+		mov ax, 15
+		call check_inventory
+
+		cmp ax, -1
+		je .return
+		call remove_from_inventory
+
+		mov byte [Character.weapon], 0
+	.return:
 ret
 
 
 monster_trapped_and_killed:
-; Monster Trapped and Killed
-; 04280 PRINT "GOOD WORK THE MONSTER FELL INTO A TRAP AND IS DEAD"
-; 04290 LET K1=-1
-; 04300 LET B(K,6)=0
-; 04310 GO TO 07000
+	PrintString MonsterTrappedKilledString
+
+	mov byte[CurrentMonster.status], -1
+	mov bh, 0
+	mov bl, [CurrentMonster.type]
+	mov ax, monster_size
+	mul bx
+
+	mov word[Monsters + bx + monster.gold], 0
 ret
 
-
-; 04320 GO TO 04150
-
 check_hit:
-; 04330 IF INT(RND(0)*20)+1=20 THEN 04380
-; 04340 IF INT(RND(0)*20)+1>B(K,2)-C(2)/3 THEN 04410
-; 04350 IF INT(RND(0)*20)+1>10-C(2)/3 THEN 04440
-; 04360 PRINT "TOTAL MISS"
-; 04370 GO TO 04150
+	call roll_d20
+	cmp bx, 20
+	jne .no_crit
+		PrintString CheckHitStrings + 1 * string_size
+		mov ax, [Character.str]
+		mov bx, 6
+		div bx
+		call get_current_monster
+		sub [Monsters + bx + monster.hp], ax
+		jmp .return
+		
+	.no_crit:
+		mov cx, bx
+		call get_current_monster
 
-; 04380 PRINT "DIRECT HIT"
-; 04390 LET B(K,3)=B(K,3)-INT(C(1)/6)
-; 04400 REM
-; 04410 PRINT "HIT"
-; 04420 LET B(K,3)=B(K,3)-INT(C(1)/8)
-; 04430 GO TO 04150
-; 04440 PRINT "YOU HIT HIM BUT NOT GOOD ENOUGH"
-; 04450 GO TO 04150
+		mov ax, [Character.dex]
+		mov dx, 3
+		div dx
+
+		mov dx, [Monsters + bx + monster.dex]
+		
+		sub dx, ax
+
+	cmp bx, cx
+	jle .no_damage
+
+		PrintString CheckHitStrings + 2 * string_size		
+		mov ax, [Character.str]
+		mov dx, 8
+		div dx
+		sub [Monsters + bx + monster.hp], ax
+		jmp .return
+
+	.no_damage:
+		mov bx, 10
+		sub bx, ax
+	cmp bx, cx
+	jle .total_miss
+
+		PrintString CheckHitStrings + 3 * string_size
+		jmp .return
+
+	.total_miss:
+		PrintString CheckHitStrings + 0 * string_size
+
+	.return:
 ret 
 
 fist_fight:
@@ -164,7 +252,7 @@ attack_with_sword:
 ; Sword Fight
 ; 04670 REM
 ; 04680 PRINT "SWING"
-; 04690 GOSUB 08410
+; 04690 GOSUB 08410 call range_and_hit_check
 ; 04700 IF R1<2 THEN 04730
 ; Out of Range
 ; 04710 PRINT "HE IS OUT OF RANGE"
@@ -191,7 +279,7 @@ ret
 attack_with_2_handed_sword:
 ; 2 Handed Sword Fight
 ; 04860 PRINT "SWHNG"
-; 04870 GOSUB 08410
+; 04870 GOSUB 08410 call range_and_hit_check
 ; 04880 IF R1<2.1 THEN 04910
 ; 04890 PRINT "HE IS OUT OF RANGE"
 ; 04900 GO TO 07000
