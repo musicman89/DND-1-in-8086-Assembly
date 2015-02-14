@@ -274,4 +274,11 @@ PassStrings:
 NewString "SO YOU HAVE RETURNED"
 NewString "WANT TO BUY MORE EQUIPMENT"
 
+FightStrings:
+NewString "YOUR WEAPON IS "
+NewString "HP="
+
+MoveMonsterString: 
+NewString "MONSTER MOVED BACK"
+
 StringBuffer times 256 db 0 

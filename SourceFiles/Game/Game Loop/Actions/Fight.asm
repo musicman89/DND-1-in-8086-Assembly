@@ -1,18 +1,50 @@
 fight:
-; 03750 REM FIGHTING BACK
-; 03760 PRINT "YOUR WEAPON IS ";I$(J)
-; 03770 IF K=0 THEN 01590
-; 03780 PRINT B$(K)
-; 03790 PRINT "HP=";B(K,3)
-; 03800 IF J=0 THEN 04460 //Fists
-; 03810 IF J=1 THEN 04680 //Sword
-; 03820 IF J=2 THEN 04860 //2-H-Sword
-; 03830 IF J=3 THEN 05040 //Dagger
-; 03840 IF J=4 THEN 05270 //Mace
-; 03850 IF J>4 THEN 03870 //Other
-; 03860 GO TO 03880
+	PrintString FightStrings + 0 * string_size
+	mov bh, 0
+	mov bl, [Character.weapon]
+	mov ax, item_size
+	mul bx
+	mov bx, ax
+	PrintString [Items + bx + item.name]
 
-; 03870 IF J<15 THEN 05450
+	mov bh, 0
+	mov bl, [CurrentMonster.type]
+	cmp bx, 0
+	je .return
+	mov ax, monster_size
+	mul bx
+	PrintString [Monsters + bx + monster.name]
+
+	PrintString FightString + 1 * string_size
+	mov bx, [Character.hp]
+	call print_dec
+
+	mov bl, [Character.weapon]
+	cmp bl, 0
+	jg .not_fists
+		call fist_fight
+	.not_fists:
+	cmp bl, 1
+	jg .not_sword
+		call attack_with_sword
+	.not_sword:
+	cmp bl, 2
+	jg .no_2_hand
+		call attack_with_2_handed_sword
+	.no_2_hand:
+	cmp bl, 3
+	jg .no_dagger
+		call attack_with_dagger
+	.no_dagger:
+	cmp bl, 4
+	jg .other
+		call food_fight
+		jmp .return
+	.other:
+	cmp bl, 15
+	jg .return
+		call check_other_weapon
+	.return:
 ret
 
 move_monster:
