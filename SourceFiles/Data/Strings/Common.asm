@@ -307,5 +307,36 @@ NewString "NO GOOD ONE"
 NewString "TERRIBLE NO GOOD"
 NewString "GOOD A HIT"
 
+AttackWithSwordStrings:
+NewString "SWING"
+NewString "HE IS OUT OF RANGE"
+NewString "CRITICAL HIT"
+NewString "GOOD HIT"
+NewString "NOT GOOD ENOUGH"
+NewString "MISSED TOTALY"
+
+AttackWith2HandSwordStrings:
+NewString "SWHNG"
+NewString "HE IS OUT OF RANGE"
+NewString "CRITICAL HIT"
+NewString "HIT"
+NewString "HIT BUT ‘ WELL ENOUGH"
+NewString "MISSED TOTALY"
+
+DaggerFightStrings:
+NewString "YOU DONT HAVE A DGGER"
+NewString "HE IS OUT OF RANGE"
+NewString "CRITICAL HIT"
+NewString "HIT BUT NO DAMAGE"
+NewString "HIT"
+NewString "MISSED TOTALY"
+
+AttackWithMaceStrings:
+NewString "SWING"
+NewString "HE IS OUT OF RANGE"
+NewString "CRITICAL HIT"
+NewString "HIT"
+NewString "HIT BUT NO DAMAGE"
+NewString "MISS"
 
 StringBuffer times 256 db 0 
