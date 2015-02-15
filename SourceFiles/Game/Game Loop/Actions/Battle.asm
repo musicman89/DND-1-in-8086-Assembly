@@ -42,8 +42,6 @@ range_and_hit_check:
 	cmp byte [CurrentMonster.type], 0
 	je .no_monster
 
-	jmp .no_monster
-
 	mov cl, [CurrentMonster.y]
 	mov dl, [CurrentMonster.x]
 
@@ -89,10 +87,7 @@ range_and_hit_check:
 
 		.no_crit:
 			push bx 									;We need to get the current monsters attributes
-			mov ax, [CurrentMonster.type] 				;Lets load the monster type into ax
-			mov bx, monster_size 						;The size of a monster object goest into bx
-			mul bx 										;We will get the offset of where our monster is 
-			mov bx, ax 									;Lets move that offset into bx for addressing
+			call get_current_monster
 			mov bx, [Monsters + bx + monster.dex]  		;Now we can get the dextarity of the monster
 
 			mov ax, [Character.dex] 					;In ax we will load our character's dextarity
@@ -119,11 +114,7 @@ ret
 
 
 monster_attack:
-	push bx 													;We need to get the current monsters attributes
-	mov ax, [CurrentMonster.type] 								;Lets load the monster type into ax
-	mov bx, monster_size 										;The size of a monster object goest into bx
-	mul bx 														;We will get the offset of where our monster is 
-	mov bx, ax 													;Lets move that offset into bx for addressing
+	call get_current_monster
 	add bx, [Monsters + bx + monster.name]
 	PrintString bx
 	PrintString WatchItString
@@ -179,13 +170,9 @@ ret
 
 monster_killed:
 	mov byte [CurrentMonster.status], 0
+	call get_current_monster	
 	push bx 													;We need to get the current monsters attributes
-	mov ax, [CurrentMonster.type] 								;Lets load the monster type into ax
-	mov bx, monster_size 										;The size of a monster object goest into bx
-	mul bx 														;We will get the offset of where our monster is 
-	mov bx, ax 													;Lets move that offset into bx for addressing
-	add bx, Monsters	
-	push bx						
+
 	mov dx, [bx + monster.gold]
 	mov [Character.gold], dx
 	PrintString MonsterKilledStrings + 0 * string_size
@@ -274,6 +261,7 @@ hp_low:
 ret
 
 check_for_random_encounter:
+	inc bx
 	mov [CurrentMonster.type], bx
 	mov cx, 7
 	call random_int
@@ -391,10 +379,7 @@ ret
 
 monster_hit:
 	PrintString MonsterHitStrings + 0 * string_size
-	mov bx, [CurrentMonster.type]
-	mov ax, monster_size
-	mul bx
-	mov bx, ax
+	call get_current_monster
 	mov cx, [Monsters + bx + monster.str]
 	call random_int
 	inc bx
@@ -415,19 +400,13 @@ ret
 monster_trapped:
 	PrintString MonsterTrappedString
 	mov byte[CurrentMonster.status], -1
-	mov bx, [CurrentMonster.type]
-	mov ax, monster_size
-	mul bx
-	mov bx, ax
+	call get_current_monster
 	mov word[Monsters + bx + monster.gold], 0
 ret
 
 monster_battle:
 	call range_and_hit_check
-	mov bx, [CurrentMonster.type]
-	mov ax, monster_size
-	mul bx
-	mov bx, ax
+	call get_current_monster
 
 	cmp word[Monsters + bx + monster.hp], 1
 	jge .itLives

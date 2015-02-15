@@ -25,6 +25,7 @@ check_inventory:
 	push bx
 	mov bh, 0
 	mov bl, byte[Character.itemCount]
+	dec al
 	.loop:
 		cmp al, byte[Character.inventory + bx]
 		je .yes
@@ -43,6 +44,7 @@ get_current_monster:
 	push ax
 		mov bh, 0
 		mov bl, [CurrentMonster.type]
+		dec bl
 		mov ax, monster_size
 		mul bx
 
@@ -126,6 +128,7 @@ remove_from_inventory:
 	push bx
 	mov bh, 0
 	push cx
+		inc al
 		mov bl, [Character.itemCount]
 		dec bl
 		mov cl, [Character.inventory + bx]
@@ -161,6 +164,7 @@ add_to_inventory:
 	push bx
 	mov bh, 0
 	push cx
+		inc al
 		mov bl, [Character.itemCount]
 		inc bl
 		mov [Character.inventory + bx], al
