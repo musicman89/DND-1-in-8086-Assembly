@@ -48,6 +48,10 @@ fight:
 	jg .return
 		call check_other_weapon
 	.return:
+		cmp byte [CurrentMonster.hit], 0
+		jg .no_pass
+		call pass
+	.no_pass:
 ret
 
 move_monster:
@@ -487,163 +491,295 @@ atack_with_mace:
 ret
 
 check_other_weapon:
-; Check other Weapon
-; 05440 REM
-; 05450 FOR M=1 TO X
-; 05460 IF W(M)=J THEN 05500 
-; 05470 NEXT M
-; 05480 PRINT "NO WEAPON FOUND"
-; 05490 GO TO 01590
+	mov ah, 0
+	mov al, [Character.weapon]
+	call check_inventory
+
+	cmp ax, 0
+	jg .has_weapon
+		PrintString NoWeaponString
+		call new_line
+		jmp .return
+	.has_weapon:
+		call user_other_weapon
+		jmp .return
+	.return:
 ret
 
 user_other_weapon:
-; 05500 GOSUB 08410 // Range and Hit Check
-; 05510 IF J=5 THEN 05760 //Spear
-; 05520 IF J=6 THEN 05800 //Bow
-; 05530 IF J=7 THEN 05840 //Arrows
-; 05540 IF J=8 THEN 05880 //Leather Mail
-; 05550 IF J=9 THEN 05920 //Chain Mail
-; 05560 IF J=10 THEN 05960 //TLTE Mail
-; 05570 IF J=11 THEN 06000 //Rope
-; 05580 IF J=12 THEN 06040 //Spikes
-; 05590 IF J=13 THEN 06080 //Flask of Oil
+	call range_and_hit_check
+	mov ah, 0
+	mov al, [Character.weapon]
+	cmp al, 5
+	jne .no_spear
+		call throw_spear
+		jmp .return
+
+	.no_spear:
+	cmp al, 6
+	jne .no_bow
+		call attack_with_bow
+		jmp .return
+
+	.no_bow:
+	cmp al, 7
+	jne .no_arrow
+		call attack_with_arrows
+		jmp .return
+
+	.no_arrow:
+	cmp al, 8
+	jne .no_leather
+		call attack_with_leather_armor
+		jmp .return
+
+	.no_leather:
+	cmp al, 9
+	jne .no_chain
+		call attack_with_chain_armor
+		jmp .return
+
+	.no_chain:
+	cmp al, 10
+	jne .no_tlte
+		call attack_with_tlte_mail
+		jmp .return
+
+	.no_tlte:
+	cmp al, 11
+	jne .no_rope
+		call attack_with_rope
+		jmp .return
+
+	.no_rope:
+	cmp al, 12
+	jne .no_spikes
+		call attack_with_spikes
+		jmp .return
+
+	.no_spikes:
+	cmp al, 13
+	jne .cross
+		call attack_with_oil
+		jmp .return
+
+	.cross:
+		call attack_with_cross
+		jmp .return
+
+	.return:
 ret
 
 attack_with_cross:
-; Silver Cross
-; 05600 PRINT "AS A CLUB OR SIGHT";
-; 05610 INPUT Q$
-; 05620 IF Q$="SIGHT" THEN 05650
-; 05630 IF J=14 THEN 06120
-; 05640 GO TO 05480
+	PrintString AttackWithCrossStrings + 0 * string_size
+	call new_line
 
-; Sight of Cross
-; 05650 IF R1<10 THEN 05680
-; 05660 PRINT "FAILED"
-; 05670 GO TO 07000
+	call get_user_input
+	StringCompareInsensitive bx, AttackWithCrossStrings + 1 * string_size
+	je .sight
+		call club_with_cross
+		jmp .return
 
-; 05680 PRINT "THE MONSTER IS HURT"
-; 05690 LET R5=1/6
-; 05700 IF K=2 THEN 06200
-; 05710 IF K=10 THEN 06200
-; 05720 IF K=4 THEN 06200
-; 05730 GOTO 06260
+	.sight:
+		cmp byte [Character.weapon], 14
+		je .has_weapon			
+			PrintString NoWeaponString
+			call new_line
+			jmp .return
+		.has_weapon:
+			cmp word [CurrentMonster.range], 10
+			jg .monster_hurt
+				PrintString AttackWithCrossStrings + 2 * string_size
+				call new_line
+				jmp .return
+			.monster_hurt:
+				mov word [Statistics.weapon_range], 10
+				PrintString AttackWithCrossStrings + 3 * string_size
+				call new_line
 
-; 05740 IF INT(RND(0)*0)>0 THEN 06260
-; 05750 GO TO 06200
-; Throw Spear
-; 05760 LET R3=10
-; 05770 LET R4=3/7
-; 05780 LET R5=5/11
-; 05790 GO TO 06160
+				mov word [Statistics.crit_damage], 16
+
+				mov bx, [CurrentMonster.type]
+				cmp bx, 2
+				je .crit
+
+				cmp bx, 4
+				je .crit
+
+				cmp bx, 10
+				jne .no_crit
+				.crit:
+					mov byte [CurrentMonster.hit], 3
+
+				.no_crit:
+					mov byte [CurrentMonster.hit], 1
+	.return:
+		call attack
+ret
+
+throw_spear:
+	mov word [Statistics.damage], 42
+
+	mov word [Statistics.crit_damage], 45
+
+	mov word [Statistics.weapon_range], 10
+
+	call attack
 ret
 
 attack_with_bow:
-; Shoot Bow
-; 05800 LET R3=15
-; 05810 LET R4=3/7
-; 05820 LET R5=5/11
-; 05821 FOR Z=1 TO 100
-; 05822 IF W(Z)=7 THEN 5825
-; 05823 NEXT Z
-; 05824 GO TO 6280
+	mov word [Statistics.damage], 42
 
-; 05825 J=7
-; 05826 W(Z)=0
-; 05830 GO TO 06160
+	mov word [Statistics.crit_damage], 45
 
-; Arrows
-; 05840 LET R3=1.5
-; 05850 LET R4=1/7
-; 05860 LET R5=1/5
-; 05870 GO TO 06160
+	mov word [Statistics.weapon_range], 15
+	mov ax, 7
+	call check_inventory
+	cmp ax, 0
+	jl .no_arrows
+		call remove_from_inventory
+		call attack
+	.no_arrows:
+ret
+
+attack_with_arrows:
+	mov word [Statistics.damage], 14
+
+	mov word [Statistics.crit_damage], 20
+
+	mov word [Statistics.weapon_range], 2
+
+	call attack
 ret
 
 attack_with_leather_armor:
-; Leather Mail
-; 05880 LET R3=4
-; 05890 LET R4=1/10
-; 05900 LET R5=1/8
-; 05910 GO TO 06160
+	mov word [Statistics.damage], 10
+
+	mov word [Statistics.crit_damage], 13
+
+	mov word [Statistics.weapon_range], 4
+
+	call attack
 ret
 
 attack_with_chain_armor:
-; Chain Mail
-; 05920 LET R3=4
-; 05930 LET R4=1/7
-; 05940 LET R5=1/6
-; 05950 GO TO 06160
+	mov word [Statistics.damage], 14
+
+	mov word [Statistics.crit_damage], 17
+
+	mov word [Statistics.weapon_range], 4
+
+	call attack
 ret
 
 attack_with_tlte_mail:
-; TLTE Mail
-; 05960 LET R3=3
-; 05970 LET R4=1/8
-; 05980 LET R5=1/5
-; 05990 GO TO 06160
+	mov word [Statistics.damage], 13
+
+	mov word [Statistics.crit_damage], 20
+
+	mov word [Statistics.weapon_range], 3
+
+	call attack
 ret
 
 attack_with_rope:
-; Rope
-; 06000 LET R3=5
-; 06010 LET R4=1/9
-; 06020 LET R5=1/6
-; 06030 GO TO 06160
+	mov word [Statistics.damage], 11
+
+	mov word [Statistics.crit_damage], 17
+
+	mov word [Statistics.weapon_range], 5
+
+	call attack
 ret
 
 attack_with_spikes:
-; Spikes
-; 06040 LET R3=8
-; 06050 LET R4=1/9
-; 06060 LET R5=1/4
-; 06070 GO TO 06160
+	mov word [Statistics.damage], 11
+
+	mov word [Statistics.crit_damage], 25
+
+	mov word [Statistics.weapon_range], 8
+
+	call attack
 ret 
 
 attack_with_oil:
-; Flask of Oil
-; 06080 LET R3=6
-; 06090 LET R4=1/3
-; 06100 LET R5=2/3
-; 06110 GO TO 06160
+	mov word [Statistics.damage], 33
+
+	mov word [Statistics.crit_damage], 66
+
+	mov word [Statistics.weapon_range], 6
+
+	call attack
 ret
 
 club_with_cross:
-; Club with Cross
-; 06120 LET R3=1.5
-; 06130 LET R4=1/3
-; 06140 LET R5=1/2
-; 06150 GO TO 06160
+	mov word [Statistics.damage], 33
+
+	mov word [Statistics.crit_damage], 50
+
+	mov word [Statistics.weapon_range], 2
+
+	call attack
 ret
 
 attack:
-; Attack
-; 06160 IF R1>R3 THEN 04710 //Out of Range?
-; 06170 IF R2=0 THEN 06280 //Miss
-; 06180 IF R2=1 THEN 06260 //Hit No Damage
-; 06190 IF R2=2 THEN 06230 //Hit
-; 06200 PRINT "CRITICAL HIT"
-; 06210 LET B(K,3)=B(K,3)-INT(C(1)*R5)
-; 06220 GO TO 06300
+	mov bx, [CurrentMonster.range]
+	cmp bx, [Statistics.weapon_range]
+	jl .in_range
 
-; 06230 PRINT "HIT"
-; 06240 LET B(K,3)=B(K,3)-INT(C(1)*R4)
-; 06250 GO TO 06300
+	.in_range:
+		mov bx, [CurrentMonster.hit]
+		cmp bx, 0
+		je .miss
 
-; 06260 PRINT "HIT BUT NO DAMAGE"
-; 06270 GO TO 06300
+		cmp bx, 1
+		je .hit_no_damage
 
-; 06280 PRINT "MISS"
-; 06290 GO TO 06300
+		cmp bx, 2
+		je .hit
+			PrintString AttackWithOtherWeaponStrings + 0 * string_size
+			call new_line
+			mov ax, [Statistics.crit_damage]
+			jmp .do_damage
 
-; 06300 IF W(J)=14 THEN 07000 //If Cross go to the pass
-; 06310 FOR M=1 TO X
-; 06320 IF W(M)=J THEN 06340 //Remove Item
-; 06330 NEXT M
-; 06340 LET W(M)=0 
-; 06350 IF J<>7 THEN 06360 //If bow don’t switch
-; 06355 GO TO 06370
+		.hit:
+			PrintString AttackWithOtherWeaponStrings + 1 * string_size
+			call new_line
+			mov ax, [Statistics.damage]
 
-; 06360 LET J=0
-; 06370 IF R2>0 THEN 01590  //Get Command 
-; 06380 GO TO 07000
+		.do_damage:
+			mov bx, [Character.str]
+			mul bx
+			mov bx, 100
+			div bx
+			call get_current_monster
+
+			sub [Monsters + bx + monster.hp], ax
+			jmp .check_and_remove
+		.hit_no_damage:
+			PrintString AttackWithOtherWeaponStrings + 2 * string_size
+			call new_line
+			jmp .check_and_remove
+			
+		.miss:
+			PrintString AttackWithOtherWeaponStrings + 3 * string_size
+			call new_line
+			jmp .check_and_remove
+
+		.check_and_remove:
+			cmp byte [Character.weapon], 14
+			je .return
+
+			mov ah, 0
+			mov al, [Character.weapon]
+			cmp ax, 7
+			je .no_switch
+				mov byte [Character.weapon], 0
+			.no_switch:
+				call check_inventory
+				cmp ax, 0
+				jl .return
+				call remove_from_inventory
+
+			.return:
 ret

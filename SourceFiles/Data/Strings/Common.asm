@@ -339,4 +339,19 @@ NewString "HIT"
 NewString "HIT BUT NO DAMAGE"
 NewString "MISS"
 
+NoWeaponString:
+NewString "NO WEAPON FOUND"
+
+AttackWithCrossStrings:
+NewString "AS A CLUB OR SIGHT"
+NewString "SIGHT" 
+NewString "FAILED"
+NewString "THE MONSTER IS HURT"
+
+AttackWithOtherWeaponStrings:
+NewString "CRITICAL HIT"
+NewString "HIT"
+NewString "HIT BUT NO DAMAGE"
+NewString "MISS"
+
 StringBuffer times 256 db 0 
