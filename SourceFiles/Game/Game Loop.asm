@@ -51,5 +51,5 @@ game_loop_welcome:
 ret
 
 quit:
-
+	jmp boot
 ret

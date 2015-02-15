@@ -146,7 +146,7 @@ ret
 ;   Exceptions:
 ;       
 ;*******************************************************************************
-get_dungeon_num	
+get_dungeon_num:
 	Write DungeonNumberString
 	ReadLine
 	call parse_int

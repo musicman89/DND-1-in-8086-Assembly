@@ -24,13 +24,29 @@
 ;	Uses:
 ;		AX
 ;	Exceptions:
-;		Disk Read Error
+;		
 ;*******************************************************************************
 get_key:
     mov ax, 0x01
     int 0x16 
 ret
 
+;********************************************************************************
+;	wait_key
+;	Purpose:
+;      To wait for a single key press event
+;			Prototype:
+;				word wait_key();
+;				
+;	Entry:
+;       None
+;	Exit:
+;       byte character in AL and byte key in AH
+;	Uses:
+;		AX
+;	Exceptions:
+;		
+;*******************************************************************************
 wait_key:
     mov ax, 0x01
     int 0x16 
@@ -63,11 +79,11 @@ ret
 ;	Entry:
 ;       None
 ;	Exit:
-;       byte character in AL and byte key in AH
+;       Byte string address in BX
 ;	Uses:
-;		AX
+;		AX, BX
 ;	Exceptions:
-;		Disk Read Error
+;		
 ;*******************************************************************************
 get_user_input:
     mov bx, 0 			

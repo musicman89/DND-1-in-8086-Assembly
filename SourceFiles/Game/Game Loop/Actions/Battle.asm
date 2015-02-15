@@ -231,8 +231,8 @@ ret
 
 dead:
 	WriteLine DeadString
-	cli
-	hlt
+	call wait_key
+	jmp boot
 ret
 
 hp_check:
