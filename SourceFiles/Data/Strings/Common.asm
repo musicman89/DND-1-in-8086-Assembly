@@ -10,15 +10,15 @@ endstruc
 %endmacro
 
 TitleString: 
-NewString '    Dungeons and Dragons #1',13, 10
-NewString '    Copyright 1977-2015 Richard Garriott', 13, 10
-NewString '               Ported By Davan Etelamaki', 13, 10
+NewString '    Dungeons and Dragons #1'
+NewString '    Copyright 1977-2015 Richard Garriott'
+NewString '               Ported By Davan Etelamaki'
 
 NeedInstructionsString: 
 NewString 'DO YOU NEED INSTRUCTIONS? Y/N: '
 
 WhoSaidString: 
-NewString '"WHO SAID YOU COULD PLAY"',13, 10
+NewString '"WHO SAID YOU COULD PLAY"'
 
 NoInstructionsString: 
 NewString 'OLD OR NEW GAME: '

@@ -29,8 +29,8 @@ ret
 ;       
 ;*******************************************************************************
 shop_welcome:
-	PrintString ItemShopString + 0 * string_size
-	PrintString ItemShopString + 1 * string_size
+	WriteLine ItemShopString, 0
+	WriteLine ItemShopString, 1
 	call get_user_input
 	StringCompareInsensitive InputStringBuffer, FastString
 	je .return
@@ -66,14 +66,15 @@ print_shop_wares:
 	.loop:
 	mov bx, 16
 	sub bx, cx
+	inc bx
 	call print_dec
-	PrintString Space
+	Write Space
 
 	mov bx, dx
 	add bx, item.name
-	PrintString bx
+	Write bx
 
-	PrintString Space
+	Write Space
 	mov bx, dx
 	mov bx, [bx + item.price]
 	call print_dec
@@ -128,7 +129,7 @@ ret
 ;       
 ;*******************************************************************************
 make_item_selection:
-	call get_user_input
+	ReadLine
 	call parse_int
 	dec bl
 	mov dl, bl
@@ -142,10 +143,10 @@ make_item_selection:
 	jg .insufficientFunds
 	mov cx, ax
 
-	StringCompareInsensitive Character.class, Classes + 2 * string_size
+	StringCompareInsensitive Character.class, Classes, 2 
 	je .cleric
 
-	StringCompareInsensitive Character.class, Classes + 3 * string_size
+	StringCompareInsensitive Character.class, Classes, 3 
 	je .wizard
 
 	jmp .purchase
@@ -154,19 +155,19 @@ make_item_selection:
 		call check_cleric_item
 		test ax, ax
 		jz .purchase
-		PrintString ClericCannotUseString
+		WriteLine ClericCannotUseString
 	jmp make_item_selection
 
 	.wizard:
 		call check_wizard_item
 		test ax, ax
 		jz .purchase
-		PrintString WizardCannotUseString
+		WriteLine WizardCannotUseString
 	jmp make_item_selection
 
 	.insufficientFunds:
-		PrintString CostsTooMuchString + 0 * string_size
-		PrintString CostsTooMuchString + 1 * string_size
+		WriteLine CostsTooMuchString, 0 
+		WriteLine CostsTooMuchString, 1
 	jmp make_item_selection
 
 	.purchase:

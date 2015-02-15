@@ -41,8 +41,7 @@
 ;       
 ;*******************************************************************************
 search:
-	PrintString SearchForTrapStrings + 0 * string_size
-	call new_line
+	WriteLine SearchForTrapStrings, 0
 	call roll_d20
 	mov ax, bx 
 	call roll_d20
@@ -51,8 +50,7 @@ search:
 	add bx, [Character.wis]
 	cmp ax, bx
 	jl .loopy
-		PrintString SearchForTrapStrings + 1 * string_size
-		call new_line
+		WriteLine SearchForTrapStrings, 1
 		jmp .return
 
 	mov cx, 0
@@ -76,35 +74,31 @@ search:
 			mov bx, [CurrentDungeon + bx]
 			cmp bx, 2
 			jne .noTrap
-				PrintString SearchForTrapStrings + 2 * string_size
-				call new_line
+				WriteLine SearchForTrapStrings, 2
 
-				PrintString SearchForTrapStrings + 3 * string_size
+				Write SearchForTrapStrings, 3
 				mov bx, dx
 				call print_dec
 
-				PrintString SearchForTrapStrings + 4 * string_size
+				Write SearchForTrapStrings, 4
 				mov bx, ax
 				call print_dec
 
-				PrintString SearchForTrapStrings + 5 * string_size
-				call new_line
+				WriteLine SearchForTrapStrings, 5
 			.noTrap:
 			cmp bx, 3
 			jne .noDoor
-				PrintString SearchForTrapStrings + 6 * string_size
-				call new_line
+				WriteLine SearchForTrapStrings, 6
 
-				PrintString SearchForTrapStrings + 7 * string_size
+				Write SearchForTrapStrings, 7
 				mov bx, dx
 				call print_dec
 
-				PrintString SearchForTrapStrings + 8 * string_size
+				Write SearchForTrapStrings, 8
 				mov bx, ax
 				call print_dec
 
-				PrintString SearchForTrapStrings + 9 * string_size
-				call new_line
+				WriteLine SearchForTrapStrings, 9
 			.noDoor:
 			inc dl
 			cmp dl, dh

@@ -1,12 +1,12 @@
 fight:
-	PrintString FightStrings + 0 * string_size
+	WriteLine FightStrings, 0
 	mov bh, 0
 	mov bl, [Character.weapon]
 	mov ax, item_size
 	mul bx
 	mov bx, ax
-	PrintString [Items + bx + item.name]
-	call new_line
+	add bx, Items + item.name
+	WriteLine bx
 
 	mov bh, 0
 	mov bl, [CurrentMonster.type]
@@ -14,10 +14,11 @@ fight:
 	je .return
 	mov ax, monster_size
 	mul bx
-	PrintString [Monsters + bx + monster.name]
-	call new_line
+	add bx,  Monsters + monster.name
 
-	PrintString FightStrings + 1 * string_size
+	WriteLine bx
+
+	Write FightStrings, 1
 	mov bx, [Character.hp]
 	call print_dec
 	call new_line
@@ -55,8 +56,7 @@ fight:
 ret
 
 move_monster:
-	PrintString MoveMonsterString
-	call new_line
+	WriteLine MoveMonsterString
 	mov bl, [CurrentMonster.y]
 	mov bh, 0
 	mov ax, [rows + bx]
@@ -78,7 +78,7 @@ move_monster:
 ret
 
 push_monster:
-	call get_user_input
+	ReadLine
 	call to_upper
 	mov al, [bx]
 	cmp al, 'B'
@@ -128,26 +128,22 @@ push_monster:
 			jmp .return
 
 		.did_not_work:
-			PrintString DidntWorkString
-			call new_line
+			WriteLine DidntWorkString
 		.return:
 ret
 
 food_fight:
-	PrintString FoodFightStrings + 0 * string_size
-	call new_line
+	WriteLine FoodFightStrings, 0
 
-	PrintString FoodFightStrings + 1 * string_size
-	call new_line
+	WriteLine FoodFightStrings, 1
 
-	call get_user_input
-	StringCompareInsensitive bx, FoodFightStrings + 2 * string_size
+	ReadLine
+	StringCompareInsensitive bx, FoodFightStrings, 2
 	jne .distract
 		call check_hit
 		jmp .remove_food
 	.distract:
-		PrintString FoodFightStrings + 3 * string_size
-		call new_line
+		WriteLine FoodFightStrings, 3
 
 		call push_monster
 
@@ -165,8 +161,7 @@ ret
 
 
 monster_trapped_and_killed:
-	PrintString MonsterTrappedKilledString
-	call new_line
+	WriteLine MonsterTrappedKilledString
 
 	mov byte[CurrentMonster.status], -1
 	mov bh, 0
@@ -181,8 +176,7 @@ check_hit:
 	call roll_d20
 	cmp bx, 20
 	jne .no_crit
-		PrintString CheckHitStrings + 1 * string_size
-		call new_line
+		WriteLine CheckHitStrings, 1
 		mov ax, [Character.str]
 		mov bx, 6
 		div bx
@@ -205,8 +199,7 @@ check_hit:
 	cmp bx, cx
 	jle .no_damage
 
-		PrintString CheckHitStrings + 2 * string_size	
-		call new_line	
+		WriteLine CheckHitStrings, 2	
 		mov ax, [Character.str]
 		mov dx, 8
 		div dx
@@ -219,29 +212,24 @@ check_hit:
 	cmp bx, cx
 	jle .total_miss
 
-		PrintString CheckHitStrings + 3 * string_size
-		call new_line
+		WriteLine CheckHitStrings, 3
 		jmp .return
 
 	.total_miss:
-		PrintString CheckHitStrings + 0 * string_size
-		call new_line
+		WriteLine CheckHitStrings, 0
 	.return:
 ret 
 
 fist_fight:
-	PrintString FistFightStrings + 0 * string_size
-	call new_line
+	WriteLine FistFightStrings, 0
 
-	PrintString FistFightStrings + 1 * string_size
-	call new_line
+	WriteLine FistFightStrings, 1
 
-	call get_user_input
+	ReadLine
 	StringCompareInsensitive bx, NoString
 	je .return
 
-	PrintString FistFightStrings + 2 * string_size
-	call new_line
+	WriteLine FistFightStrings, 2
 
 	cmp word [CurrentMonster.range], 1
 	jg .no_good
@@ -251,32 +239,29 @@ fist_fight:
 		call get_current_monster
 		cmp [Monsters + bx + monster.dex], cx
 		jg .hit
-			PrintString FistFightStrings + 4 * string_size
-			call new_line
+			WriteLine FistFightStrings, 4
 			jmp .return
 		.hit:
-			PrintString FistFightStrings + 5 * string_size
+			WriteLine FistFightStrings, 5
 			mov ax, [Character.str]
 			mov dx, 6
 			div dx
 
 			sub [Monsters + bx + monster.hp], ax
 	.no_good:
-		PrintString FistFightStrings + 3 * string_size
+		WriteLine FistFightStrings + 3
 		call new_line
 	.return:
 ret
 
 attack_with_sword:
-	PrintString AttackWithSwordStrings + 0 * string_size
-	call new_line
+	WriteLine AttackWithSwordStrings, 0
 
 	call range_and_hit_check
 
 	cmp word[CurrentMonster.range], 2
 	jl .in_range
-		PrintString AttackWithSwordStrings + 1 * string_size
-		call new_line
+		WriteLine AttackWithSwordStrings, 1
 		jmp .return
 	.in_range:
 		mov bx, [CurrentMonster.hit]
@@ -288,8 +273,7 @@ attack_with_sword:
 
 		cmp bx, 2
 		je .hit
-			PrintString AttackWithSwordStrings + 2 * string_size	
-			call new_line		
+			WriteLine AttackWithSwordStrings, 2
 			mov ax, [Character.str]
 			mov bx, 2
 			div bx
@@ -298,8 +282,7 @@ attack_with_sword:
 			sub [Monsters + bx + monster.hp], ax
 
 		.hit:
-			PrintString AttackWithSwordStrings + 3 * string_size
-			call new_line
+			WriteLine AttackWithSwordStrings, 3
 			mov ax, [Character.str]
 			mov cl, 2
 			shl ax, cl
@@ -312,25 +295,20 @@ attack_with_sword:
 			sub [Monsters + bx + monster.hp], ax
 
 		.not_good_enough:
-			PrintString AttackWithSwordStrings + 4 * string_size
-			call new_line
+			WriteLine AttackWithSwordStrings, 4
 		.total_miss:
-			PrintString AttackWithSwordStrings + 5 * string_size
-			call new_line
+			WriteLine AttackWithSwordStrings, 5
 		.return:
 ret 
 
 attack_with_2_handed_sword:
-	PrintString AttackWith2HandSwordStrings + 0 * string_size
-	call new_line
+	WriteLine AttackWith2HandSwordStrings, 0
 
 	call range_and_hit_check
 
 	cmp word[CurrentMonster.range], 2
 	jl .in_range
-		PrintString AttackWith2HandSwordStrings + 1 * string_size
-		call new_line
-		jmp .return
+		WriteLine AttackWith2HandSwordStrings, 1
 	.in_range:
 		mov bx, [CurrentMonster.hit]
 		cmp bx, 0
@@ -341,16 +319,14 @@ attack_with_2_handed_sword:
 
 		cmp bx, 2
 		je .hit
-			PrintString AttackWith2HandSwordStrings + 2 * string_size	
-			call new_line		
+			WriteLine AttackWith2HandSwordStrings, 2	
 			mov ax, [Character.str]
 			call get_current_monster
 
 			sub [Monsters + bx + monster.hp], ax
 
 		.hit:
-			PrintString AttackWith2HandSwordStrings + 3 * string_size
-			call new_line
+			WriteLine AttackWith2HandSwordStrings, 3
 			mov ax, [Character.str]
 			mov bx, 5
 			mul bx
@@ -363,11 +339,9 @@ attack_with_2_handed_sword:
 			sub [Monsters + bx + monster.hp], ax
 
 		.not_good_enough:
-			PrintString AttackWith2HandSwordStrings + 4 * string_size
-			call new_line
+			WriteLine AttackWith2HandSwordStrings, 4
 		.total_miss:
-			PrintString AttackWith2HandSwordStrings + 5 * string_size
-			call new_line
+			WriteLine AttackWith2HandSwordStrings, 5
 		.return:
 ret
 
@@ -376,16 +350,14 @@ attack_with_dagger:
 	call check_inventory
 	cmp ax, 0
 	jg .has_dagger
-		PrintString DaggerFightStrings + 0 * string_size
-		call new_line
+		WriteLine DaggerFightStrings, 0
 		jmp .return
 	.has_dagger:
 	call range_and_hit_check
 
 	cmp word[CurrentMonster.range], 5
 	jl .in_range
-		PrintString DaggerFightStrings + 1 * string_size
-		call new_line
+		WriteLine DaggerFightStrings, 1
 		jmp .return
 	.in_range:
 		cmp word [CurrentMonster.range], 2
@@ -402,8 +374,7 @@ attack_with_dagger:
 
 		cmp bx, 2
 		je .hit
-			PrintString DaggerFightStrings + 2 * string_size	
-			call new_line		
+			WriteLine DaggerFightStrings, 2
 			mov ax, [Character.str]
 			mov bx, 3
 			mul bx
@@ -415,8 +386,7 @@ attack_with_dagger:
 			sub [Monsters + bx + monster.hp], ax
 
 		.hit:
-			PrintString DaggerFightStrings + 3 * string_size
-			call new_line
+			WriteLine DaggerFightStrings, 3
 			mov ax, [Character.str]
 			mov cl, 2
 			shr bx, cl
@@ -426,24 +396,20 @@ attack_with_dagger:
 			sub [Monsters + bx + monster.hp], ax
 
 		.not_good_enough:
-			PrintString DaggerFightStrings + 4 * string_size
-			call new_line
+			WriteLine DaggerFightStrings, 4
 		.total_miss:
-			PrintString DaggerFightStrings + 5 * string_size
-			call new_line
+			WriteLine DaggerFightStrings, 5
 		.return:
 ret
 
 atack_with_mace:
-	PrintString AttackWithMaceStrings + 0 * string_size
-	call new_line
+	WriteLine AttackWithMaceStrings, 0
 
 	call range_and_hit_check
 
 	cmp word[CurrentMonster.range], 2
 	jl .in_range
-		PrintString AttackWithMaceStrings + 1 * string_size
-		call new_line
+		WriteLine AttackWithMaceStrings, 1
 		jmp .return
 	.in_range:
 		mov bx, [CurrentMonster.hit]
@@ -455,8 +421,7 @@ atack_with_mace:
 
 		cmp bx, 2
 		je .hit
-			PrintString AttackWithMaceStrings + 2 * string_size	
-			call new_line	
+			WriteLine AttackWithMaceStrings, 2
 			mov ax, [Character.str]
 			mov cl, 4
 			shl ax, cl
@@ -468,8 +433,7 @@ atack_with_mace:
 			sub [Monsters + bx + monster.hp], ax
 
 		.hit:
-			PrintString AttackWithMaceStrings + 3 * string_size
-			call new_line
+			WriteLine AttackWithMaceStrings, 3
 			mov ax, [Character.str]
 			mov bx, 5
 			mul bx
@@ -482,11 +446,9 @@ atack_with_mace:
 			sub [Monsters + bx + monster.hp], ax
 
 		.not_good_enough:
-			PrintString AttackWithMaceStrings + 4 * string_size
-			call new_line
+			WriteLine AttackWithMaceStrings, 4
 		.total_miss:
-			PrintString AttackWithMaceStrings + 5 * string_size
-			call new_line
+			WriteLine AttackWithMaceStrings, 5
 		.return:
 ret
 
@@ -497,8 +459,7 @@ check_other_weapon:
 
 	cmp ax, 0
 	jg .has_weapon
-		PrintString NoWeaponString
-		call new_line
+		WriteLine NoWeaponString
 		jmp .return
 	.has_weapon:
 		call user_other_weapon
@@ -571,11 +532,10 @@ user_other_weapon:
 ret
 
 attack_with_cross:
-	PrintString AttackWithCrossStrings + 0 * string_size
-	call new_line
+	WriteLine AttackWithCrossStrings, 0
 
 	call get_user_input
-	StringCompareInsensitive bx, AttackWithCrossStrings + 1 * string_size
+	StringCompareInsensitive bx, AttackWithCrossStrings, 1
 	je .sight
 		call club_with_cross
 		jmp .return
@@ -583,19 +543,16 @@ attack_with_cross:
 	.sight:
 		cmp byte [Character.weapon], 14
 		je .has_weapon			
-			PrintString NoWeaponString
-			call new_line
+			WriteLine NoWeaponString
 			jmp .return
 		.has_weapon:
 			cmp word [CurrentMonster.range], 10
 			jg .monster_hurt
-				PrintString AttackWithCrossStrings + 2 * string_size
-				call new_line
+				WriteLine AttackWithCrossStrings, 2
 				jmp .return
 			.monster_hurt:
 				mov word [Statistics.weapon_range], 10
-				PrintString AttackWithCrossStrings + 3 * string_size
-				call new_line
+				WriteLine AttackWithCrossStrings, 3
 
 				mov word [Statistics.crit_damage], 16
 
@@ -737,14 +694,12 @@ attack:
 
 		cmp bx, 2
 		je .hit
-			PrintString AttackWithOtherWeaponStrings + 0 * string_size
-			call new_line
+			WriteLine AttackWithOtherWeaponStrings, 0
 			mov ax, [Statistics.crit_damage]
 			jmp .do_damage
 
 		.hit:
-			PrintString AttackWithOtherWeaponStrings + 1 * string_size
-			call new_line
+			WriteLine AttackWithOtherWeaponStrings, 1
 			mov ax, [Statistics.damage]
 
 		.do_damage:
@@ -757,13 +712,11 @@ attack:
 			sub [Monsters + bx + monster.hp], ax
 			jmp .check_and_remove
 		.hit_no_damage:
-			PrintString AttackWithOtherWeaponStrings + 2 * string_size
-			call new_line
+			WriteLine AttackWithOtherWeaponStrings, 2
 			jmp .check_and_remove
 			
 		.miss:
-			PrintString AttackWithOtherWeaponStrings + 3 * string_size
-			call new_line
+			WriteLine AttackWithOtherWeaponStrings, 3
 			jmp .check_and_remove
 
 		.check_and_remove:

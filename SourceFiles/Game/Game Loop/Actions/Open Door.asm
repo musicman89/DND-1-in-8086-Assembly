@@ -48,31 +48,31 @@ open_door:
 	mov cl, [Character.x]
 	mov dl, [Character.y]
 	.loop:
-		PrintString OpenDoorStrings + 0 * string_size
+		WriteLine OpenDoorStrings, 0
 		call to_upper
 		call get_user_input
 		cmp byte [bx], 'R'
 		je .right
 
-		StringCompare bx, DirectionStrings + 1 * string_size
+		StringCompare bx, DirectionStrings,  1
 		je .right
 
 		cmp byte [bx], 'L'
 		je .left
 
-		StringCompare bx, DirectionStrings + 0 * string_size
+		StringCompare bx, DirectionStrings,  0
 		je .left
 		
 		cmp byte [bx], 'U'
 		je .up
 
-		StringCompare bx, DirectionStrings + 2 * string_size
+		StringCompare bx, DirectionStrings, 2
 		je .up
 		
 		cmp byte [bx], 'D'
 		je .down
 
-		StringCompare bx, DirectionStrings + 3 * string_size
+		StringCompare bx, DirectionStrings, 3
 		je .down
 
 
@@ -130,18 +130,18 @@ check_door:
 	je .door
 	cmp al, 4
 	je .door
-		PrintString OpenDoorStrings + 1 * string_size
+		WriteLine OpenDoorStrings, 1
 		jmp .return
 	.door:
-		PrintString OpenDoorStrings + 2 * string_size
+		WriteLine OpenDoorStrings, 2
 		call roll_d20
 		cmp bx, [Character.str]
 		jl .advance
-			PrintString OpenDoorStrings + 3 * string_size
+			WriteLine OpenDoorStrings, 3
 			call pass
 			jmp .return
 		.advance:
-			PrintString OpenDoorStrings + 4 * string_size
+			WriteLine OpenDoorStrings, 4
 			call advance_position
 			jmp .return
 	.return:

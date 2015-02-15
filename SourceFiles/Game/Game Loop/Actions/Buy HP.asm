@@ -34,9 +34,8 @@
 ;       
 ;*******************************************************************************
 buy_hp:
-	PrintString BuyHPStrings + 0 * string_size
-	call new_line
-	call get_user_input
+	WriteLine BuyHPStrings, 0
+	ReadLine
 	call parse_int
 	mov ax, 200
 	mul bx
@@ -45,13 +44,13 @@ buy_hp:
 		call remove_gold
 		mov ax, bx
 		call add_hp
-		PrintString BuyHPStrings + 1 * string_size
+		WriteLine BuyHPStrings, 1
 		call show_hp
 		call print_attributes
 		call pass
 		jmp .return
 	.no:
-		PrintString BuyHPStrings + 3 * string_size
+		WriteLine BuyHPStrings, 3
 		jmp buy_hp
 	.return:
 ret

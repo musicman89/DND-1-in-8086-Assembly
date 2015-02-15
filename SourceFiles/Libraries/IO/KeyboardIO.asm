@@ -104,7 +104,7 @@ get_user_input:
 ret
 
 invalid_input:
-	PrintString InvalidInputString
+	WriteLine InvalidInputString
     call wait_key
 ret
 

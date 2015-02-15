@@ -116,8 +116,8 @@ ret
 monster_attack:
 	call get_current_monster
 	add bx, [Monsters + bx + monster.name]
-	PrintString bx
-	PrintString WatchItString
+	Write bx
+	WriteLine WatchItString
 
 	mov ax, 10
 	call check_inventory
@@ -175,12 +175,12 @@ monster_killed:
 
 	mov dx, [bx + monster.gold]
 	mov [Character.gold], dx
-	PrintString MonsterKilledStrings + 0 * string_size
-	PrintString bx + monster.name
+	Write MonsterKilledStrings, 0
+	WriteLine bx + monster.name
 	mov bx, dx
-	PrintString MonsterKilledStrings + 1 * string_size
+	Write MonsterKilledStrings, 1
 	call print_dec
-	PrintString MonsterKilledStrings + 2 * string_size
+	WriteLine MonsterKilledStrings, 2
 
 	mov bx, [CurrentMonster.y]
 	mov bx, [rows + bx]
@@ -190,9 +190,9 @@ monster_killed:
 	mov byte[CurrentMonster.y], 0
 	mov bx, [Character.gold]
 
-	PrintString MonsterKilledStrings + 3 * string_size
+	Write MonsterKilledStrings, 3
 	call print_dec
-	PrintString MonsterKilledStrings + 4 * string_size
+	WriteLine MonsterKilledStrings, 4
 	pop bx
 
 	cmp byte [Character.continues],1
@@ -230,7 +230,7 @@ survive_with_constitution:
 ret
 
 dead:
-	PrintString DeadString
+	WriteLine DeadString
 	cli
 	hlt
 ret
@@ -244,7 +244,7 @@ hp_check:
 	jg .live
 		call dead
 	.live:
-	PrintString HPCheckString
+	WriteLine HPCheckString
 ret
 
 hp_low:
@@ -254,9 +254,10 @@ hp_low:
 		jmp .return
 
 	.watch_it:
-		PrintString HPLowString
+		Write HPLowString
 		mov bx, [Character.hp]
 		call print_dec
+		call new_line
 	.return:
 ret
 
@@ -364,10 +365,9 @@ check_for_monsters:
 				jnz .mloop
 		dec dl
 		jnz .zloop
-	PrintString CheckForMonstersStrings + 0 * string_size
-	call new_line
-	PrintString CheckForMonstersStrings + 1 * string_size
-	call get_user_input
+	WriteLine CheckForMonstersStrings, 0
+	WriteLine CheckForMonstersStrings, 1
+	ReadLine
 	StringCompareInsensitive bx, YesString
 	je .reset
 		cli
@@ -378,27 +378,27 @@ check_for_monsters:
 ret
 
 monster_hit:
-	PrintString MonsterHitStrings + 0 * string_size
+	WriteLine MonsterHitStrings, 0
 	call get_current_monster
 	mov cx, [Monsters + bx + monster.str]
 	call random_int
 	inc bx
 	sub [Character.hp], bx
-	PrintString MonsterHitStrings + 1 * string_size
+	Write MonsterHitStrings, 1
 	mov bx, [Character.hp]
 	call print_dec
 ret
 
 monster_hit_no_damage:
-	PrintString MonsterHitNoDamageString
+	WriteLine MonsterHitNoDamageString
 ret
 
 monster_miss:
-	PrintString MonsterMissedString
+	WriteLine MonsterMissedString
 ret
 
 monster_trapped:
-	PrintString MonsterTrappedString
+	WriteLine MonsterTrappedString
 	mov byte[CurrentMonster.status], -1
 	call get_current_monster
 	mov word[Monsters + bx + monster.gold], 0

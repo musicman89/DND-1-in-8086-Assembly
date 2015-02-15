@@ -41,8 +41,8 @@ ret
 ;       
 ;*******************************************************************************
 get_character_name:
-	PrintString PlayerNameInputString 
-	call get_user_input
+	Write PlayerNameInputString 
+	ReadLine
 	call string_length
 	test cx, cx
 	je get_character_name 
@@ -50,7 +50,7 @@ get_character_name:
 
 	StringCompare InputStringBuffer, PlayerNameShavs
 	je .return 		
-		PrintString WhoSaidString
+		WriteLine WhoSaidString
 		call get_key
 		jmp get_character_name
 	.return:
@@ -221,19 +221,19 @@ ret
 ;       
 ;*******************************************************************************
 set_character_class:
-	PrintString ClassStrings + 0 * string_size
-	PrintString ClassStrings + 1 * string_size
-	PrintString ClassStrings + 2 * string_size
+	WriteLine ClassStrings, 0 
+	WriteLine ClassStrings, 1
+	WriteLine ClassStrings, 2
 	call get_user_input
 	StringToUpper InputStringBuffer
 	
-	StringCompareInsensitive InputStringBuffer, Classes + 0 * string_size
+	StringCompareInsensitive InputStringBuffer, Classes, 0 
 	je .reroll
-	StringCompareInsensitive InputStringBuffer, Classes + 2 * string_size
+	StringCompareInsensitive InputStringBuffer, Classes, 2
 	je .cleric
-	StringCompareInsensitive InputStringBuffer, Classes + 1 * string_size
+	StringCompareInsensitive InputStringBuffer, Classes, 1 
 	je .fighter
-	StringCompareInsensitive InputStringBuffer, Classes + 3 * string_size
+	StringCompareInsensitive InputStringBuffer, Classes, 3
 	je .wizard
 	jmp set_character_class
 	.cleric:
@@ -317,8 +317,8 @@ ret
 ;       
 ;*******************************************************************************
 list_equipment:
-	PrintString EQListString
-	call get_user_input
+	Write EQListString
+	ReadLine
 	StringCompareInsensitive InputStringBuffer, NoString
 	je .return
 		mov cl, byte[Character.itemCount]
@@ -333,8 +333,7 @@ list_equipment:
 			mov bx, item_size
 			mul bx
 			add ax, Items + item.name
-			PrintString ax
-			call new_line
+			WriteLine ax
 			dec cx
 		jnz .loop
 	.return:
@@ -368,16 +367,15 @@ ret
 ;       
 ;*******************************************************************************
 print_characteristics:
-	PrintString YourCharacteristicsString
-	PrintString Character.name
-	call new_line
+	Write YourCharacteristicsString
+	WriteLine Character.name
 	mov bx, word[Character.hp]
 	cmp bx, 1
 	jg .healthy
 		mov word[Character.hp], 2
 		mov bx, 2
 	.healthy:
-	PrintString HitPointsString
+	Write HitPointsString
 	call print_dec
 	call new_line
 	call new_line

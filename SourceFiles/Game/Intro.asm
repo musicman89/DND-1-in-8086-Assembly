@@ -1,7 +1,7 @@
 intro:
-	PrintString TitleString	+ 0 * string_size		
-	PrintString TitleString	+ 1 * string_size	
-	PrintString TitleString	+ 2 * string_size	
+	WriteLine TitleString, 0 	
+	WriteLine TitleString, 1 	
+	WriteLine TitleString, 2 	
 	call new_line	
 
 	call instructions
@@ -41,8 +41,8 @@ ret
 ;       
 ;*******************************************************************************
 instructions:
-	PrintString NeedInstructionsString	
-	call get_user_input
+	Write NeedInstructionsString	
+	ReadLine
 	StringToUpper InputStringBuffer
 	StringCompareInsensitive InputStringBuffer, YesString
 	je .yes_instructions
@@ -60,7 +60,7 @@ instructions:
 	jmp instructions
 
 	.yes_instructions:
-		PrintString WhoSaidString
+		WriteLine WhoSaidString
 		call wait_key
 		ret
 	.no_instructions:  
@@ -99,8 +99,8 @@ ret
 ;       
 ;*******************************************************************************
 new_or_old:
-	PrintString NoInstructionsString
-	call get_user_input
+	WriteLine NoInstructionsString
+	ReadLine
 	StringCompareInsensitive InputStringBuffer, OldGameString
 	je .old
 		call get_dungeon_num
@@ -146,8 +146,9 @@ ret
 ;   Exceptions:
 ;       
 ;*******************************************************************************
-get_dungeon_num	PrintString DungeonNumberString
-	call get_user_input
+get_dungeon_num	
+	Write DungeonNumberString
+	ReadLine
 	call parse_int
 	test bx, bx
 	jnz .return
@@ -187,8 +188,8 @@ ret
 ;       
 ;*******************************************************************************
 get_continues:
-	PrintString ResetContinuesString
-	call get_user_input
+	Write ResetContinuesString
+	ReadLine
 	call parse_int
 	cmp bx, 1
 	jl .fail

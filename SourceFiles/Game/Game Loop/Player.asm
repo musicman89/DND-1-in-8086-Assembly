@@ -87,9 +87,9 @@ print_attributes:
 		shl bx, cl
 		pop cx
 		add bx, CharacterAttributeNames
-		call print_string
+		Write bx
 
-		PrintString Space
+		Write Space
 		mov bx, cx
 		sub bx, 1
 		shl bx, 1
@@ -174,7 +174,7 @@ add_to_inventory:
 ret
 
 die:
-
+	call dead
 ret
 
 lose_hp:
@@ -237,7 +237,7 @@ ret
 ;       
 ;*******************************************************************************
 show_gold:
-	PrintString GPString
+	Write GPString
 	mov bx, [Character.gold]
 	call print_dec
 	call new_line
@@ -264,7 +264,7 @@ ret
 ;       
 ;*******************************************************************************
 show_hp:
-	PrintString HPString
+	Write HPString
 	mov bx, [Character.hp]
 	call print_dec
 	call new_line
