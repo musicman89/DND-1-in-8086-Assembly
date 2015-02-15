@@ -1,4 +1,10 @@
 align 16
+Statistics:
+	.crit_damage dw 0
+	.damage dw 0
+	.armor dw 0
+	.weapon_range dw 0
+
 Character:
 	.name times 32 db 0
 	.class times 32 db 0

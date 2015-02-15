@@ -39,6 +39,17 @@ check_inventory:
 		pop bx
 ret
 
+get_current_monster:
+	push ax
+		mov bh, 0
+		mov bl, [CurrentMonster.type]
+		mov ax, monster_size
+		mul bx
+
+		mov bx, ax
+	pop ax
+ret
+
 ;********************************************************************************
 ;   print_attributes
 ;   Purpose:

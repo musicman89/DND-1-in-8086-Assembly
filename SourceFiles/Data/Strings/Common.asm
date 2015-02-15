@@ -274,4 +274,84 @@ PassStrings:
 NewString "SO YOU HAVE RETURNED"
 NewString "WANT TO BUY MORE EQUIPMENT"
 
+FightStrings:
+NewString "YOUR WEAPON IS "
+NewString "HP="
+
+MoveMonsterString: 
+NewString "MONSTER MOVED BACK"
+
+DidntWorkString:
+NewString "DIDN’T WORK"
+
+FoodFightStrings:
+NewString "FOOD ???.... WELL O.K."
+NewString "IS IT TO HIT OR DISTRACT"
+NewString "HIT" 
+NewString "THROW A-ABOVE,B-BELOW,L-LEFT,OR R-RIGHT OF THE MONSTER"
+
+MonsterTrappedKilledString:
+NewString "GOOD WORK THE MONSTER FELL INTO A TRAP AND IS DEAD"
+
+CheckHitStrings:
+NewString "TOTAL MISS"
+NewString "DIRECT HIT"
+NewString "HIT"
+NewString "YOU HIT HIM BUT NOT GOOD ENOUGH"
+
+FistFightStrings:
+NewString "DO YOU REALIZE YOU ARE BARE HANDED"
+NewString "DO YOU WANT TO MAKE ANOTHER CHOICE"
+NewString "O.K. PUNCH BITE SCRATCH HIT ........"
+NewString "NO GOOD ONE"
+NewString "TERRIBLE NO GOOD"
+NewString "GOOD A HIT"
+
+AttackWithSwordStrings:
+NewString "SWING"
+NewString "HE IS OUT OF RANGE"
+NewString "CRITICAL HIT"
+NewString "GOOD HIT"
+NewString "NOT GOOD ENOUGH"
+NewString "MISSED TOTALY"
+
+AttackWith2HandSwordStrings:
+NewString "SWHNG"
+NewString "HE IS OUT OF RANGE"
+NewString "CRITICAL HIT"
+NewString "HIT"
+NewString "HIT BUT ‘ WELL ENOUGH"
+NewString "MISSED TOTALY"
+
+DaggerFightStrings:
+NewString "YOU DONT HAVE A DGGER"
+NewString "HE IS OUT OF RANGE"
+NewString "CRITICAL HIT"
+NewString "HIT BUT NO DAMAGE"
+NewString "HIT"
+NewString "MISSED TOTALY"
+
+AttackWithMaceStrings:
+NewString "SWING"
+NewString "HE IS OUT OF RANGE"
+NewString "CRITICAL HIT"
+NewString "HIT"
+NewString "HIT BUT NO DAMAGE"
+NewString "MISS"
+
+NoWeaponString:
+NewString "NO WEAPON FOUND"
+
+AttackWithCrossStrings:
+NewString "AS A CLUB OR SIGHT"
+NewString "SIGHT" 
+NewString "FAILED"
+NewString "THE MONSTER IS HURT"
+
+AttackWithOtherWeaponStrings:
+NewString "CRITICAL HIT"
+NewString "HIT"
+NewString "HIT BUT NO DAMAGE"
+NewString "MISS"
+
 StringBuffer times 256 db 0 

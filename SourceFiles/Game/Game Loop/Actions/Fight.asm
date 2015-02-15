@@ -1,400 +1,785 @@
 fight:
-; 03750 REM FIGHTING BACK
-; 03760 PRINT "YOUR WEAPON IS ";I$(J)
-; 03770 IF K=0 THEN 01590
-; 03780 PRINT B$(K)
-; 03790 PRINT "HP=";B(K,3)
-; 03800 IF J=0 THEN 04460 //Fists
-; 03810 IF J=1 THEN 04680 //Sword
-; 03820 IF J=2 THEN 04860 //2-H-Sword
-; 03830 IF J=3 THEN 05040 //Dagger
-; 03840 IF J=4 THEN 05270 //Mace
-; 03850 IF J>4 THEN 03870 //Other
-; 03860 GO TO 03880
+	PrintString FightStrings + 0 * string_size
+	mov bh, 0
+	mov bl, [Character.weapon]
+	mov ax, item_size
+	mul bx
+	mov bx, ax
+	PrintString [Items + bx + item.name]
+	call new_line
 
-; 03870 IF J<15 THEN 05450
+	mov bh, 0
+	mov bl, [CurrentMonster.type]
+	cmp bx, 0
+	je .return
+	mov ax, monster_size
+	mul bx
+	PrintString [Monsters + bx + monster.name]
+	call new_line
+
+	PrintString FightStrings + 1 * string_size
+	mov bx, [Character.hp]
+	call print_dec
+	call new_line
+
+	mov bl, [Character.weapon]
+	cmp bl, 0
+	jg .not_fists
+		call fist_fight
+	.not_fists:
+	cmp bl, 1
+	jg .not_sword
+		call attack_with_sword
+	.not_sword:
+	cmp bl, 2
+	jg .no_2_hand
+		call attack_with_2_handed_sword
+	.no_2_hand:
+	cmp bl, 3
+	jg .no_dagger
+		call attack_with_dagger
+	.no_dagger:
+	cmp bl, 4
+	jg .other
+		call food_fight
+		jmp .return
+	.other:
+	cmp bl, 15
+	jg .return
+		call check_other_weapon
+	.return:
+		cmp byte [CurrentMonster.hit], 0
+		jg .no_pass
+		call pass
+	.no_pass:
 ret
 
 move_monster:
-; Monster Moved
-; 04220 PRINT "MONSTER MOVED BACK"
-; 04230 LET D(F1,F2)=0
-; 04240 LET F1=F1+S
-; 04250 LET F2=F2+T
-; 04260 LET D(F1,F2)=5
-; 04270 GO TO 04150
+	PrintString MoveMonsterString
+	call new_line
+	mov bl, [CurrentMonster.y]
+	mov bh, 0
+	mov ax, [rows + bx]
+	mov bl, [CurrentMonster.x]
+	add bx, ax
+
+	mov byte [CurrentDungeon + bx], 0
+
+	add [CurrentMonster.x], cl 
+	add [CurrentMonster.y], dl
+
+	mov bl, [CurrentMonster.y]
+	mov bh, 0
+	mov ax, [rows + bx]
+	mov bl, [CurrentMonster.x]
+	add bx, ax
+
+	mov byte [CurrentDungeon + bx], 5
 ret
 
 push_monster:
-; Try Push
-; 04100 IF Z5=1 THEN 04120
-; 04110 IF RND(0)>.5 THEN 04140
-; 04120 IF D(F1+S,F2+T)=0 THEN 04220
-; 04130 IF D(F1+S,F2+T)=2 THEN 04280
-; 04140 PRINT "DIDN’T WORK"
-; 04150 FOR M=1 TO X
-; 04160 IF Z5=Q THEN 07000
-; 04170 IF W(M)=15 THEN 04190
-; 04180 NEXT M
-; 04190 LET W(M)=0
-; 04200 LET J=0
-; 04210 GO TO 07000
+	call get_user_input
+	call to_upper
+	mov al, [bx]
+	cmp al, 'B'
+	je .below
+
+	cmp al, 'A'
+	je .above
+
+	cmp al, 'L'
+	je .left
+		mov dl, 0
+		mov cl, 1
+		jmp .check_tile
+
+	.below:
+		mov dl, -1
+		mov cl, 0
+		jmp .check_tile
+
+	.above:
+		mov dl, 1
+		mov cl, 0
+		jmp .check_tile
+
+	.left:
+		mov dl, 0
+		mov cl, -1
+
+	.check_tile:
+		mov bl, [CurrentMonster.y]
+		add bl, dl
+		mov bh, 0
+		mov ax, [rows + bx]
+		mov bl, [CurrentMonster.x]
+		add bl, cl
+		add bx, ax
+		mov ax, [CurrentDungeon + bx]
+		cmp ax, 0
+		jne .try_trap
+			call move_monster
+			jmp .return
+
+		.try_trap:
+		cmp ax, 2
+		jne .did_not_work
+			call monster_trapped_and_killed
+			jmp .return
+
+		.did_not_work:
+			PrintString DidntWorkString
+			call new_line
+		.return:
 ret
 
 food_fight:
-; Food Fight
-; 03880 PRINT "FOOD ???.... WELL O.K."
-; 03890 PRINT "IS IT TO HIT OR DISTRACT";
-; 03900 INPUT Q$
-; 03910 IF Q$="HIT" THEN 04330
-; 03920 PRINT "THROW A-ABOVE,B-BELOW,L-LEFT,OR R-RIGHT OF THE MONSTER";
-; 03930 LET Z5=0
-; Push Monster
-; 03940 INPUT Q$
-; 03950 IF Q$="B" THEN 04010
-; 03960 IF Q$="A" THEN 04040
-; 03970 IF Q$="L" THEN 04070
-; 03980 LET S=0
-; 03990 LET T=1
-; 04000 GO TO 04120
+	PrintString FoodFightStrings + 0 * string_size
+	call new_line
 
-; 04010 LET S=-1
-; 04020 LET T=0
-; 04030 GO TO 04120
+	PrintString FoodFightStrings + 1 * string_size
+	call new_line
 
-; 04040 LET S=1
-; 04050 LET T=0
-; 04060 GO TO 04120
+	call get_user_input
+	StringCompareInsensitive bx, FoodFightStrings + 2 * string_size
+	jne .distract
+		call check_hit
+		jmp .remove_food
+	.distract:
+		PrintString FoodFightStrings + 3 * string_size
+		call new_line
 
-; 04070 LET S=0
-; 04080 LET T=-1
-; 04090 GO TO 04120
+		call push_monster
+
+	.remove_food:
+		mov ax, 15
+		call check_inventory
+
+		cmp ax, -1
+		je .return
+		call remove_from_inventory
+
+		mov byte [Character.weapon], 0
+	.return:
 ret
 
 
 monster_trapped_and_killed:
-; Monster Trapped and Killed
-; 04280 PRINT "GOOD WORK THE MONSTER FELL INTO A TRAP AND IS DEAD"
-; 04290 LET K1=-1
-; 04300 LET B(K,6)=0
-; 04310 GO TO 07000
+	PrintString MonsterTrappedKilledString
+	call new_line
+
+	mov byte[CurrentMonster.status], -1
+	mov bh, 0
+	mov bl, [CurrentMonster.type]
+	mov ax, monster_size
+	mul bx
+
+	mov word[Monsters + bx + monster.gold], 0
 ret
 
-
-; 04320 GO TO 04150
-
 check_hit:
-; 04330 IF INT(RND(0)*20)+1=20 THEN 04380
-; 04340 IF INT(RND(0)*20)+1>B(K,2)-C(2)/3 THEN 04410
-; 04350 IF INT(RND(0)*20)+1>10-C(2)/3 THEN 04440
-; 04360 PRINT "TOTAL MISS"
-; 04370 GO TO 04150
+	call roll_d20
+	cmp bx, 20
+	jne .no_crit
+		PrintString CheckHitStrings + 1 * string_size
+		call new_line
+		mov ax, [Character.str]
+		mov bx, 6
+		div bx
+		call get_current_monster
+		sub [Monsters + bx + monster.hp], ax
+		jmp .return
 
-; 04380 PRINT "DIRECT HIT"
-; 04390 LET B(K,3)=B(K,3)-INT(C(1)/6)
-; 04400 REM
-; 04410 PRINT "HIT"
-; 04420 LET B(K,3)=B(K,3)-INT(C(1)/8)
-; 04430 GO TO 04150
-; 04440 PRINT "YOU HIT HIM BUT NOT GOOD ENOUGH"
-; 04450 GO TO 04150
+	.no_crit:
+		mov cx, bx
+		call get_current_monster
+
+		mov ax, [Character.dex]
+		mov dx, 3
+		div dx
+
+		mov dx, [Monsters + bx + monster.dex]
+		
+		sub dx, ax
+
+	cmp bx, cx
+	jle .no_damage
+
+		PrintString CheckHitStrings + 2 * string_size	
+		call new_line	
+		mov ax, [Character.str]
+		mov dx, 8
+		div dx
+		sub [Monsters + bx + monster.hp], ax
+		jmp .return
+
+	.no_damage:
+		mov bx, 10
+		sub bx, ax
+	cmp bx, cx
+	jle .total_miss
+
+		PrintString CheckHitStrings + 3 * string_size
+		call new_line
+		jmp .return
+
+	.total_miss:
+		PrintString CheckHitStrings + 0 * string_size
+		call new_line
+	.return:
 ret 
 
 fist_fight:
-; Fist Fighting
-; 04460 REM FISTS
-; 04470 PRINT "DO YOU REALIZE YOU ARE BARE HANDED"
-; 04480 PRINT "DO YOU WANT TO MAKE ANOTHER CHOICE";
-; 04490 INPUT Q$
-; 04500 IF Q$="NO" THEN 04520
-; 04510 GO TO 01590
+	PrintString FistFightStrings + 0 * string_size
+	call new_line
 
-; 04520 PRINT "O.K. PUNCH BITE SCRATCH HIT ........"
-; 04530 FOR M=-1 TO 1
-; 04540 FOR N=-1 TO 1
-; 04550 IF D(G+M,H+N)=5 THEN 04610
-; 04560 NEXT N
-; 04570 NEXT M
-; 04580 PRINT "NO GOOD ONE"
-; 04590 GO TO 01590
+	PrintString FistFightStrings + 1 * string_size
+	call new_line
 
-; 04600 REM
-; 04610 IF INT(RND(0)*20)+1>B(K,2) THEN 04640
-; 04620 PRINT "TERRIBLE NO GOOD"
-; 04630 GO TO 07000
+	call get_user_input
+	StringCompareInsensitive bx, NoString
+	je .return
 
-; 04640 PRINT "GOOD A HIT"
-; 04650 LET B(K,3)=B(K,3)-INT(C(1)/6)
-; 04660 GO TO 01590
+	PrintString FistFightStrings + 2 * string_size
+	call new_line
+
+	cmp word [CurrentMonster.range], 1
+	jg .no_good
+		call roll_d20
+		mov cx, bx
+
+		call get_current_monster
+		cmp [Monsters + bx + monster.dex], cx
+		jg .hit
+			PrintString FistFightStrings + 4 * string_size
+			call new_line
+			jmp .return
+		.hit:
+			PrintString FistFightStrings + 5 * string_size
+			mov ax, [Character.str]
+			mov dx, 6
+			div dx
+
+			sub [Monsters + bx + monster.hp], ax
+	.no_good:
+		PrintString FistFightStrings + 3 * string_size
+		call new_line
+	.return:
 ret
 
 attack_with_sword:
-; Sword Fight
-; 04670 REM
-; 04680 PRINT "SWING"
-; 04690 GOSUB 08410
-; 04700 IF R1<2 THEN 04730
-; Out of Range
-; 04710 PRINT "HE IS OUT OF RANGE"
-; 04720 GO TO 07000
+	PrintString AttackWithSwordStrings + 0 * string_size
+	call new_line
 
-; 04730 IF R2=0 THEN 04840
-; 04740 IF R2=1 THEN 04820
-; 04750 IF R2=2 THEN 04790
-; 04760 PRINT "CRITICAL HIT"
-; 04770 LET B(K,3)=B(K,3)-INT(C(1)/2)
-; 04780 GO TO 01590
+	call range_and_hit_check
 
-; 04790 PRINT "GOOD HIT"
-; 04800 LET B(K,3)=B(K,3)-INT(C(1)*4/5)
-; 04810 GO TO 01590
+	cmp word[CurrentMonster.range], 2
+	jl .in_range
+		PrintString AttackWithSwordStrings + 1 * string_size
+		call new_line
+		jmp .return
+	.in_range:
+		mov bx, [CurrentMonster.hit]
+		cmp bx, 0
+		je .total_miss
 
-; 04820 PRINT "NOT GOOD ENOUGH"
-; 04830 GO TO 01590
+		cmp bx, 1
+		je .not_good_enough
 
-; 04840 PRINT "MISSED TOTALY"
-; 04850 GO TO 07000
+		cmp bx, 2
+		je .hit
+			PrintString AttackWithSwordStrings + 2 * string_size	
+			call new_line		
+			mov ax, [Character.str]
+			mov bx, 2
+			div bx
+			call get_current_monster
+
+			sub [Monsters + bx + monster.hp], ax
+
+		.hit:
+			PrintString AttackWithSwordStrings + 3 * string_size
+			call new_line
+			mov ax, [Character.str]
+			mov cl, 2
+			shl ax, cl
+
+			mov bx, 5
+			div bx
+
+			call get_current_monster
+
+			sub [Monsters + bx + monster.hp], ax
+
+		.not_good_enough:
+			PrintString AttackWithSwordStrings + 4 * string_size
+			call new_line
+		.total_miss:
+			PrintString AttackWithSwordStrings + 5 * string_size
+			call new_line
+		.return:
 ret 
 
 attack_with_2_handed_sword:
-; 2 Handed Sword Fight
-; 04860 PRINT "SWHNG"
-; 04870 GOSUB 08410
-; 04880 IF R1<2.1 THEN 04910
-; 04890 PRINT "HE IS OUT OF RANGE"
-; 04900 GO TO 07000
+	PrintString AttackWith2HandSwordStrings + 0 * string_size
+	call new_line
 
-; 04910 IF R2=0 THEN 05020
-; 04920 IF R2=1 THEN 05000
-; 04930 IF R2=2 THEN 04970
-; 04940 PRINT "CRITICAL HIT"
-; 04950 LET B(K,3)=B(K,3)-C(1)
-; 04960 GO TO 01590
+	call range_and_hit_check
 
-; 04970 PRINT "HIT"
-; 04980 LET B(K,3)=B(K,3)-INT(C(1)*5/7)
-; 04990 GO TO 01590
+	cmp word[CurrentMonster.range], 2
+	jl .in_range
+		PrintString AttackWith2HandSwordStrings + 1 * string_size
+		call new_line
+		jmp .return
+	.in_range:
+		mov bx, [CurrentMonster.hit]
+		cmp bx, 0
+		je .total_miss
 
-; 05000 PRINT "HIT BUT ‘ WELL ENOUGH"
-; 05010 GO TO 01590
+		cmp bx, 1
+		je .not_good_enough
 
-; 05020 PRINT "MISSED TOTALY"
-; 05030 GO TO 07000
+		cmp bx, 2
+		je .hit
+			PrintString AttackWith2HandSwordStrings + 2 * string_size	
+			call new_line		
+			mov ax, [Character.str]
+			call get_current_monster
+
+			sub [Monsters + bx + monster.hp], ax
+
+		.hit:
+			PrintString AttackWith2HandSwordStrings + 3 * string_size
+			call new_line
+			mov ax, [Character.str]
+			mov bx, 5
+			mul bx
+
+			mov bx, 7
+			div bx
+
+			call get_current_monster
+
+			sub [Monsters + bx + monster.hp], ax
+
+		.not_good_enough:
+			PrintString AttackWith2HandSwordStrings + 4 * string_size
+			call new_line
+		.total_miss:
+			PrintString AttackWith2HandSwordStrings + 5 * string_size
+			call new_line
+		.return:
 ret
 
 attack_with_dagger:
-; Dagger Fight
-; 05040 FOR M=1 TO X
-; 05050 IF W(M)=3 THEN 05090
-; 05060 NEXT M
-; 05070 PRINT "YOU DONT HAVE A DGGER"
-; 05080 GO TO 07000
+	mov ax, 3
+	call check_inventory
+	cmp ax, 0
+	jg .has_dagger
+		PrintString DaggerFightStrings + 0 * string_size
+		call new_line
+		jmp .return
+	.has_dagger:
+	call range_and_hit_check
 
-; 05090 GOSUB 08410
-; 05100 IF R1>5 THEN 04710
-; 05110 IF R2=0 THEN 05200
-; 05120 IF R2=1 THEN 05220
-; 05130 IF R2=2 THEN 05240
-; 05140 PRINT "CRITICAL HIT"
-; 05150 LET B(K,3)=B(K,3)-INT(C(1)*3/10)
-; 05160 IF R1<2 THEN 05190
-; 05170 LET W(J)=0
-; 05180 LET J=0
-; 05190 GO TO 07000
+	cmp word[CurrentMonster.range], 5
+	jl .in_range
+		PrintString DaggerFightStrings + 1 * string_size
+		call new_line
+		jmp .return
+	.in_range:
+		cmp word [CurrentMonster.range], 2
+		jl .no_throw
+			call remove_from_inventory
+			mov byte[Character.weapon], 0
+		.no_throw:
+		mov bx, [CurrentMonster.hit]
+		cmp bx, 0
+		je .total_miss
 
-; 05200 PRINT "MISSED TOTALY"
-; 05210 GO TO 05160
+		cmp bx, 1
+		je .not_good_enough
 
-; 05220 PRINT "HIT BUT NO DAMAGE"
-; 05230 GO TO 05160
+		cmp bx, 2
+		je .hit
+			PrintString DaggerFightStrings + 2 * string_size	
+			call new_line		
+			mov ax, [Character.str]
+			mov bx, 3
+			mul bx
 
-; 05240 PRINT "HIT"
-; 05250 LET B(K,3)=B(K,3)-INT(C(1)/4)
-; 05260 GO TO 05160
+			mov bx, 10
+			div bx
+			call get_current_monster
+
+			sub [Monsters + bx + monster.hp], ax
+
+		.hit:
+			PrintString DaggerFightStrings + 3 * string_size
+			call new_line
+			mov ax, [Character.str]
+			mov cl, 2
+			shr bx, cl
+
+			call get_current_monster
+
+			sub [Monsters + bx + monster.hp], ax
+
+		.not_good_enough:
+			PrintString DaggerFightStrings + 4 * string_size
+			call new_line
+		.total_miss:
+			PrintString DaggerFightStrings + 5 * string_size
+			call new_line
+		.return:
 ret
 
 atack_with_mace:
-; Mace Fight
-; 05270 PRINT "SWING"
-; 05280 GOSUB 08410
-; 05290 IF P0<2 THEN 04720
-; 05300 GO TO 04710
-; 05310 IF R2=0 THEN 05420
-; 05320 IF R2=1 THEN 05400
-; 05330 IF R2=2 THEN 05370
-; 05340 PRINT "CRITICAL HIT"
-; 05350 LET B(K,3)=B(K,3)-INT(C(1)*4/9)
-; 05360 GO TO 01590
+	PrintString AttackWithMaceStrings + 0 * string_size
+	call new_line
 
-; 05370 PRINT "HIT"
-; 05380 LET B(K,3)=B(K,3)-INT(C(0)*5/11)
-; 05390 GO TO 01590
+	call range_and_hit_check
 
-; 05400 PRINT "HIT BUT NO DAMAGE"
-; 05410 GO TO 01590
+	cmp word[CurrentMonster.range], 2
+	jl .in_range
+		PrintString AttackWithMaceStrings + 1 * string_size
+		call new_line
+		jmp .return
+	.in_range:
+		mov bx, [CurrentMonster.hit]
+		cmp bx, 0
+		je .total_miss
 
-; 05420 PRINT "MISS"
-; 05430 GO TO 07000
+		cmp bx, 1
+		je .not_good_enough
+
+		cmp bx, 2
+		je .hit
+			PrintString AttackWithMaceStrings + 2 * string_size	
+			call new_line	
+			mov ax, [Character.str]
+			mov cl, 4
+			shl ax, cl
+
+			mov bx, 9
+			div bx
+			call get_current_monster
+
+			sub [Monsters + bx + monster.hp], ax
+
+		.hit:
+			PrintString AttackWithMaceStrings + 3 * string_size
+			call new_line
+			mov ax, [Character.str]
+			mov bx, 5
+			mul bx
+
+			mov bx, 11
+			div bx
+
+			call get_current_monster
+
+			sub [Monsters + bx + monster.hp], ax
+
+		.not_good_enough:
+			PrintString AttackWithMaceStrings + 4 * string_size
+			call new_line
+		.total_miss:
+			PrintString AttackWithMaceStrings + 5 * string_size
+			call new_line
+		.return:
 ret
 
 check_other_weapon:
-; Check other Weapon
-; 05440 REM
-; 05450 FOR M=1 TO X
-; 05460 IF W(M)=J THEN 05500 
-; 05470 NEXT M
-; 05480 PRINT "NO WEAPON FOUND"
-; 05490 GO TO 01590
+	mov ah, 0
+	mov al, [Character.weapon]
+	call check_inventory
+
+	cmp ax, 0
+	jg .has_weapon
+		PrintString NoWeaponString
+		call new_line
+		jmp .return
+	.has_weapon:
+		call user_other_weapon
+		jmp .return
+	.return:
 ret
 
 user_other_weapon:
-; 05500 GOSUB 08410 // Range and Hit Check
-; 05510 IF J=5 THEN 05760 //Spear
-; 05520 IF J=6 THEN 05800 //Bow
-; 05530 IF J=7 THEN 05840 //Arrows
-; 05540 IF J=8 THEN 05880 //Leather Mail
-; 05550 IF J=9 THEN 05920 //Chain Mail
-; 05560 IF J=10 THEN 05960 //TLTE Mail
-; 05570 IF J=11 THEN 06000 //Rope
-; 05580 IF J=12 THEN 06040 //Spikes
-; 05590 IF J=13 THEN 06080 //Flask of Oil
+	call range_and_hit_check
+	mov ah, 0
+	mov al, [Character.weapon]
+	cmp al, 5
+	jne .no_spear
+		call throw_spear
+		jmp .return
+
+	.no_spear:
+	cmp al, 6
+	jne .no_bow
+		call attack_with_bow
+		jmp .return
+
+	.no_bow:
+	cmp al, 7
+	jne .no_arrow
+		call attack_with_arrows
+		jmp .return
+
+	.no_arrow:
+	cmp al, 8
+	jne .no_leather
+		call attack_with_leather_armor
+		jmp .return
+
+	.no_leather:
+	cmp al, 9
+	jne .no_chain
+		call attack_with_chain_armor
+		jmp .return
+
+	.no_chain:
+	cmp al, 10
+	jne .no_tlte
+		call attack_with_tlte_mail
+		jmp .return
+
+	.no_tlte:
+	cmp al, 11
+	jne .no_rope
+		call attack_with_rope
+		jmp .return
+
+	.no_rope:
+	cmp al, 12
+	jne .no_spikes
+		call attack_with_spikes
+		jmp .return
+
+	.no_spikes:
+	cmp al, 13
+	jne .cross
+		call attack_with_oil
+		jmp .return
+
+	.cross:
+		call attack_with_cross
+		jmp .return
+
+	.return:
 ret
 
 attack_with_cross:
-; Silver Cross
-; 05600 PRINT "AS A CLUB OR SIGHT";
-; 05610 INPUT Q$
-; 05620 IF Q$="SIGHT" THEN 05650
-; 05630 IF J=14 THEN 06120
-; 05640 GO TO 05480
+	PrintString AttackWithCrossStrings + 0 * string_size
+	call new_line
 
-; Sight of Cross
-; 05650 IF R1<10 THEN 05680
-; 05660 PRINT "FAILED"
-; 05670 GO TO 07000
+	call get_user_input
+	StringCompareInsensitive bx, AttackWithCrossStrings + 1 * string_size
+	je .sight
+		call club_with_cross
+		jmp .return
 
-; 05680 PRINT "THE MONSTER IS HURT"
-; 05690 LET R5=1/6
-; 05700 IF K=2 THEN 06200
-; 05710 IF K=10 THEN 06200
-; 05720 IF K=4 THEN 06200
-; 05730 GOTO 06260
+	.sight:
+		cmp byte [Character.weapon], 14
+		je .has_weapon			
+			PrintString NoWeaponString
+			call new_line
+			jmp .return
+		.has_weapon:
+			cmp word [CurrentMonster.range], 10
+			jg .monster_hurt
+				PrintString AttackWithCrossStrings + 2 * string_size
+				call new_line
+				jmp .return
+			.monster_hurt:
+				mov word [Statistics.weapon_range], 10
+				PrintString AttackWithCrossStrings + 3 * string_size
+				call new_line
 
-; 05740 IF INT(RND(0)*0)>0 THEN 06260
-; 05750 GO TO 06200
-; Throw Spear
-; 05760 LET R3=10
-; 05770 LET R4=3/7
-; 05780 LET R5=5/11
-; 05790 GO TO 06160
+				mov word [Statistics.crit_damage], 16
+
+				mov bx, [CurrentMonster.type]
+				cmp bx, 2
+				je .crit
+
+				cmp bx, 4
+				je .crit
+
+				cmp bx, 10
+				jne .no_crit
+				.crit:
+					mov byte [CurrentMonster.hit], 3
+
+				.no_crit:
+					mov byte [CurrentMonster.hit], 1
+	.return:
+		call attack
+ret
+
+throw_spear:
+	mov word [Statistics.damage], 42
+
+	mov word [Statistics.crit_damage], 45
+
+	mov word [Statistics.weapon_range], 10
+
+	call attack
 ret
 
 attack_with_bow:
-; Shoot Bow
-; 05800 LET R3=15
-; 05810 LET R4=3/7
-; 05820 LET R5=5/11
-; 05821 FOR Z=1 TO 100
-; 05822 IF W(Z)=7 THEN 5825
-; 05823 NEXT Z
-; 05824 GO TO 6280
+	mov word [Statistics.damage], 42
 
-; 05825 J=7
-; 05826 W(Z)=0
-; 05830 GO TO 06160
+	mov word [Statistics.crit_damage], 45
 
-; Arrows
-; 05840 LET R3=1.5
-; 05850 LET R4=1/7
-; 05860 LET R5=1/5
-; 05870 GO TO 06160
+	mov word [Statistics.weapon_range], 15
+	mov ax, 7
+	call check_inventory
+	cmp ax, 0
+	jl .no_arrows
+		call remove_from_inventory
+		call attack
+	.no_arrows:
+ret
+
+attack_with_arrows:
+	mov word [Statistics.damage], 14
+
+	mov word [Statistics.crit_damage], 20
+
+	mov word [Statistics.weapon_range], 2
+
+	call attack
 ret
 
 attack_with_leather_armor:
-; Leather Mail
-; 05880 LET R3=4
-; 05890 LET R4=1/10
-; 05900 LET R5=1/8
-; 05910 GO TO 06160
+	mov word [Statistics.damage], 10
+
+	mov word [Statistics.crit_damage], 13
+
+	mov word [Statistics.weapon_range], 4
+
+	call attack
 ret
 
 attack_with_chain_armor:
-; Chain Mail
-; 05920 LET R3=4
-; 05930 LET R4=1/7
-; 05940 LET R5=1/6
-; 05950 GO TO 06160
+	mov word [Statistics.damage], 14
+
+	mov word [Statistics.crit_damage], 17
+
+	mov word [Statistics.weapon_range], 4
+
+	call attack
 ret
 
 attack_with_tlte_mail:
-; TLTE Mail
-; 05960 LET R3=3
-; 05970 LET R4=1/8
-; 05980 LET R5=1/5
-; 05990 GO TO 06160
+	mov word [Statistics.damage], 13
+
+	mov word [Statistics.crit_damage], 20
+
+	mov word [Statistics.weapon_range], 3
+
+	call attack
 ret
 
 attack_with_rope:
-; Rope
-; 06000 LET R3=5
-; 06010 LET R4=1/9
-; 06020 LET R5=1/6
-; 06030 GO TO 06160
+	mov word [Statistics.damage], 11
+
+	mov word [Statistics.crit_damage], 17
+
+	mov word [Statistics.weapon_range], 5
+
+	call attack
 ret
 
 attack_with_spikes:
-; Spikes
-; 06040 LET R3=8
-; 06050 LET R4=1/9
-; 06060 LET R5=1/4
-; 06070 GO TO 06160
+	mov word [Statistics.damage], 11
+
+	mov word [Statistics.crit_damage], 25
+
+	mov word [Statistics.weapon_range], 8
+
+	call attack
 ret 
 
 attack_with_oil:
-; Flask of Oil
-; 06080 LET R3=6
-; 06090 LET R4=1/3
-; 06100 LET R5=2/3
-; 06110 GO TO 06160
+	mov word [Statistics.damage], 33
+
+	mov word [Statistics.crit_damage], 66
+
+	mov word [Statistics.weapon_range], 6
+
+	call attack
 ret
 
 club_with_cross:
-; Club with Cross
-; 06120 LET R3=1.5
-; 06130 LET R4=1/3
-; 06140 LET R5=1/2
-; 06150 GO TO 06160
+	mov word [Statistics.damage], 33
+
+	mov word [Statistics.crit_damage], 50
+
+	mov word [Statistics.weapon_range], 2
+
+	call attack
 ret
 
 attack:
-; Attack
-; 06160 IF R1>R3 THEN 04710 //Out of Range?
-; 06170 IF R2=0 THEN 06280 //Miss
-; 06180 IF R2=1 THEN 06260 //Hit No Damage
-; 06190 IF R2=2 THEN 06230 //Hit
-; 06200 PRINT "CRITICAL HIT"
-; 06210 LET B(K,3)=B(K,3)-INT(C(1)*R5)
-; 06220 GO TO 06300
+	mov bx, [CurrentMonster.range]
+	cmp bx, [Statistics.weapon_range]
+	jl .in_range
 
-; 06230 PRINT "HIT"
-; 06240 LET B(K,3)=B(K,3)-INT(C(1)*R4)
-; 06250 GO TO 06300
+	.in_range:
+		mov bx, [CurrentMonster.hit]
+		cmp bx, 0
+		je .miss
 
-; 06260 PRINT "HIT BUT NO DAMAGE"
-; 06270 GO TO 06300
+		cmp bx, 1
+		je .hit_no_damage
 
-; 06280 PRINT "MISS"
-; 06290 GO TO 06300
+		cmp bx, 2
+		je .hit
+			PrintString AttackWithOtherWeaponStrings + 0 * string_size
+			call new_line
+			mov ax, [Statistics.crit_damage]
+			jmp .do_damage
 
-; 06300 IF W(J)=14 THEN 07000 //If Cross go to the pass
-; 06310 FOR M=1 TO X
-; 06320 IF W(M)=J THEN 06340 //Remove Item
-; 06330 NEXT M
-; 06340 LET W(M)=0 
-; 06350 IF J<>7 THEN 06360 //If bow don’t switch
-; 06355 GO TO 06370
+		.hit:
+			PrintString AttackWithOtherWeaponStrings + 1 * string_size
+			call new_line
+			mov ax, [Statistics.damage]
 
-; 06360 LET J=0
-; 06370 IF R2>0 THEN 01590  //Get Command 
-; 06380 GO TO 07000
+		.do_damage:
+			mov bx, [Character.str]
+			mul bx
+			mov bx, 100
+			div bx
+			call get_current_monster
+
+			sub [Monsters + bx + monster.hp], ax
+			jmp .check_and_remove
+		.hit_no_damage:
+			PrintString AttackWithOtherWeaponStrings + 2 * string_size
+			call new_line
+			jmp .check_and_remove
+			
+		.miss:
+			PrintString AttackWithOtherWeaponStrings + 3 * string_size
+			call new_line
+			jmp .check_and_remove
+
+		.check_and_remove:
+			cmp byte [Character.weapon], 14
+			je .return
+
+			mov ah, 0
+			mov al, [Character.weapon]
+			cmp ax, 7
+			je .no_switch
+				mov byte [Character.weapon], 0
+			.no_switch:
+				call check_inventory
+				cmp ax, 0
+				jl .return
+				call remove_from_inventory
+
+			.return:
 ret
