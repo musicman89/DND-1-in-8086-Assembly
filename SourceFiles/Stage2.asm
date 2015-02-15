@@ -34,14 +34,12 @@ boot_drive db 0
 	%include "../Test/Tests.asm"
 %endif
 
-%include "Game/Setup.asm"
 %include "Game/Intro.asm"
 %include "Game/Roll Character.asm"
 %include "Game/Shop.asm"
 %include "Game/Load Game.asm"
 %include "Game/Game Loop.asm"
 %include "Game/Game Loop/Player.asm"
-%include "Game/Game Loop/Instructions.asm"
 %include "Game/Game Loop/Get Command.asm"
 %include "Game/Game Loop/Actions/Buy HP.asm"
 %include "Game/Game Loop/Actions/Buy Magic.asm"

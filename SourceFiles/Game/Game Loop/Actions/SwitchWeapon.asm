@@ -29,7 +29,7 @@
 ;       
 ;*******************************************************************************
 switch_weapon:
-	PrintString SwitchWeaponStrings + 0 * string_size
+	WriteLine SwitchWeaponStrings, 0
 	.loop:
 		call get_user_input
 		cmp bx, 0
@@ -40,9 +40,9 @@ switch_weapon:
 		cmp ax, 0
 		jge .switch
 
-		PrintString SwitchWeaponStrings + 1 * string_size
+		WriteLine SwitchWeaponStrings, 1
 		jmp .loop
 	.switch:
-		PrintString SwitchWeaponStrings + 2 * string_size
+		WriteLine SwitchWeaponStrings, 2
 		mov byte [Character.weapon], bl
 ret

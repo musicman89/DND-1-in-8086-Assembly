@@ -35,23 +35,21 @@ game_loop_welcome:
 	call new_line
 	call new_line
 
-	PrintString WelcomeStrings + 0 * string_size
+	WriteLine WelcomeStrings, 0
 	mov bx, [DungeonNumber]
 	call print_dec
 
-	call new_line
-	PrintString WelcomeStrings + 1 * string_size
+	Write WelcomeStrings, 1
 	mov bh, 0
 	mov bl, [Character.x]
 	call print_dec
-	PrintString WelcomeStrings + 2 * string_size
+	Write WelcomeStrings, 2 
 	mov bl, [Character.y]
 	call print_dec
-	PrintString WelcomeStrings + 3 * string_size
-	call new_line
+	WriteLine WelcomeStrings, 3 
 	call wait_key
 ret
 
 quit:
-
+	jmp boot
 ret

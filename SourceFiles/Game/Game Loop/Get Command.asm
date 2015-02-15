@@ -1,25 +1,21 @@
 get_command:
-	PrintString CommandStrings + 0 * string_size
-	call get_user_input
+	WriteLine CommandStrings, 0
+	ReadLine
 	StringCompareInsensitive YesString, bx
 	jne .no
-		PrintString CommandStrings + 1 * string_size
-		call new_line
+		WriteLine CommandStrings, 1
 
-		PrintString CommandStrings + 2 * string_size
-		call new_line
+		WriteLine CommandStrings, 2
 
-		PrintString CommandStrings + 3 * string_size
-		call new_line
+		WriteLine CommandStrings, 3
 
-		PrintString CommandStrings + 4 * string_size
-		call new_line
+		WriteLine CommandStrings, 4
 	.no:
 ret
 
 get_command_from_user:	
-	PrintString CommandStrings + 5 * string_size
-	call get_user_input
+	Write CommandStrings, 5
+	ReadLine
 	cmp bx, 12
 	jg .fail
 	jl .continue
@@ -86,7 +82,7 @@ get_command_from_user:
 		call pass
 		jmp .return
 	.fail:
-		PrintString CommandStrings + 6 * string_size
+		WriteLine CommandStrings, 6
 		call wait_key
 		jmp get_command_from_user
 	.return:

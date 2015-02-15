@@ -16,12 +16,12 @@ pass:
 	jne .return
 	cmp byte [Character.y], 12
 	jne .return
-		PrintString PassStrings + 0 * string_size
+		WriteLine PassStrings, 0
 		cmp word [Character.gold], 100
 		jl .return
 		sub word [Character.gold], 100
 
-		PrintString PassStrings + 1 * string_size
+		WriteLine PassStrings, 1
 		call get_user_input
 		StringCompareInsensitive bx, YesString
 		jne .return

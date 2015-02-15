@@ -35,24 +35,24 @@
 ;       
 ;*******************************************************************************
 use_magic:
-	PrintString UseMagicStrings + 0 * string_size
+	WriteLine UseMagicStrings, 0
 	cmp byte [Character.weapon], 0
 	jne .hasWeapon
-	StringCompareInsensitive Character.class, Classes + 2 * string_size
+	StringCompareInsensitive Character.class, Classes, 2
 	jne .wizard
 		call use_cleric_spell
 		jmp .return
 	.wizard:
-	StringCompareInsensitive Character.class, Classes + 3 * string_size
+	StringCompareInsensitive Character.class, Classes, 3
 	jne .none
 		call user_wizard_spell
 		jmp .return
 	.none:
-		PrintString + 2 * string_size
+		WriteLine UseMagicStrings, 2
 		call pass
 		jmp .return
 	.hasWeapon:
-		PrintString UseMagicStrings + 1 * string_size
+		WriteLine UseMagicStrings, 1
 		call pass
 	.return:
 ret
@@ -119,9 +119,8 @@ ret
 ;       
 ;*******************************************************************************
 use_cleric_spell:
-	PrintString UseMagicStrings + 3 * string_size
-	call new_line
-	call get_user_input
+	WriteLine UseMagicStrings, 3
+	ReadLine
 	call parse_int
 	call check_cleric_spell
 	cmp ax, 0
@@ -162,7 +161,7 @@ use_cleric_spell:
 	jne .nope
 		call cleric_repel_undead
 	.nope:
-		PrintString UseMagicStrings + 4 * string_size
+		WriteLine UseMagicStrings, 4
 		call pass
 	.return:
 ret
@@ -200,7 +199,7 @@ cleric_repel_undead:
 	cmp byte [CurrentMonster.type], 10
 	jne .not
 	.undead:
-		PrintString DoneString
+		WriteLine DoneString
 		mov bl, [CurrentMonster.x]
 		add bl, [Character.x]
 		mov bh, 0
@@ -211,7 +210,7 @@ cleric_repel_undead:
 		call wait_key
 		call pass
 	.not:
-		PrintString FailedString
+		WriteLine FailedString
 		call wait_key
 	.return:
 ret
@@ -249,12 +248,12 @@ cleric_kill:
 	call random_int
 	cmp bx, 2
 	jg .fail
-		PrintString DoneString
+		WriteLine DoneString
 		mov byte [CurrentMonster.status], -1
 		call wait_key
 		call pass
 	.fail:
-		PrintString FailedString
+		WriteLine FailedString
 		call wait_key
 		call pass
 ret
@@ -282,7 +281,7 @@ ret
 ;       
 ;*******************************************************************************
 cleric_magic_missile_1:
-	PrintString DoneString
+	WriteLine DoneString
 	mov ax, [CurrentMonster.type]
 	mov bx, monster_size
 	mul bx
@@ -315,7 +314,7 @@ ret
 ;       
 ;*******************************************************************************
 cleric_magic_missile_2:
-	PrintString DoneString
+	WriteLine DoneString
 	mov ax, [CurrentMonster.type]
 	mov bx, monster_size
 	mul bx
@@ -348,7 +347,7 @@ ret
 ;       
 ;*******************************************************************************
 cleric_magic_missile_3:
-	PrintString DoneString
+	WriteLine DoneString
 	mov ax, [CurrentMonster.type]
 	mov bx, monster_size
 	mul bx
@@ -381,7 +380,7 @@ ret
 ;       
 ;*******************************************************************************
 cleric_cure_light_1:
-	PrintString DoneString
+	WriteLine DoneString
 	add word [Character.hp], 3
 	call wait_key
 	call pass
@@ -410,7 +409,7 @@ ret
 ;       
 ;*******************************************************************************
 cleric_cure_light_2:
-	PrintString DoneString
+	WriteLine DoneString
 	add word [Character.hp], 3
 	call wait_key
 	call pass
@@ -516,15 +515,15 @@ find:
 		pop dx
 		cmp [CurrentDungeon + bx], ax
 		jne .no_match
-			PrintString UseMagicStrings + 6 * string_size
+			Write UseMagicStrings, 6
 			mov bl, dl
 			call print_dec
 
-			PrintString UseMagicStrings + 7 * string_size
+			Write UseMagicStrings, 7
 			mov bl, cl
 			call print_dec
 
-			PrintString UseMagicStrings + 8 * string_size
+			WriteLine UseMagicStrings, 8
 		.no_match:
 		inc dl
 		cmp dl, dh
@@ -600,9 +599,8 @@ ret
 ;       
 ;*******************************************************************************
 user_wizard_spell:
-	PrintString UseMagicStrings + 9 * string_size
-	call new_line
-	call get_user_input
+	WriteLine UseMagicStrings, 9
+	ReadLine
 	call parse_int
 	call check_wizard_spell
 	cmp ax, 0
@@ -647,7 +645,7 @@ user_wizard_spell:
 	jne .nope
 		call wizard_change_0_1
 	.nope:
-		PrintString UseMagicStrings + 10 * string_size
+		WriteLine UseMagicStrings, 10
 		call pass
 	.return:
 ret
@@ -677,7 +675,7 @@ ret
 ;       
 ;*******************************************************************************
 wizard_magic_missile_1:
-	PrintString DoneString
+	WriteLine DoneString
 	mov cx, 11
 	call random_int
 	mov dx, bx
@@ -688,7 +686,7 @@ wizard_magic_missile_1:
 	mul bx
 	mov bx, ax
 	sub word [Monsters + bx + monster.hp], dx
-	PrintString UseMagicStrings + 11 * string_size
+	WriteLine UseMagicStrings, 11
 	call wait_key
 	call pass
 ret
@@ -717,7 +715,7 @@ ret
 ;       
 ;*******************************************************************************
 wizard_magic_missile_2:
-	PrintString DoneString
+	WriteLine DoneString
 	mov cx, 11
 	call random_int
 	mov dx, bx
@@ -728,7 +726,7 @@ wizard_magic_missile_2:
 	mul bx
 	mov bx, ax
 	sub word [Monsters + bx + monster.hp], dx
-	PrintString UseMagicStrings + 11 * string_size
+	WriteLine UseMagicStrings, 11
 	call wait_key
 	call pass
 ret
@@ -757,7 +755,7 @@ ret
 ;       
 ;*******************************************************************************
 wizard_magic_missile_3:
-	PrintString DoneString
+	WriteLine DoneString
 	mov cx, 11
 	call random_int
 	mov dx, bx
@@ -768,7 +766,7 @@ wizard_magic_missile_3:
 	mul bx
 	mov bx, ax
 	sub word [Monsters + bx + monster.hp], dx
-	PrintString UseMagicStrings + 11 * string_size
+	WriteLine UseMagicStrings, 11
 	call wait_key
 	call pass
 ret
@@ -799,13 +797,13 @@ ret
 ;       
 ;*******************************************************************************
 wizard_teleport:
-	PrintString UseMagicStrings + 12 * string_size
-	PrintString UseMagicStrings + 7 * string_size
-	call get_user_input
+	WriteLine UseMagicStrings, 12
+	WriteLine UseMagicStrings, 7
+	ReadLine
 	call parse_int
 	mov byte [Character.x], bl
-	PrintString UseMagicStrings + 8 * string_size
-	call get_user_input
+	WriteLine UseMagicStrings, 8 
+	ReadLine
 	call parse_int
 	mov byte [Character.x], bl
 	call pass
@@ -894,13 +892,13 @@ ret
 ;       
 ;*******************************************************************************
 wizard_change:
-	PrintString UseMagicStrings + 12 * string_size
-	PrintString UseMagicStrings + 7 * string_size
-	call get_user_input
+	WriteLine UseMagicStrings, 12
+	WriteLine UseMagicStrings, 7
+	ReadLine
 	call parse_int
 	mov cx, bx
-	PrintString UseMagicStrings + 8 * string_size
-	call get_user_input
+	Write UseMagicStrings, 8
+	ReadLine
 	call parse_int
 	shl bx, 1
 	mov bx, [rows + bx]
@@ -908,11 +906,11 @@ wizard_change:
 	mov cx, [CurrentDungeon + bx]
 	cmp cx, 1
 	jg .fail
-		PrintString DoneString
+		WriteLine DoneString
 		mov [CurrentDungeon + bx], al
 		jmp .return
 	.fail:
-		PrintString FailedString
+		WriteLine FailedString
 	.return:
 	call pass		
 	call wait_key
@@ -951,10 +949,10 @@ wizard_kill:
 	cmp bx, 1
 	jg .fail
 		mov byte[CurrentMonster.status], -1
-		PrintString DoneString
+		WriteLine DoneString
 		jmp .return;
 	.fail:
-		PrintString FailedString
+		WriteLine FailedString
 	.return:
 	call wait_key
 	call pass
@@ -995,6 +993,6 @@ wizard_push:
 		jne .no_force
 		mov ax, 1
 	.no_force:
-		PrintString UseMagicStrings + 13 * string_size
+		WriteLine UseMagicStrings, 13
 		call push_monster
 ret

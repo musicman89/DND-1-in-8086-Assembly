@@ -25,6 +25,7 @@ check_inventory:
 	push bx
 	mov bh, 0
 	mov bl, byte[Character.itemCount]
+	dec al
 	.loop:
 		cmp al, byte[Character.inventory + bx]
 		je .yes
@@ -43,6 +44,7 @@ get_current_monster:
 	push ax
 		mov bh, 0
 		mov bl, [CurrentMonster.type]
+		dec bl
 		mov ax, monster_size
 		mul bx
 
@@ -85,9 +87,9 @@ print_attributes:
 		shl bx, cl
 		pop cx
 		add bx, CharacterAttributeNames
-		call print_string
+		Write bx
 
-		PrintString Space
+		Write Space
 		mov bx, cx
 		sub bx, 1
 		shl bx, 1
@@ -126,6 +128,7 @@ remove_from_inventory:
 	push bx
 	mov bh, 0
 	push cx
+		inc al
 		mov bl, [Character.itemCount]
 		dec bl
 		mov cl, [Character.inventory + bx]
@@ -161,6 +164,7 @@ add_to_inventory:
 	push bx
 	mov bh, 0
 	push cx
+		inc al
 		mov bl, [Character.itemCount]
 		inc bl
 		mov [Character.inventory + bx], al
@@ -170,7 +174,7 @@ add_to_inventory:
 ret
 
 die:
-
+	call dead
 ret
 
 lose_hp:
@@ -233,7 +237,7 @@ ret
 ;       
 ;*******************************************************************************
 show_gold:
-	PrintString GPString
+	Write GPString
 	mov bx, [Character.gold]
 	call print_dec
 	call new_line
@@ -260,7 +264,7 @@ ret
 ;       
 ;*******************************************************************************
 show_hp:
-	PrintString HPString
+	Write HPString
 	mov bx, [Character.hp]
 	call print_dec
 	call new_line

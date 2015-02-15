@@ -31,13 +31,13 @@
 ;       
 ;*******************************************************************************
 buy_magic:
-	StringCompare Character.class, Classes + 2 * string_size
+	StringCompare Character.class, Classes, 2
 	je .cleric
 	
-	StringCompare Character.class, Classes + 3 * string_size
+	StringCompare Character.class, Classes, 3
 	je .wizard
 
-	PrintString BuyMagicStrings * 0 * string_size
+	WriteLine BuyMagicStrings, 0
 	jmp .return
 	.cleric:
 		call buy_cleric_spells
@@ -99,25 +99,18 @@ ret
 ;       
 ;*******************************************************************************
 buy_wizard_spells:
-	PrintString BuyWizardSpellsStrings + 0 * string_size
-	call new_line
-	call get_user_input
+	WriteLine BuyWizardSpellsStrings, 0
+	ReadLine
 	StringCompareInsensitive bx, YesString
 	jne .loop
-		PrintString BuyWizardSpellsStrings + 1 * string_size
-		call new_line
-		PrintString BuyWizardSpellsStrings + 2 * string_size
-		call new_line
-		PrintString BuyWizardSpellsStrings + 3 * string_size
-		call new_line
-		PrintString BuyWizardSpellsStrings + 4 * string_size	
-		call new_line
-		PrintString BuyWizardSpellsStrings + 5 * string_size	
-		call new_line
-		PrintString BuyWizardSpellsStrings + 6 * string_size	
-		call new_line
+		WriteLine BuyWizardSpellsStrings, 1
+		WriteLine BuyWizardSpellsStrings, 2
+		WriteLine BuyWizardSpellsStrings, 3
+		WriteLine BuyWizardSpellsStrings, 4
+		WriteLine BuyWizardSpellsStrings, 5
+		WriteLine BuyWizardSpellsStrings, 6
 	.loop:
-	call get_user_input
+	ReadLine
 	call parse_int
 	test bx, bx
 	jl .return
@@ -135,10 +128,10 @@ buy_wizard_spells:
 			mov bl, [Character.wizardSpellCount]
 			mov [Character.wizardSpells + bx], dx
 			inc byte [Character.wizardSpellCount]
-			PrintString BuyWizardSpellsStrings + 7 * string_size
+			WriteLine BuyWizardSpellsStrings, 7
 
 		.nope:
-			PrintString BuyWizardSpellsStrings + 8 * string_size
+			WriteLine BuyWizardSpellsStrings, 8
 	.return:
 ret
 
@@ -166,12 +159,11 @@ ret
 ;       
 ;*******************************************************************************
 show_wizard_spells:
-	PrintString BuyWizardSpellsStrings + 9 * string_size
-	call new_line
+	WriteLine BuyWizardSpellsStrings, 9
 	mov cl, [Character.wizardSpellCount]
 	mov bh, 0
 	.loop:
-		PrintString BuyWizardSpellsStrings + 10 * string_size
+		Write BuyWizardSpellsStrings, 10
 		mov bl, cl
 		mov bl, [Character.wizardSpells + bx]
 		call print_dec
@@ -227,23 +219,17 @@ ret
 ;       
 ;*******************************************************************************
 buy_cleric_spells:
-	PrintString BuyClericSpellsStrings + 0 * string_size
-	call new_line
-	call get_user_input
+	WriteLine BuyClericSpellsStrings, 0
+	ReadLine 
 	StringCompareInsensitive bx, YesString
 	jne .loop
-		PrintString BuyClericSpellsStrings + 1 * string_size
-		call new_line
-		PrintString BuyClericSpellsStrings + 2 * string_size
-		call new_line
-		PrintString BuyClericSpellsStrings + 3 * string_size
-		call new_line
-		PrintString BuyClericSpellsStrings + 4 * string_size	
-		call new_line
-		PrintString BuyClericSpellsStrings + 5 * string_size	
-		call new_line
+		WriteLine BuyClericSpellsStrings, 1
+		WriteLine BuyClericSpellsStrings, 2
+		WriteLine BuyClericSpellsStrings, 3
+		WriteLine BuyClericSpellsStrings, 4
+		WriteLine BuyClericSpellsStrings, 5
 	.loop:
-	call get_user_input
+	ReadLine
 	call parse_int
 	test bx, bx
 	jl .return
@@ -261,11 +247,9 @@ buy_cleric_spells:
 			mov bl, [Character.clericSpellCount]
 			mov [Character.clericSpells + bx], dx
 			inc byte [Character.clericSpellCount]
-			PrintString BuyClericSpellsStrings + 6 * string_size
-			call new_line
+			WriteLine BuyClericSpellsStrings, 6
 		.nope:
-			PrintString BuyClericSpellsStrings + 7 * string_size
-			call new_line
+			WriteLine BuyClericSpellsStrings, 7
 	.return:
 ret
 
@@ -295,17 +279,16 @@ ret
 ;       
 ;*******************************************************************************
 show_cleric_spells:
-	PrintString BuyClericSpellsStrings + 10 * string_size
-	call new_line
+	WriteLine BuyClericSpellsStrings, 10
 	mov cl, [Character.clericSpells]
 	mov bh, 0
 	.loop:
-		PrintString BuyClericSpellsStrings + 9 * string_size
+		Write BuyClericSpellsStrings, 9
 		mov bl, cl
 		mov bl, [Character.clericSpells + bx]
 		call print_dec
 		call new_line
 	dec cl
 	jg .loop
-	PrintString BuyClericSpellsStrings + 10 * string_size
+	WriteLine BuyClericSpellsStrings, 10
 ret

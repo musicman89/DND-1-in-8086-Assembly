@@ -46,45 +46,45 @@
 ;       
 ;*******************************************************************************
 move:
-	PrintString MoveStrings + 0 * string_size
+	Write MoveStrings, 0
 	mov bx, [Character.x]
 	call print_dec
 
-	PrintString MoveStrings + 1 * string_size
+	Write MoveStrings, 1
 	mov bx, [Character.y]
 	call print_dec
 
-	PrintString MoveStrings + 2 * string_size
-	call new_line
+	WriteLine MoveStrings, 2
 
 	mov cl, [Character.x]
 	mov dl, [Character.y]
 	.loop:
-		PrintString MoveStrings + 3 * string_size
+		Write MoveStrings, 3
+		ReadLine
 		call to_upper
-		call get_user_input
+		
 		cmp byte [bx], 'R'
 		je .right
 
-		StringCompare bx, DirectionStrings + 1 * string_size
+		StringCompare bx, DirectionStrings, 1
 		je .right
 
 		cmp byte [bx], 'L'
 		je .left
 
-		StringCompare bx, DirectionStrings + 0 * string_size
+		StringCompare bx, DirectionStrings, 0
 		je .left
 		
 		cmp byte [bx], 'U'
 		je .up
 
-		StringCompare bx, DirectionStrings + 2 * string_size
+		StringCompare bx, DirectionStrings, 2
 		je .up
 		
 		cmp byte [bx], 'D'
 		je .down
 
-		StringCompare bx, DirectionStrings + 3 * string_size
+		StringCompare bx, DirectionStrings, 3
 		je .down
 
 
@@ -220,7 +220,7 @@ ret
 advance_position:
 	mov [Character.x], cl
 	mov [Character.y], dl
-	PrintString DoneString
+	WriteLine DoneString
 	call pass
 ret
 
@@ -253,16 +253,16 @@ ret
 ;       
 ;*******************************************************************************
 hit_wall:
-	PrintString HitWallStrings + 0 * string_size
+	WriteLine HitWallStrings, 0
 	call roll_d12
 	cmp bx, 9
 	jg .noDamage
-		PrintString HitWallStrings + 2 * string_size
+		WriteLine HitWallStrings, 2
 		call lose_one_hp
 		jmp .return
 
 	.noDamage:
-		PrintString HitWallStrings + 1 * string_size
+		WriteLine HitWallStrings, 1
 
 	.return:
 	call pass
@@ -323,27 +323,22 @@ ret
 ;       
 ;*******************************************************************************
 fall_in_trap:
-	PrintString TrapStrings + 0 * string_size
-	call new_line
+	WriteLine TrapStrings, 0
 	call roll_d3
 	cmp bx, 2
 	jg .noInitDamage
-		PrintString TrapStrings + 1 * string_size
-		call new_line
+		WriteLine TrapStrings, 1
 		call lose_one_hp
 	.noInitDamage:
-	PrintString TrapStrings + 2 * string_size
-	call new_line
-	PrintString TrapStrings + 3 * string_size
-	call new_line
+	WriteLine TrapStrings, 2
+	WriteLine TrapStrings, 3
 
 	mov ax, 12
 	call check_inventory
 	cmp ax, 0
 
 	jge .live
-		PrintString TrapStrings + 4 * string_size
-		call new_line
+		WriteLine TrapStrings, 4
 		call die
 
 	.live:
@@ -353,20 +348,18 @@ fall_in_trap:
 	call check_inventory
 	cmp ax, 0
 	jl .iCouldHaveBeenWrong
-		PrintString TrapStrings + 5 * string_size
-		call new_line
-		PrintString TrapStrings + 6 * string_size
-		call new_line
+		WriteLine TrapStrings, 5
+		WriteLine TrapStrings, 6
 		call remove_from_inventory
 		jmp .return
 
 	.iCouldHaveBeenWrong:
-		PrintString TrapStrings + 8 * string_size
+		WriteLine TrapStrings, 8
 		call roll_d3
 		cmp bx, 2
 		jne .return
-			PrintString TrapStrings + 10 * string_size
-			PrintString TrapStrings + 11 * string_size
+			WriteLine TrapStrings, 10
+			WriteLine TrapStrings, 11
 			call lose_one_hp
 			mov ax, 12
 			call check_inventory
@@ -374,7 +367,7 @@ fall_in_trap:
 			jge .return
 				call die
 	.return:
-		PrintString TrapStrings + 7 * string_size
+		WriteLine TrapStrings, 7
 ret
 
 ;********************************************************************************
@@ -408,8 +401,8 @@ find_secret_door:
 	call roll_d6
 	cmp bx, 4
 	jg .wall
-		PrintString SecretDoorStrings + 0 * string_size
-		PrintString SecretDoorStrings + 1 * string_size
+		WriteLine SecretDoorStrings, 0
+		WriteLine SecretDoorStrings, 1
 		call advance_position
 		jmp .return
 	.wall:
@@ -444,12 +437,12 @@ ret
 ;       
 ;*******************************************************************************
 run_into_monster:
-	PrintString RunIntoMonsterStrings + 0 * string_size
-	PrintString RunIntoMonsterStrings + 1 * string_size
+	WriteLine RunIntoMonsterStrings, 0
+	WriteLine RunIntoMonsterStrings, 1
 	call flip_coin
 	cmp bx, 0
 	jne .return
-		PrintString RunIntoMonsterStrings + 2 * string_size
+		WriteLine RunIntoMonsterStrings, 2
 		mov ax, 6
 		call lose_hp
 
@@ -482,7 +475,7 @@ ret
 ;       
 ;*******************************************************************************
 find_gold:
-	PrintString FoundGoldStrings + 0 * string_size
+	WriteLine FoundGoldStrings, 0
 
 	mov cx, 500
 	call random_int
@@ -491,7 +484,7 @@ find_gold:
 
 	mov ax, bx
 	call add_gold
-	PrintString FoundGoldStrings + 1 * string_size
+	WriteLine FoundGoldStrings, 1
 
 	call hit_wall
 ret
@@ -584,7 +577,7 @@ clear_tile:
 	call roll_d100
 	cmp bx, 20
 	jl .return
-		PrintString PoisonString
+		WriteLine PoisonString
 		call roll_d4
 		mov ax, bx
 		call lose_hp
