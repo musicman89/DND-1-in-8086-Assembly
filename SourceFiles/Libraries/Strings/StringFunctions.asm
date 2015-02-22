@@ -296,9 +296,9 @@ to_lower:
 		
         add bx, 2 					;advance to the next characters
         jmp .loop
-        .return:
-		pop bx
-		pop ax
+    .return:
+	pop bx
+	pop ax
 ret
 
 ;********************************************************************************
@@ -348,9 +348,9 @@ to_upper:
 
         add bx, 2 					;advance to the next characters
         jmp .loop
-        .return:
-		pop bx
-		pop ax
+    .return:
+	pop bx
+	pop ax
 ret
 
 
@@ -403,7 +403,7 @@ string_copy:
         add cx, 2 					;advance to the next characters
 		add dx, 2
         jmp .loop
-        .return:
+    .return:
 	pop dx
 	pop cx
 	pop bx

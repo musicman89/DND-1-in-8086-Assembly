@@ -330,41 +330,44 @@ reset_monsters:
 		mov dx, [Monsters + bx + monster.initHP]
 		mov ax, [Difficulty]
 		mul dx
-		mov [Monsters + bx + monster.hp], dx
+		mov [Monsters + bx + monster.hp], ax
 
 		mov dx, [Monsters + bx + monster.initGold]
 		mov ax, [Difficulty]
 		mul dx
-		mov [Monsters + bx + monster.gold], dx
-	dec dl
+		mov [Monsters + bx + monster.gold], ax
+	dec cl
 	jnz .loop
 	add word[Character.hp], 5
 ret
 
 check_for_monsters:
-	mov dl, 50
+	mov cl, 50
 	.zloop:
-		mov dh, 10
+		mov ch, 10
 		.mloop:
 			mov bh, 0
-			mov bl, dh
+			mov bl, ch
 			dec bl
 			mov ax, monster_size
 			mul bx
 			mov bx, ax
 			cmp word[Monsters + bx + monster.hp], 1
 			jne .loopm
+				push cx
 				mov cx, 1000
 				call random_int
+				pop cx
 				cmp bx, 925
 				jle .loopm
 					call check_for_random_encounter
 					jmp .return
 			.loopm:
-				dec dh
-				jnz .mloop
-		dec dl
-		jnz .zloop
+			dec ch
+
+			jnz .mloop
+	dec cl
+	jnz .zloop
 	WriteLine CheckForMonstersStrings, 0
 	WriteLine CheckForMonstersStrings, 1
 	ReadLine

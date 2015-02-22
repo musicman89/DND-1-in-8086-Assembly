@@ -34,7 +34,7 @@ test_disk_save:
 	mov bx, test_memory_area
 	mov cx, 64
 	call mem_copy
-	PrintString DoneString
+	WriteLine DoneString
 
 	mov bx, test_memory_area
 	mov dh, 1

@@ -36,7 +36,7 @@ ret
 ;*******************************************************************************
 
 test_mem_copy:
-	PrintString TestingMemoryCopyString
+	WriteLine TestingMemoryCopyString
 	mov ax, TestMemData
 	mov bx, TestMemDestination
 	mov cx, TestMemDestination - TestMemData

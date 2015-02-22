@@ -48,13 +48,13 @@ get_character_name:
 	je get_character_name 
 	call to_upper
 
-	StringCompare InputStringBuffer, PlayerNameShavs
+	StringCompareInsensitive bx, PlayerNameShavs
 	je .return 		
 		WriteLine WhoSaidString
 		call get_key
 		jmp get_character_name
 	.return:
-		StringCopy InputStringBuffer, Character.name
+		StringCopy bx, Character.name
 ret
 
 ;********************************************************************************

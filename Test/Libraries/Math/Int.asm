@@ -1,11 +1,11 @@
 IntTests:
-	PrintString IntParseString
+	WriteLine IntParseString
 	call test_parse_int_bad_num_string
 	call test_parse_int_good_num_string
 	call test_parse_int_good_negative_num_string
 	call test_parse_int_good_low_num_string
 	call test_parse_int_good_high_num_string
-	PrintString GetRootTestString
+	WriteLine GetRootTestString
 	call test_get_root
 ret
 
@@ -73,12 +73,12 @@ int_assert_equal:
 	
 	call print_dec
 	
-	PrintString StringEqual
+	WriteLine StringEqual
 	
 	mov bx, cx
 	call print_dec
 	
-	PrintString Space
+	WriteLine Space
 	
 	mov bx, dx
 	
@@ -89,8 +89,8 @@ int_assert_equal:
 	.fail:
 		call PrintFail
 ret
-GetRootTestString db "Testing Get Root", 13,10,0
-IntParseString db "Testing Parse Int", 13,10,0
+GetRootTestString db "Testing Get Root",0
+IntParseString db "Testing Parse Int",0
 TestGoodNumString db "1052", 0
 TestGoodNegativeNumString db "-1052", 0
 TestBadNumString db "1lw", 0

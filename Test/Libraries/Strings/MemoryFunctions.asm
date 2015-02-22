@@ -36,7 +36,7 @@ ret
 ;*******************************************************************************
 
 test_mem_copy:
-	PrintString TestingMemoryCopyString
+	WriteLine TestingMemoryCopyString
 	mov ax, TestMemData
 	mov bx, TestMemDestination
 	mov cx, TestMemDestination - TestMemData
@@ -46,6 +46,6 @@ test_mem_copy:
 	mov dx, TestMemDestination
 	call string_assert_equal
 ret
-TestingMemoryCopyString db "Testing Memory Copy:", 10, 13, 0
+TestingMemoryCopyString db "Testing Memory Copy:", 0
 TestMemData db "This is a string used for testing memory copy data", 0
 TestMemDestination times 64 db 0

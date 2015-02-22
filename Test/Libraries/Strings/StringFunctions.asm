@@ -85,7 +85,7 @@ ret
 ;		None
 ;*******************************************************************************
 test_string_compare:
-	PrintString TestingStringCompareString
+	WriteLine TestingStringCompareString
 	call test_string_compare_greater
 	call test_string_compare_less
 	call test_string_compare_equal
@@ -139,7 +139,7 @@ ret
 ;		None
 ;*******************************************************************************
 test_to_lower:
-	PrintString TestingToLowerString
+	WriteLine TestingToLowerString
 	call test_to_lower_lower
 	call test_to_lower_upper
 	call test_to_lower_mixed
@@ -194,7 +194,7 @@ ret
 ;		None
 ;*******************************************************************************
 test_to_upper:
-	PrintString TestingToUpperString
+	WriteLine TestingToUpperString
 	call test_to_upper_lower
 	call test_to_upper_upper
 	call test_to_upper_mixed
@@ -224,7 +224,7 @@ ret
 
 
 test_string_copy:
-	PrintString TestingStringCopyString
+	WriteLine TestingStringCopyString
 	mov cx, UpperWord
 	mov dx, StringBuffer
 	call string_copy
@@ -233,10 +233,10 @@ ret
 
 string_assert_equal:
 	call string_compare
-	PrintString cx
-	PrintString StringEqual
-	PrintString dx
-	PrintString Space
+	Write cx
+	Write StringEqual
+	Write dx
+	Write Space
 	cmp ax, 0
 	jne .fail
 		call PrintSuccess
@@ -247,10 +247,10 @@ ret
 
 string_assert_insensitive_equal:
 	call string_compare_insensitive
-	PrintString cx
-	PrintString StringEqual
-	PrintString dx
-	PrintString Space
+	Write cx
+	Write StringEqual
+	Write dx
+	Write Space
 	cmp ax, 0
 	jne .fail
 		call PrintSuccess
@@ -261,10 +261,10 @@ ret
 
 string_assert_greater:
 	call string_compare
-	PrintString cx
-	PrintString StringGreater
-	PrintString dx
-	PrintString Space
+	Write cx
+	Write StringGreater
+	Write dx
+	Write Space
 	cmp ax, 0
 	jle .fail
 		call PrintSuccess
@@ -275,10 +275,10 @@ ret
 
 string_assert_less:
 	call string_compare
-	PrintString cx
-	PrintString StringLess
-	PrintString dx
-	PrintString Space
+	Write cx
+	Write StringLess
+	Write dx
+	Write Space
 	cmp ax, 0
 	jge .fail
 		call PrintSuccess
@@ -294,11 +294,11 @@ ret
 StringGreater db " > ", 0
 StringLess db " < ", 0
 StringEqual db " = ", 0
-TestingStringCopyString db "Testing String Copy:", 10, 13, 0
-TestingToUpperString db "Testing To Upper:", 10, 13, 0
-TestingToLowerString db "Testing To Lower:", 10, 13, 0
-TestingStringCompareString db "Testing String Compare:", 10, 13, 0
-TestingSubstringString db "Testing Substring:", 10, 13, 0
+TestingStringCopyString db "Testing String Copy:", 0
+TestingToUpperString db "Testing To Upper:", 0
+TestingToLowerString db "Testing To Lower:", 0
+TestingStringCompareString db "Testing String Compare:", 0
+TestingSubstringString db "Testing Substring:", 0
 UpperWord db "THIS IS A TEST WORD!",0
 LowerWord db "this is a test word!",0
 MixedWord db "This Is A Test Word!",0

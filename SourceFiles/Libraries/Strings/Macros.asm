@@ -12,7 +12,7 @@
 	push cx
 	push dx
 	mov cx, %1 
-	mov dx, %2 + %3 + string_size
+	mov dx, %2 + %3 * string_size
 	call string_compare
 	test ax, ax
 	pop dx
