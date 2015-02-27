@@ -8,7 +8,7 @@
 ;       To provide the functions needed for string comparison and manipulation
 ;
 ;*******************************************************************************
-
+SECTION .text
 ;********************************************************************************
 ;	substr
 ;	Purpose:
@@ -37,6 +37,7 @@
 ;		None
 ;*******************************************************************************
 StringFunctionTests:
+	WriteLine StringFunctionTestsString
 	call test_string_compare
 	call test_to_upper
 	call test_to_lower
@@ -91,21 +92,25 @@ test_string_compare:
 	call test_string_compare_equal
 	call test_string_compare_insensitive
 ret
+
 test_string_compare_greater:
 	mov cx, UpperWord
 	mov dx, LowerWord
 	call string_assert_greater
 ret
+
 test_string_compare_less:
 	mov cx, LowerWord
 	mov dx, UpperWord
 	call string_assert_less
 ret
+
 test_string_compare_equal:
 	mov cx, MixedWord
 	mov dx, MixedWord
 	call string_assert_equal
 ret
+
 test_string_compare_insensitive:
 	mov cx, LowerWord
 	mov dx, MixedWord
@@ -222,7 +227,6 @@ test_to_upper_sub:
 	call string_assert_equal
 ret
 
-
 test_string_copy:
 	WriteLine TestingStringCopyString
 	mov cx, UpperWord
@@ -291,16 +295,17 @@ test_get_string_array:
 
 ret
 
-StringGreater db " > ", 0
-StringLess db " < ", 0
-StringEqual db " = ", 0
-TestingStringCopyString db "Testing String Copy:", 0
-TestingToUpperString db "Testing To Upper:", 0
-TestingToLowerString db "Testing To Lower:", 0
-TestingStringCompareString db "Testing String Compare:", 0
-TestingSubstringString db "Testing Substring:", 0
-UpperWord db "THIS IS A TEST WORD!",0
-LowerWord db "this is a test word!",0
-MixedWord db "This Is A Test Word!",0
-
-SubStringTestWord db "IsATest",0
+SECTION .data
+	StringFunctionTestsString 	NewString "Testing Sring Functions"
+	StringGreater 				NewString " > "
+	StringLess 					NewString " < "
+	StringEqual 				NewString " = "
+	TestingStringCopyString 	NewString "Testing String Copy:"
+	TestingToUpperString 		NewString "Testing To Upper:"
+	TestingToLowerString 		NewString "Testing To Lower:"
+	TestingStringCompareString 	NewString "Testing String Compare:"
+	TestingSubstringString 		NewString "Testing Substring:"
+	UpperWord 					NewString "THIS IS A TEST WORD!"
+	LowerWord 					NewString "this is a test word!"
+	MixedWord 					NewString "This Is A Test Word!"
+	SubStringTestWord 			NewString "IsATest"

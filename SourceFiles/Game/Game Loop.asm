@@ -1,3 +1,4 @@
+SECTION .text
 game_loop:
 	call save_game
 	call game_loop_welcome
@@ -50,6 +51,27 @@ game_loop_welcome:
 	call wait_key
 ret
 
+
+;********************************************************************************
+;   quit
+;   Purpose:
+;      To go to the beginning of the program when a player quits the game
+;           Prototype:
+;               void quit();
+;           Algorithm:
+;               void quit(){
+;					goto(boot);
+;               }
+;               
+;   Entry:
+;       None
+;   Exit:
+;       None
+;   Uses:
+;       BX
+;   Exceptions:
+;       
+;*******************************************************************************
 quit:
 	jmp boot
 ret

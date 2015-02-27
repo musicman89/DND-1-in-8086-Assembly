@@ -1,3 +1,4 @@
+SECTION .text
 get_command:
 	WriteLine CommandStrings, 0
 	ReadLine

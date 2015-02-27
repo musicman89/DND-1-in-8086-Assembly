@@ -1,3 +1,4 @@
+SECTION .text
 IntTests:
 	WriteLine IntParseString
 	call test_parse_int_bad_num_string
@@ -9,25 +10,10 @@ IntTests:
 	call test_get_root
 ret
 
-test_get_root:
-	mov bx, 25
-	call get_root
-	mov cx, 5
-	call int_assert_equal
-
-	mov bx, 81
-	call get_root
-	mov cx, 9
-	call int_assert_equal
-
-	mov bx, 31012
-	call get_root
-	mov cx, 176
-	call int_assert_equal
-
-	mov bx, 712
-	call get_root
-	mov cx, 26
+test_parse_int_bad_num_string:
+	mov bx, TestBadNumString
+	call parse_int
+	mov cx, 0
 	call int_assert_equal
 ret
 
@@ -59,26 +45,18 @@ test_parse_int_good_high_num_string:
 	call int_assert_equal
 ret
 
-test_parse_int_bad_num_string:
-	mov bx, TestBadNumString
-	call parse_int
-	mov cx, 0
-	call int_assert_equal
-ret
-
 int_assert_equal:
-
 	mov dx, bx
 	mov bx, dx
 	
 	call print_dec
 	
-	WriteLine StringEqual
+	Write StringEqual
 	
 	mov bx, cx
 	call print_dec
 	
-	WriteLine Space
+	Write Space
 	
 	mov bx, dx
 	
@@ -89,10 +67,33 @@ int_assert_equal:
 	.fail:
 		call PrintFail
 ret
-GetRootTestString db "Testing Get Root",0
-IntParseString db "Testing Parse Int",0
-TestGoodNumString db "1052", 0
-TestGoodNegativeNumString db "-1052", 0
-TestBadNumString db "1lw", 0
-TestGoodLowNumString db "1", 0
-TestGoodHighNumString db "32767", 0
+
+test_get_root:
+	mov bx, 25
+	call get_root
+	mov cx, 5
+	call int_assert_equal
+
+	mov bx, 81
+	call get_root
+	mov cx, 9
+	call int_assert_equal
+
+	mov bx, 31012
+	call get_root
+	mov cx, 176
+	call int_assert_equal
+
+	mov bx, 712
+	call get_root
+	mov cx, 26
+	call int_assert_equal
+ret
+SECTION .data
+	GetRootTestString 			NewString "Testing Get Root"
+	IntParseString 				NewString "Testing Parse Int"
+	TestGoodNumString 			NewString "1052"
+	TestGoodNegativeNumString 	NewString "-1052"
+	TestBadNumString 			NewString "1lw"
+	TestGoodLowNumString 		NewString "1"
+	TestGoodHighNumString 		NewString "32767"

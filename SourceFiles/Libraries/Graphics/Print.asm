@@ -247,7 +247,8 @@ ret
 
 ypos        dw 0
 xpos        dw 0
-hexStr      db '0123456789ABCDEF'
 decOutput 	times 10 db 0
-hexOutput   db '0000 ', 0  			;register value string
+hexOutput   times 6  db 0  			
+
+hexStr      db '0123456789ABCDEF'
 VideoMemory dw 0xb800

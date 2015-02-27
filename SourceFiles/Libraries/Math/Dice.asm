@@ -1,3 +1,4 @@
+section .text
 flip_coin:
 	push cx
 	mov cx, 2

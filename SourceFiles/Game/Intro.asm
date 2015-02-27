@@ -1,3 +1,4 @@
+SECTION .text
 intro:
 	WriteLine TitleString, 0 	
 	WriteLine TitleString, 1 	

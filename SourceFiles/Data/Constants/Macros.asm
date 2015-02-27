@@ -1,29 +1,6 @@
-struc monster
-	.name resb 32
-	.str resw 1
-	.dex resw 1
-	.hp resw 1
-	.initHP resw 1
-	.initGold resw 1
-	.gold resw 1
-	.int resw 1
-endstruc
-
-struc spell
-	.name resw 32
-	.cost resw 1
-endstruc
-
-struc item
-	.name: resb 32
-	.price: resw 1
-endstruc
-
-struc CharacterAttribute
-	.name resb 8
-endstruc
-
+SECTION .text
 %macro NewMonster 7
+	[section .data]
 	istruc monster
 		at monster.name, db %1
 		at monster.str, dw %2
@@ -33,6 +10,7 @@ endstruc
 		at monster.initGold, dw %7
 		at monster.gold, dw %7
 	iend
+	__SECT__
 %endmacro
 
 %macro NewItem 2

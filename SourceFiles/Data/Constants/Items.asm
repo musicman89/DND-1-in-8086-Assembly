@@ -1,3 +1,4 @@
+SECTION .data
 Items: 
 NewItem 'SWORD', 10
 NewItem '2-H-SWORD', 15

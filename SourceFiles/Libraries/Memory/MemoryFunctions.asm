@@ -8,7 +8,7 @@
 ;       To provide the functions needed for memory comparison and manipulation
 ;
 ;*******************************************************************************
-
+SECTION .text
 ;********************************************************************************
 ;	mem_copy
 ;	Purpose:

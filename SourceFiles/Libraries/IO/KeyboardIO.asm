@@ -9,7 +9,7 @@
 ;
 ;*******************************************************************************
 
-
+SECTION .text
 ;********************************************************************************
 ;	get_key
 ;	Purpose:
@@ -124,5 +124,8 @@ invalid_input:
     call wait_key
 ret
 
-InputStringBuffer times 255 db 0
-InvalidInputString db 'The selection you have entered is invalid press any key to continue',13,10,0
+SECTION .data
+	InvalidInputString NewString 'The selection you have entered is invalid press any key to continue'
+
+SECTION .bss
+	InputStringBuffer resb 255

@@ -8,7 +8,7 @@
 ;       To provide the functions needed for string comparison and manipulation
 ;
 ;*******************************************************************************
-
+SECTION .text
 ;********************************************************************************
 ;	char_to_lower
 ;	Purpose:
@@ -247,8 +247,6 @@ string_compare_insensitive:
 	StringCompare StringCompareBuffer1,StringCompareBuffer2	
 ret
 
-StringCompareBuffer1 times 255 db 0
-StringCompareBuffer2 times 255 db 0
 ;********************************************************************************
 ;	to_lower
 ;	Purpose:
@@ -458,3 +456,7 @@ string_length:
 	pop bx
 	pop ax
 ret
+
+SECTION .bss
+	StringCompareBuffer1 resb 256
+	StringCompareBuffer2 resb 256

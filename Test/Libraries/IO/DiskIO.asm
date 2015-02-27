@@ -1,3 +1,4 @@
+SECTION .text
 ;********************************************************************************
 ;	disk_save
 ;	Purpose:
@@ -34,16 +35,15 @@ test_disk_save:
 	mov bx, test_memory_area
 	mov cx, 64
 	call mem_copy
-	WriteLine DoneString
 
 	mov bx, test_memory_area
 	mov dh, 1
 	mov dl, [boot_drive]
 	call disk_save
+	WriteLine DoneString
 ret
-align 16
-times 256 db 0xAB
-test_new_memory  db "This is a string used for testing memory copy data", 0
-align 16
-times 256 db 0xCD
-test_memory_area times 256 db 0xAB
+SECTION .data
+	test_new_memory  NewString "This is a string used for testing memory copy data"
+
+SECTION .bss
+	test_memory_area resb 256

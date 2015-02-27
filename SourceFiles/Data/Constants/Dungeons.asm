@@ -1,3 +1,4 @@
+SECTION .data
 align 16
 Dungeons:
 

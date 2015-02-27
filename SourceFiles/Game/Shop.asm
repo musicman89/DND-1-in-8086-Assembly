@@ -1,3 +1,4 @@
+SECTION .text
 item_shop:
 	call shop_welcome
 	call make_item_selection

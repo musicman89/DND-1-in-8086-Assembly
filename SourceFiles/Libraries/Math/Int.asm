@@ -1,3 +1,4 @@
+SECTION .text
 ;********************************************************************************
 ;   parse_int
 ;   Purpose:
@@ -327,6 +328,8 @@ abs_int:
         inc ax                  ;Adjust for the twos compliment switch
     .return:
 ret
-RandSeed dw 0
-IntBuffer dw 0
-IntFlags dw 0
+
+SECTION .bss
+    RandSeed    resw 1
+    IntBuffer   resw 1
+    IntFlags    resw 1

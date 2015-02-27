@@ -1,3 +1,4 @@
+SECTION .text
 %define LightGreenOnBlack 0x0A
 %define LightRedOnBlack 0x0C
 %define LightGrayOnBlack 0x07
@@ -25,9 +26,9 @@
 %macro  WriteLine 1-2 0
 	push ax
 	push bx
-	mov bx, %1 + %2 * string_size   		;load the pointer to our string
-	mov ah, LightGrayOnBlack
-	call print_string   ;print the string
+	mov bx, %1
+	mov ax, %2
+	call _write
 	call new_line
 	pop bx
 	pop ax
@@ -36,12 +37,30 @@
 %macro  Write 1-2 0
 	push ax
 	push bx
-	mov bx, %1 + %2 * string_size	;load the pointer to our string
-	mov ah, LightGrayOnBlack
-	call print_string   ;print the string
+	mov bx, %1
+	mov ax, %2
+	call _write
 	pop bx
 	pop ax
 %endmacro
+
+_write:
+	push cx
+	cmp ax, 0
+	je .print 
+	.getstring:
+		add bx, [bx]
+		add bx, 2	
+		dec ax
+		jnz .getstring
+	.print:
+		mov cx, [bx]
+		add bx, 2
+		mov ah, LightGrayOnBlack
+		call print_string   ;print the string
+	.return:
+	pop cx
+ret
 
 %macro  ReadLine 0
 	call get_user_input

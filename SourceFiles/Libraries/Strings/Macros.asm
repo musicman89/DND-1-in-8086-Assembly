@@ -1,3 +1,26 @@
+SECTION .text
+struc string
+	.value resb 68
+	.length resw 1
+endstruc
+
+%macro NewString 1+
+	%strlen len %1
+	;Define each string
+	%rep %0
+		dw len
+		db %1
+	%endrep
+%endmacro
+
+; %macro NewString 1+
+; 	%strlen len %1
+; 	istruc string
+; 		at string.value, db %1
+; 		at string.length, db len
+; 	iend
+; %endmacro
+
 %macro StringToLower 1 
 	mov bx, %1 
 	call to_lower
