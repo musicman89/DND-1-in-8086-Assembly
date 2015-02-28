@@ -331,6 +331,6 @@ abs_int:
 ret
 
 section .bss
-    RandSeed    resb 1
-    IntBuffer   resb 1
-    IntFlags    resb 1
+    RandSeed    resw 1
+    IntBuffer   resw 1
+    IntFlags    resw 1

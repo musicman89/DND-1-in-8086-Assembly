@@ -252,11 +252,17 @@ ret
 ;*******************************************************************************
 
 string_compare_insensitive:
+	push cx
+	push dx
 	StringCopy cx, StringCompareBuffer1
 	StringCopy dx, StringCompareBuffer2
 	StringToUpper StringCompareBuffer1
 	StringToUpper StringCompareBuffer2
-	StringCompare StringCompareBuffer1,StringCompareBuffer2	
+	mov cx, StringCompareBuffer1
+	mov dx, StringCompareBuffer2
+	call string_compare
+	pop dx
+	pop cx
 ret
 
 ;********************************************************************************
@@ -498,3 +504,4 @@ ret
 section .bss
 	StringCompareBuffer1 resb 256 
 	StringCompareBuffer2 resb 256 
+	StringBuffer 		 resb 256

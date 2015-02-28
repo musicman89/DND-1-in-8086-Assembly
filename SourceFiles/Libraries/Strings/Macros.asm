@@ -46,9 +46,12 @@ section .text
 %endmacro
 
 %macro GetString 1-2 0
-	mov ax, %2
 	mov bx, %1
-	call get_string
+
+	%if %2 <> 0
+		mov ax, %2
+		call get_string
+	%endif
 %endmacro
 
 %macro StringCopy 2-3 0

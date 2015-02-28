@@ -343,6 +343,3 @@ NewString "CRITICAL HIT"
 NewString "HIT"
 NewString "HIT BUT NO DAMAGE"
 NewString "MISS"
-
-section .bss
-StringBuffer resb 256

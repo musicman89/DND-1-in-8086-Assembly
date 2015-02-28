@@ -39,9 +39,6 @@ boot:
 	%include "Data/Constants/Structures.asm"
 	%include "Data/Constants/Macros.asm"
 
-	%include "Data/Variables/Monsters.asm"
-	%include "Data/Variables/GameSave.asm"
-
 	%include "Game/Intro.asm"
 	%include "Game/Roll Character.asm"
 	%include "Game/Shop.asm"
@@ -76,10 +73,14 @@ section .bss
 	%include "Data/Variables/Dungeon.asm"
 
 section .data
+	%include "Data/Variables/Monsters.asm"
+	%include "Data/Variables/GameSave.asm"
+
 	%include "Data/Strings/Common.asm"
 	%include "Data/Constants/Attributes.asm"
 	%include "Data/Constants/Items.asm"
 	%include "Data/Constants/Spells.asm"
 	%include "Data/Constants/Dungeons.asm"
 	%include "Data/Strings/ErrorStrings.asm"
+
 	times 51688-($-$$) db 0

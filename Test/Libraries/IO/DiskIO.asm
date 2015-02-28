@@ -42,7 +42,7 @@ test_disk_save:
 	call disk_save
 	WriteLine DoneString
 ret
-section .data
+section .rdata
 	test_new_memory  NewString "This is a string used for testing memory copy data"
 
 section .bss

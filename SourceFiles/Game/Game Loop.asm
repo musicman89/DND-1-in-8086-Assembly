@@ -32,10 +32,7 @@ ret
 ;       
 ;*******************************************************************************
 game_loop_welcome:
-	call new_line
-	call new_line
-	call new_line
-	
+
 	Write WelcomeStrings, 0
 	mov bx, [DungeonNumber]
 	call print_dec

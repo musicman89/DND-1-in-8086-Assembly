@@ -1,4 +1,4 @@
-section .text
+section .data
 %macro NewMonster 7
 	%strlen len %1
 	istruc monster

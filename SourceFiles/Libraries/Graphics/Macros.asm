@@ -7,10 +7,7 @@ section .text
 	push ax
 	push bx
 	push cx
-	mov bx, %1
-	mov ax, %2
-
-	call get_string
+	GetString %1, %2
 	mov cx, [bx]
 	add bx, 2
 	mov ah, LightGreenOnBlack
@@ -24,10 +21,7 @@ section .text
 	push ax
 	push bx
 	push cx
-	mov bx, %1
-	mov ax, %2
-
-	call get_string
+	GetString %1, %2
 	mov cx, [bx]
 	add bx, 2
 	mov ah, LightRedOnBlack
@@ -41,9 +35,7 @@ section .text
 	push ax
 	push bx
 	push cx
-	mov bx, %1
-	mov ax, %2
-	call get_string
+	GetString %1, %2
 	mov cx, [bx]
 	add bx, 2
 	mov ah, LightGrayOnBlack
@@ -58,10 +50,7 @@ section .text
 	push ax
 	push bx
 	push cx
-	mov bx, %1
-	mov ax, %2
-
-	call get_string
+	GetString %1, %2
 	mov cx, [bx]
 	add bx, 2
 	mov ah, LightGrayOnBlack

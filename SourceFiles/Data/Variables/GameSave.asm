@@ -1,4 +1,4 @@
-section .text
+section .data
 game_save:
 SaveCharacter:
 	.name 					dw 6, "SHAVS", 0
