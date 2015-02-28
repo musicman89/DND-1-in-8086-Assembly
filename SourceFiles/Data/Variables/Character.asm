@@ -1,29 +1,34 @@
-align 16
+section .bss
 Statistics:
-	.crit_damage dw 0
-	.damage dw 0
-	.armor dw 0
-	.weapon_range dw 0
+	.crit_damage 		resw 1
+	.damage 			resw 1
+	.armor 				resw 1
+	.weapon_range 		resw 1
 
 Character:
-	.name times 32 db 0
-	.class times 32 db 0
-	.hp dw 0
-	.str dw 0
-	.dex dw 0
-	.con dw 0
-	.char dw 0
-	.wis dw 0
-	.int dw 0
-	.gold dw 0
-	.continues db 0
-	.weapon db 0
-	.itemCount db 0
-	.inventory times 100 db 0
-	.clericSpellCount db 0
-	.clericSpells times 100 db 0
-	.wizardSpellCount db 0
-	.wizardSpells times 100 db 0
-	.x db 0
-	.y db 0
+	.name 				resb 16
+	.class 				resb 16
 
+	.hp 				resw 1
+	.str 				resw 1
+	.dex 				resw 1
+	.con 				resw 1
+	.char 				resw 1
+	.wis 				resw 1
+	.int 				resw 1
+
+	.gold 				resw 1
+	.continues 			resb 1
+	.weapon 			resb 1
+
+	.itemCount 			resb 1
+	.inventory 			resb 100
+
+	.clericSpellCount 	resb 1
+	.clericSpells 		resb 100
+
+	.wizardSpellCount 	resb 1
+	.wizardSpells 		resb 100
+
+	.x 					resb 1
+	.y 					resb 1

@@ -1,3 +1,4 @@
+section .text
 ;********************************************************************************
 ;   check_inventory
 ;   Purpose:
@@ -164,7 +165,6 @@ add_to_inventory:
 	push bx
 	mov bh, 0
 	push cx
-		inc al
 		mov bl, [Character.itemCount]
 		inc bl
 		mov [Character.inventory + bx], al

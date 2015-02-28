@@ -1,14 +1,4 @@
-align 16
-struc string
-	.value resb 64
-endstruc
-
-%macro NewString 1+
-	istruc string
-		at string.value, db %1, 0
-	iend
-%endmacro
-
+section .data
 TitleString: 
 NewString '    Dungeons and Dragons #1'
 NewString '    Copyright 1977-2015 Richard Garriott'
@@ -36,9 +26,9 @@ PlayerNameShavs:
 NewString 'SHAVS'
 
 ClassStrings: 
-NewString 'CLASSIFICATION', 13, 10
-NewString 'WHICH DO YOU WANT TO BE', 13, 10
-NewString 'FIGHTER, CLERIC, OR WIZARD ', 13, 10
+NewString 'CLASSIFICATION'
+NewString 'WHICH DO YOU WANT TO BE'
+NewString 'FIGHTER, CLERIC, OR WIZARD '
 
 Classes:
 NewString "none"
@@ -50,15 +40,15 @@ WelcomeStrings:
 NewString "WELCOME TO DUNGEON # "
 NewString "YOU ARE AT ("
 NewString ","
-NewString ")", 13, 10
+NewString ")"
 
 ItemShopString:
-NewString "BUYING WEAPONS",13,10
-NewString "FAST OR NORM",13,10
+NewString "BUYING WEAPONS"
+NewString "FAST OR NORM"
 
 CostsTooMuchString:
-NewString "COSTS TOO MUCH", 13, 10
-NewString "TRY AGAIN ", 13, 10
+NewString "COSTS TOO MUCH"
+NewString "TRY AGAIN "
 
 WizardCannotUseString:
 NewString "YOUR A WIZARD YOU CANT USE THAT"
@@ -353,5 +343,3 @@ NewString "CRITICAL HIT"
 NewString "HIT"
 NewString "HIT BUT NO DAMAGE"
 NewString "MISS"
-
-StringBuffer times 256 db 0 

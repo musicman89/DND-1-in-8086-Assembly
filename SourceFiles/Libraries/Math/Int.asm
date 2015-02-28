@@ -1,3 +1,4 @@
+section .text
 ;********************************************************************************
 ;   parse_int
 ;   Purpose:
@@ -39,7 +40,9 @@ parse_int:
 	push cx
 	push ax
     mov word [IntBuffer], 0                 ;Clear our buffer
-    mov word [IntFlags], 0                   ;Clear our flags
+    mov word [IntFlags], 0                  ;Clear our flags
+    mov cl, 3                               ;Set cl to 3 to do our left shift (dx * 8)
+    add bx, 2
     .loop:
         mov al, [bx]                        ;Take the current character of the string into al
         mov ah, 0                           ;Ensure we have not hit the end of the string
@@ -51,7 +54,6 @@ parse_int:
         jl .failCheck
 
         mov dx, [IntBuffer]                 ;Push the buffer into dx
-        mov cl, 3                           ;Set cl to 3 to do our left shift (dx * 8)
         shl dx, cl                          
         shl word [IntBuffer], 1             ;Shift our buffer by one byte (buffer * 2)
         add [IntBuffer], dx                 ;Add dx to our buffer (buffer * 10)
@@ -327,6 +329,8 @@ abs_int:
         inc ax                  ;Adjust for the twos compliment switch
     .return:
 ret
-RandSeed dw 0
-IntBuffer dw 0
-IntFlags dw 0
+
+section .bss
+    RandSeed    resw 1
+    IntBuffer   resw 1
+    IntFlags    resw 1

@@ -8,7 +8,7 @@
 ;       To provide the functions needed for string comparison and manipulation
 ;
 ;*******************************************************************************
-
+section .text
 ;********************************************************************************
 ;	substr
 ;	Purpose:
@@ -37,6 +37,7 @@
 ;		None
 ;*******************************************************************************
 StringFunctionTests:
+	WriteLine StringFunctionTestsString
 	call test_string_compare
 	call test_to_upper
 	call test_to_lower
@@ -85,27 +86,31 @@ ret
 ;		None
 ;*******************************************************************************
 test_string_compare:
-	PrintString TestingStringCompareString
+	WriteLine TestingStringCompareString
 	call test_string_compare_greater
 	call test_string_compare_less
 	call test_string_compare_equal
 	call test_string_compare_insensitive
 ret
+
 test_string_compare_greater:
 	mov cx, UpperWord
 	mov dx, LowerWord
 	call string_assert_greater
 ret
+
 test_string_compare_less:
 	mov cx, LowerWord
 	mov dx, UpperWord
 	call string_assert_less
 ret
+
 test_string_compare_equal:
 	mov cx, MixedWord
 	mov dx, MixedWord
 	call string_assert_equal
 ret
+
 test_string_compare_insensitive:
 	mov cx, LowerWord
 	mov dx, MixedWord
@@ -139,7 +144,7 @@ ret
 ;		None
 ;*******************************************************************************
 test_to_lower:
-	PrintString TestingToLowerString
+	WriteLine TestingToLowerString
 	call test_to_lower_lower
 	call test_to_lower_upper
 	call test_to_lower_mixed
@@ -194,7 +199,7 @@ ret
 ;		None
 ;*******************************************************************************
 test_to_upper:
-	PrintString TestingToUpperString
+	WriteLine TestingToUpperString
 	call test_to_upper_lower
 	call test_to_upper_upper
 	call test_to_upper_mixed
@@ -222,9 +227,8 @@ test_to_upper_sub:
 	call string_assert_equal
 ret
 
-
 test_string_copy:
-	PrintString TestingStringCopyString
+	WriteLine TestingStringCopyString
 	mov cx, UpperWord
 	mov dx, StringBuffer
 	call string_copy
@@ -233,10 +237,10 @@ ret
 
 string_assert_equal:
 	call string_compare
-	PrintString cx
-	PrintString StringEqual
-	PrintString dx
-	PrintString Space
+	Write cx
+	Write StringEqual
+	Write dx
+	Write Space
 	cmp ax, 0
 	jne .fail
 		call PrintSuccess
@@ -247,10 +251,10 @@ ret
 
 string_assert_insensitive_equal:
 	call string_compare_insensitive
-	PrintString cx
-	PrintString StringEqual
-	PrintString dx
-	PrintString Space
+	Write cx
+	Write StringEqual
+	Write dx
+	Write Space
 	cmp ax, 0
 	jne .fail
 		call PrintSuccess
@@ -261,10 +265,10 @@ ret
 
 string_assert_greater:
 	call string_compare
-	PrintString cx
-	PrintString StringGreater
-	PrintString dx
-	PrintString Space
+	Write cx
+	Write StringGreater
+	Write dx
+	Write Space
 	cmp ax, 0
 	jle .fail
 		call PrintSuccess
@@ -275,10 +279,10 @@ ret
 
 string_assert_less:
 	call string_compare
-	PrintString cx
-	PrintString StringLess
-	PrintString dx
-	PrintString Space
+	Write cx
+	Write StringLess
+	Write dx
+	Write Space
 	cmp ax, 0
 	jge .fail
 		call PrintSuccess
@@ -291,16 +295,17 @@ test_get_string_array:
 
 ret
 
-StringGreater db " > ", 0
-StringLess db " < ", 0
-StringEqual db " = ", 0
-TestingStringCopyString db "Testing String Copy:", 10, 13, 0
-TestingToUpperString db "Testing To Upper:", 10, 13, 0
-TestingToLowerString db "Testing To Lower:", 10, 13, 0
-TestingStringCompareString db "Testing String Compare:", 10, 13, 0
-TestingSubstringString db "Testing Substring:", 10, 13, 0
-UpperWord db "THIS IS A TEST WORD!",0
-LowerWord db "this is a test word!",0
-MixedWord db "This Is A Test Word!",0
-
-SubStringTestWord db "IsATest",0
+section .data
+	StringFunctionTestsString 	NewString "Testing Sring Functions"
+	StringGreater 				NewString " > "
+	StringLess 					NewString " < "
+	StringEqual 				NewString " = "
+	TestingStringCopyString 	NewString "Testing String Copy:"
+	TestingToUpperString 		NewString "Testing To Upper:"
+	TestingToLowerString 		NewString "Testing To Lower:"
+	TestingStringCompareString 	NewString "Testing String Compare:"
+	TestingSubstringString 		NewString "Testing Substring:"
+	UpperWord 					NewString "THIS IS A TEST WORD!"
+	LowerWord 					NewString "this is a test word!"
+	MixedWord 					NewString "This Is A Test Word!"
+	SubStringTestWord 			NewString "IsATest"

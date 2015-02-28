@@ -8,7 +8,7 @@
 ;       To provide the functions needed for memory comparison and manipulation
 ;
 ;*******************************************************************************
-
+section .text
 ;********************************************************************************
 ;	mem_copy
 ;	Purpose:
@@ -38,7 +38,6 @@ mem_copy:
 	push bx
 	push cx
 	push dx
-
 	mov di, 0 						;Set our starting offset to 0
     cmp cx, 1 						;Test for the case of only 1 byte to move
     je .single		

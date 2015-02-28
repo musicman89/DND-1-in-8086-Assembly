@@ -1,3 +1,4 @@
+section .data
 WizardSpells:
 NewSpell "", 0
 NewSpell "PUSH", 75

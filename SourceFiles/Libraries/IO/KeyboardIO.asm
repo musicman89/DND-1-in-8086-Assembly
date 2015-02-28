@@ -8,8 +8,7 @@
 ;       To provide the functions needed for keyboard input
 ;
 ;*******************************************************************************
-
-
+section .text
 ;********************************************************************************
 ;	get_key
 ;	Purpose:
@@ -86,7 +85,7 @@ ret
 ;		
 ;*******************************************************************************
 get_user_input:
-    mov bx, 0 			
+    mov bx, 2 			
     .loop:
         call get_key 					;Get input from the user
         cmp ah, 0x1c 					;Check if key is the enter key
@@ -114,15 +113,16 @@ get_user_input:
 		jmp .loop
     .return:
     mov byte [InputStringBuffer + bx], 0 ;Null terminate the string	
-    call new_line
     mov bx, InputStringBuffer 			;Point BX back to the start of the string buffer
-
+    call string_length
+    call new_line
 ret
 
 invalid_input:
 	WriteLine InvalidInputString
     call wait_key
 ret
-
-InputStringBuffer times 255 db 0
-InvalidInputString db 'The selection you have entered is invalid press any key to continue',13,10,0
+section .data
+	InvalidInputString NewString 'The selection you have entered is invalid press any key to continue'
+section .bss
+	InputStringBuffer resb 256

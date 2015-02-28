@@ -1,3 +1,4 @@
+section .text
 game_loop:
 	call save_game
 	call game_loop_welcome
@@ -31,13 +32,11 @@ ret
 ;       
 ;*******************************************************************************
 game_loop_welcome:
-	call new_line
-	call new_line
-	call new_line
 
-	WriteLine WelcomeStrings, 0
+	Write WelcomeStrings, 0
 	mov bx, [DungeonNumber]
 	call print_dec
+	call new_line
 
 	Write WelcomeStrings, 1
 	mov bh, 0
@@ -50,6 +49,27 @@ game_loop_welcome:
 	call wait_key
 ret
 
+
+;********************************************************************************
+;   quit
+;   Purpose:
+;      To go to the beginning of the program when a player quits the game
+;           Prototype:
+;               void quit();
+;           Algorithm:
+;               void quit(){
+;					goto(boot);
+;               }
+;               
+;   Entry:
+;       None
+;   Exit:
+;       None
+;   Uses:
+;       BX
+;   Exceptions:
+;       
+;*******************************************************************************
 quit:
 	jmp boot
 ret

@@ -1,3 +1,4 @@
+section .text
 get_command:
 	WriteLine CommandStrings, 0
 	ReadLine
@@ -16,6 +17,7 @@ ret
 get_command_from_user:	
 	Write CommandStrings, 5
 	ReadLine
+	call parse_int
 	cmp bx, 12
 	jg .fail
 	jl .continue

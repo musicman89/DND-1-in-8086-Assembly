@@ -8,7 +8,7 @@
 ;       To provide the functions needed to print an output to the screen
 ;
 ;*******************************************************************************
-
+section .text
 ;********************************************************************************
 ;	print_string
 ;	Purpose:
@@ -48,9 +48,11 @@
 print_string:
 	push bx
 	push ax
+
 	test ah, ah
 	jnz .loop
 		mov ah, LightGrayOnBlack			;set the text color 
+
 	.loop:
 		mov al, [bx]					;Load the current byte of the string
 		test al, al						;Test AL for the null terminator (0)
@@ -65,17 +67,20 @@ print_string:
 		je .carriage_return				;Perform a Carriage Return if it is
 
 		call print						;Print the character
+		dec cx
+		jz .return
 		jmp .loop
+		
 	.line_feed:
-		cmp byte [ypos], 23 			;Check if the cursor has hit the bottom
+		cmp word [ypos], 23 			;Check if the cursor has hit the bottom
 		je .scroll
-			add byte [ypos], 1 				;Progress the cursor down a line
+			add word [ypos], 1 				;Progress the cursor down a line
 			jmp .loop
 		.scroll:
 			call scroll
 		jmp .loop
 	.carriage_return:
-		mov byte [xpos], 0     			;Restart at the left
+		mov word [xpos], 0     			;Restart at the left
 		jmp .loop
 	.return:
 		pop ax
@@ -113,14 +118,14 @@ ret
 ;*******************************************************************************
 print:
 	call push_character
-	add byte [xpos], 1      		;Move the cursor 1 to the right
-	cmp byte [xpos], 80   			;check if the cursor has hit the right 
+	inc word [xpos]		      		;Move the cursor 1 to the right
+	cmp word [xpos], 80   			;check if the cursor has hit the right 
 
 	jle .return
-	mov byte [xpos], 0 				;Move the cursor back to the left
-	cmp byte [ypos], 23 			;Check if the cursor has hit the bottom
+	mov word [xpos], 0 				;Move the cursor back to the left
+	cmp word [ypos], 23 			;Check if the cursor has hit the bottom
 	jge .scroll
-		add byte [ypos], 1 				;Progress the cursor down a line
+		add word [ypos], 1 				;Progress the cursor down a line
 	jmp .return
 	.scroll:
 		call scroll
@@ -224,8 +229,8 @@ clear_screen:						;Clear Screen
         mov word[es:di], 0 			;Set the data at our segment and offset to 0
         sub di, 2 					;advance to the next word
         jge .loop 					;Repeat until we hit the start of bideo memory
-	mov byte [xpos], 0 				;Move the cursor back to the left
-	mov byte [ypos], 0 				;Move the cursor back to the top
+	mov word [xpos], 0 				;Move the cursor back to the left
+	mov word [ypos], 0 				;Move the cursor back to the top
 	pop di
 	pop es
 ret
@@ -257,10 +262,10 @@ ret
 ;		None
 ;*******************************************************************************
 new_line:
-	mov byte [xpos], 0 					;Move the cursor back to the left
-	cmp byte [ypos], 23 				;Check if the cursor has hit the bottom
+	mov word [xpos], 0 					;Move the cursor back to the left
+	cmp word [ypos], 23 				;Check if the cursor has hit the bottom
 	jge .scroll 						;If we are the second to last row scroll the screen
-		add byte [ypos], 1 				;Progress the cursor down a line
+		add word [ypos], 1 				;Progress the cursor down a line
 	jmp .return
 	.scroll:
 		call scroll
@@ -391,11 +396,11 @@ print_dec:
 	push cx
 	push bx
 	push ax
-
+	push di
 	mov di, decOutput			;Store address of our output in the DI register
 	mov ax, bx					;Push our Value to the AX register
 
-	mov bx, 10 					;Push 10 into our BX register for multiplication later
+	mov bx, 10 					;Push 10 into our BX register for division later
 	mov cx, 0 					;Set CX to 0 we are going to store our length in it for flipping the string
 
 	cmp ax, 0 					;Check if our number is positive
@@ -422,7 +427,8 @@ print_dec:
 		inc di 					;Increment our string pointer 
 		dec cx 					;Decrement the number of remaining characters
 		jnz .flipLoop     		;If there are remaining characters repeat
-		mov Word[di], 0 		;Append a 0 as the null terminator of the string
+		mov word[di], 0 		;Append a 0 as the null terminator of the string
+	pop di
 	mov bx, decOutput			;Move BX to point to our string
 	call print_string			;Print our string
 	pop ax
@@ -431,9 +437,12 @@ print_dec:
 	pop dx
 ret
 
-ypos        dw 0 					;The current cursor y position
-xpos        dw 0 					;The current cursor x position
-hexStr      db '0123456789ABCDEF'  	;The characters for the values in Hex
-decOutput 	times 10 db 0 			;Our buffer for decimal output
-hexOutput   db '0000 ', 0  			;Our buffer for hexidecimal output
-VideoMemory dw 0xb800 				;The location of text video memory offset by 16bits (0xb8000)
+section .bss
+	ypos        resw  1 			;The current cursor y position
+	xpos        resw  1				;The current cursor x position
+	decOutput 	resb 10 			;Our buffer for decimal output
+	hexOutput   resb 6	 			;Our buffer for hexidecimal output
+
+section .data
+	hexStr      db '0123456789ABCDEF'  	;The characters for the values in Hex
+	VideoMemory dw  0xb800 				;The location of text video memory offset by 16bits (0xb8000)

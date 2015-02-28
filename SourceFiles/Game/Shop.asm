@@ -1,3 +1,4 @@
+section .text
 item_shop:
 	call shop_welcome
 	call make_item_selection
@@ -136,7 +137,7 @@ make_item_selection:
 
 	cmp bl, 0
 	jl .return
-	cmp bl, 14
+	cmp bl, 17
 	jg .return
 
 	call check_item_cost

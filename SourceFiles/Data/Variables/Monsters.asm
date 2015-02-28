@@ -1,3 +1,4 @@
+section .data
 Monsters:
 NewMonster 'MAN',1,13,26,1,1,500
 NewMonster 'GOBLIN',2,13,24,1,1,600
