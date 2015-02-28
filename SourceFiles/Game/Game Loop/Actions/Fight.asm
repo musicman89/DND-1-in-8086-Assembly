@@ -1,4 +1,4 @@
-SECTION .text
+section .text
 fight:
 	WriteLine FightStrings, 0
 	mov bh, 0

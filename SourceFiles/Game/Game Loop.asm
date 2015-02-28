@@ -1,4 +1,4 @@
-SECTION .text
+section .text
 game_loop:
 	call save_game
 	call game_loop_welcome
@@ -35,10 +35,11 @@ game_loop_welcome:
 	call new_line
 	call new_line
 	call new_line
-
-	WriteLine WelcomeStrings, 0
+	
+	Write WelcomeStrings, 0
 	mov bx, [DungeonNumber]
 	call print_dec
+	call new_line
 
 	Write WelcomeStrings, 1
 	mov bh, 0

@@ -1,3 +1,4 @@
+section .data
 TitleString: 
 NewString '    Dungeons and Dragons #1'
 NewString '    Copyright 1977-2015 Richard Garriott'
@@ -343,4 +344,5 @@ NewString "HIT"
 NewString "HIT BUT NO DAMAGE"
 NewString "MISS"
 
-StringBuffer times 256 db 0 
+section .bss
+StringBuffer resb 256

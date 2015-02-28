@@ -1,4 +1,4 @@
-SECTION .text
+section .text
 ;********************************************************************************
 ;   range_and_hit_check
 ;   Purpose:

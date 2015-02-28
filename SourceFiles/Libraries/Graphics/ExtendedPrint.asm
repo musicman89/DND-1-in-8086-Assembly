@@ -8,7 +8,7 @@
 ;       To provide the functions needed to print an output to the screen
 ;
 ;*******************************************************************************
-SECTION .text
+section .text
 ;********************************************************************************
 ;	print_string
 ;	Purpose:
@@ -48,13 +48,12 @@ SECTION .text
 print_string:
 	push bx
 	push ax
+
 	test ah, ah
 	jnz .loop
 		mov ah, LightGrayOnBlack			;set the text color 
 
 	.loop:
-
-
 		mov al, [bx]					;Load the current byte of the string
 		test al, al						;Test AL for the null terminator (0)
 		jz .return             			;If it is, this is the end of the string
@@ -438,12 +437,12 @@ print_dec:
 	pop dx
 ret
 
-SECTION .bss
+section .bss
 	ypos        resw  1 			;The current cursor y position
 	xpos        resw  1				;The current cursor x position
-	decOutput 	resb  10 			;Our buffer for decimal output
-	hexOutput   resb  6				;Our buffer for hexidecimal output
+	decOutput 	resb 10 			;Our buffer for decimal output
+	hexOutput   resb 6	 			;Our buffer for hexidecimal output
 
-SECTION .data
+section .data
 	hexStr      db '0123456789ABCDEF'  	;The characters for the values in Hex
 	VideoMemory dw  0xb800 				;The location of text video memory offset by 16bits (0xb8000)

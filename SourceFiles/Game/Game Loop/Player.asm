@@ -1,4 +1,4 @@
-SECTION .text
+section .text
 ;********************************************************************************
 ;   check_inventory
 ;   Purpose:
@@ -508,7 +508,6 @@ get_x_bounds:
 	.return:
 ret
 
-SECTION .data
 align 16
 rows:
 dw 25 * 0

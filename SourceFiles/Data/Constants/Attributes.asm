@@ -1,4 +1,4 @@
-SECTION .data
+section .data
 CharacterAttributeNames:
 NewAttribute 'STR'
 NewAttribute 'DEX'

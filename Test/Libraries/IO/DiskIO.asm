@@ -1,4 +1,4 @@
-SECTION .text
+section .text
 ;********************************************************************************
 ;	disk_save
 ;	Purpose:
@@ -42,8 +42,8 @@ test_disk_save:
 	call disk_save
 	WriteLine DoneString
 ret
-SECTION .data
+section .data
 	test_new_memory  NewString "This is a string used for testing memory copy data"
 
-SECTION .bss
-	test_memory_area resb 256
+section .bss
+	test_memory_area resb 128 

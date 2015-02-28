@@ -1,4 +1,4 @@
-SECTION .text
+section .text
 IntTests:
 	WriteLine IntParseString
 	call test_parse_int_bad_num_string
@@ -89,7 +89,8 @@ test_get_root:
 	mov cx, 26
 	call int_assert_equal
 ret
-SECTION .data
+
+section .data
 	GetRootTestString 			NewString "Testing Get Root"
 	IntParseString 				NewString "Testing Parse Int"
 	TestGoodNumString 			NewString "1052"

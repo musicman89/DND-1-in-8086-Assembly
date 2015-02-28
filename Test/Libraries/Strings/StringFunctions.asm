@@ -8,7 +8,7 @@
 ;       To provide the functions needed for string comparison and manipulation
 ;
 ;*******************************************************************************
-SECTION .text
+section .text
 ;********************************************************************************
 ;	substr
 ;	Purpose:
@@ -295,7 +295,7 @@ test_get_string_array:
 
 ret
 
-SECTION .data
+section .data
 	StringFunctionTestsString 	NewString "Testing Sring Functions"
 	StringGreater 				NewString " > "
 	StringLess 					NewString " < "

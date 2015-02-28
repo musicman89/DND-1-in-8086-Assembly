@@ -1,4 +1,4 @@
-SECTION .text
+section .text
 roll_character:
 	call get_character_name
 	call roll_character_starting_point

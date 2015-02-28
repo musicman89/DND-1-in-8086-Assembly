@@ -1,4 +1,4 @@
-SECTION .bss align=16
+section .bss
 DungeonNumber 		resb 1
 Difficulty 			resb 1
 
@@ -9,7 +9,7 @@ CurrentMonster:
 	.y: 			resb 1
 	.distance_x:	resb 1
 	.distance_y:	resb 1
-	.range: 		resw 1
+	.range: 		resb 1
 	.hit:			resb 1
 	
 CurrentDungeon:		resb 625

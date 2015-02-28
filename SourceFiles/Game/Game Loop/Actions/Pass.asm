@@ -1,4 +1,4 @@
-SECTION .text
+section .text
 pass:
 	cmp byte[CurrentMonster.status], -1
 	jne .it_lives

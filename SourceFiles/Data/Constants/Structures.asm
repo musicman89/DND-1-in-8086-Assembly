@@ -1,5 +1,6 @@
+section .text
 struc monster
-	.name resb 32
+	.name resb 16
 	.str resw 1
 	.dex resw 1
 	.hp resw 1
@@ -10,12 +11,12 @@ struc monster
 endstruc
 
 struc spell
-	.name resw 32
+	.name resb 20
 	.cost resw 1
 endstruc
 
 struc item
-	.name: resb 32
+	.name: resb 16
 	.price: resw 1
 endstruc
 
