@@ -8,7 +8,6 @@
 ;       To provide the functions needed for memory comparison and manipulation
 ;
 ;*******************************************************************************
-SECTION .text
 MemoryFunctionTests:
 	call test_mem_copy
 ret
@@ -40,7 +39,8 @@ test_mem_copy:
 	WriteLine TestingMemoryCopyString
 	mov ax, TestMemData
 	mov bx, TestMemDestination
-	mov cx, [TestMemLength]
+	mov cx, [TestMemData]
+	add cx, 2
 	call mem_copy
 
 	mov cx, TestMemData
@@ -48,10 +48,9 @@ test_mem_copy:
 	call string_assert_equal
 ret
 
-SECTION .data
+section .data
 	TestingMemoryCopyString NewString 	"Testing Memory Copy:"
 	TestMemData 			NewString 	"This is a string used for testing memory copy data"
-	TestMemLength 			dw 			$-TestMemData
 
-SECTION .bss
-	TestMemDestination resb 64
+section .bss
+	TestMemDestination resb 64 

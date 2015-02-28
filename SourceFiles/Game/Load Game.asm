@@ -1,4 +1,4 @@
-SECTION .text
+section .text
 ;********************************************************************************
 ;   read_dungeon
 ;   Purpose:
@@ -62,12 +62,12 @@ ret
 load_game:
 	mov ax, SaveCharacter
 	mov bx, Character
-	mov cx, SaveCurrentMonster - SaveCharacter
+	mov cx, [SaveCharacterLength]
 	call mem_copy
 
 	mov ax, SaveCurrentMonster
 	mov bx, CurrentMonster
-	mov cx, SaveDungeonNumber - SaveCurrentMonster
+	mov cx, [SaveCurrentMonsterLength]
 	call mem_copy
 
 	mov bl, [SaveDungeonNumber]
@@ -78,7 +78,7 @@ load_game:
 
 	mov ax, SaveMonsters
 	mov bx, Monsters
-	mov cx, SaveCurrentDungeon - SaveMonsters
+	mov cx, [SaveMonstersLength]
 	call mem_copy
 
 	mov ax, SaveCurrentDungeon
@@ -90,12 +90,12 @@ ret
 save_game:
 	mov ax, Character
 	mov bx, SaveCharacter
-	mov cx, SaveCurrentMonster - SaveCharacter
+	mov cx, [SaveCharacterLength]
 	call mem_copy
 
 	mov ax, CurrentMonster
 	mov bx, SaveCurrentMonster
-	mov cx, SaveDungeonNumber - SaveCurrentMonster
+	mov cx, [SaveCurrentMonsterLength]
 	call mem_copy
 
 	mov bl, [DungeonNumber]
@@ -106,7 +106,7 @@ save_game:
 
 	mov ax, Monsters
 	mov bx, SaveMonsters
-	mov cx, SaveCurrentDungeon - SaveMonsters
+	mov cx, [SaveMonstersLength]
 	call mem_copy
 
 	mov ax, CurrentDungeon

@@ -1,8 +1,8 @@
-SECTION .text
+section .text
 %macro NewMonster 7
-	[section .data]
+	%strlen len %1
 	istruc monster
-		at monster.name, db %1
+		at monster.name, dw len, %1, 0
 		at monster.str, dw %2
 		at monster.dex, dw %3
 		at monster.hp, dw %4
@@ -10,25 +10,27 @@ SECTION .text
 		at monster.initGold, dw %7
 		at monster.gold, dw %7
 	iend
-	__SECT__
 %endmacro
 
 %macro NewItem 2
+	%strlen len %1
 	istruc item
-		at item.name, db %1
+		at item.name, dw len, %1, 0
 		at item.price, db %2
 	iend
 %endmacro
 
 %macro NewSpell 2
+	%strlen len %1
 	istruc spell
-		at spell.name, dw %1
+		at spell.name, dw len, %1, 0
 		at spell.cost, dw %2
 	iend
 %endmacro
 
 %macro NewAttribute 1
+	%strlen len %1
 	istruc CharacterAttribute
-		at CharacterAttribute.name, db %1
+		at CharacterAttribute.name, dw len, %1, 0
 	iend
 %endmacro

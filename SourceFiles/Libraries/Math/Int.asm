@@ -1,4 +1,4 @@
-SECTION .text
+section .text
 ;********************************************************************************
 ;   parse_int
 ;   Purpose:
@@ -40,7 +40,9 @@ parse_int:
 	push cx
 	push ax
     mov word [IntBuffer], 0                 ;Clear our buffer
-    mov word [IntFlags], 0                   ;Clear our flags
+    mov word [IntFlags], 0                  ;Clear our flags
+    mov cl, 3                               ;Set cl to 3 to do our left shift (dx * 8)
+    add bx, 2
     .loop:
         mov al, [bx]                        ;Take the current character of the string into al
         mov ah, 0                           ;Ensure we have not hit the end of the string
@@ -52,7 +54,6 @@ parse_int:
         jl .failCheck
 
         mov dx, [IntBuffer]                 ;Push the buffer into dx
-        mov cl, 3                           ;Set cl to 3 to do our left shift (dx * 8)
         shl dx, cl                          
         shl word [IntBuffer], 1             ;Shift our buffer by one byte (buffer * 2)
         add [IntBuffer], dx                 ;Add dx to our buffer (buffer * 10)
@@ -329,7 +330,7 @@ abs_int:
     .return:
 ret
 
-SECTION .bss
-    RandSeed    resw 1
-    IntBuffer   resw 1
-    IntFlags    resw 1
+section .bss
+    RandSeed    resb 1
+    IntBuffer   resb 1
+    IntFlags    resb 1

@@ -1,10 +1,12 @@
-SECTION .text
+section .text
 PrintSuccess:
 	PrintGreenString Success
+	call new_line
 ret
 
 PrintFail:
 	PrintRedString Fail
+	call new_line
 ret		
 
 PrintTest:
@@ -23,7 +25,7 @@ PrintTest:
 	WriteLine PrintTestComplete
 ret
 
-SECTION .data
-	PrintTestString		NewString "Testing Print"
-	PrintTestComplete	NewString "Print Test Complete"
-	PrintTestRowString	NewString "row: "
+section .data
+PrintTestString		NewString "Testing Print"
+PrintTestComplete	NewString "Print Test Complete"
+PrintTestRowString	NewString "row: "

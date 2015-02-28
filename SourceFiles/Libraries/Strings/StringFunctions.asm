@@ -8,7 +8,7 @@
 ;       To provide the functions needed for string comparison and manipulation
 ;
 ;*******************************************************************************
-SECTION .text
+section .text
 ;********************************************************************************
 ;	char_to_lower
 ;	Purpose:
@@ -112,6 +112,8 @@ substr:
 	push ax
 	push cx
 	mov si, StringBuffer
+	add si, 2
+	add bx, 2
 	test cx, cx
 	jz .done
 	.single:
@@ -130,6 +132,7 @@ substr:
 		mov word [si], 0x0000
 		mov bx, StringBuffer
         align   4
+        call string_length
 	pop cx
 	pop ax
 ret
@@ -142,6 +145,7 @@ ret
 ;				word string_compare(byte string_addressA, byte string_addressB);
 ;			Algorithm: 
 ;				word string_compare(byte string_addressA, byte string_addressB){
+;					if(*string_addressA.length != *string_addressB.length) return -1;
 ;					while(true){
 ;						key = get_key();
 ;						if(*string_addressA > *string_addressB){
@@ -171,6 +175,14 @@ string_compare:
 	push bx
 	push cx
 	push dx
+		.comparelength:
+		mov bx, dx
+		mov ax, [bx]
+		mov bx, cx
+		cmp ax, [bx]
+		jne .donene
+		add dx, 2
+		add cx, 2
         .compareword:
             mov     bx, dx
             mov     ax,[bx]
@@ -277,6 +289,7 @@ ret
 to_lower:
 	push ax
 	push bx
+	add bx, 2
     .loop:
         mov ax, [bx]				;load the current byte of the string
         test al, al 				;check for the end of the string
@@ -329,6 +342,7 @@ ret
 to_upper:
 	push ax
 	push bx
+	add bx, 2
     .loop:
         mov ax, [bx]				;load the current byte of the string
         test al, al 				;check for the end of the string
@@ -383,6 +397,15 @@ string_copy:
 	push bx
 	push cx
 	push dx
+
+	.set_length:
+	mov bx, cx
+	mov ax, [bx]
+
+	mov bx, dx
+	mov [bx], ax
+	add cx, 2
+	add dx, 2
     .loop:
 		mov bx, cx
         mov ax, [bx]				;load the current byte of the string
@@ -436,6 +459,7 @@ ret
 string_length:
 	push ax
 	push bx
+	add bx, 2
 	mov cx, 0
     .loop:
         mov ax, [bx]				;load the current byte of the string
@@ -454,9 +478,23 @@ string_length:
         jmp .loop
 	.return:
 	pop bx
+	inc cx
+	mov [bx], cx
 	pop ax
 ret
 
-SECTION .bss
-	StringCompareBuffer1 resb 256
-	StringCompareBuffer2 resb 256
+get_string:
+	cmp ax, 0
+	je .return 
+	.getstring:
+		add bx, [bx]
+		add bx, 2	
+		dec ax
+		jnz .getstring
+
+	.return:
+ret
+
+section .bss
+	StringCompareBuffer1 resb 256 
+	StringCompareBuffer2 resb 256 

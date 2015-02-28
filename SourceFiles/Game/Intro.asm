@@ -1,4 +1,4 @@
-SECTION .text
+section .text
 intro:
 	WriteLine TitleString, 0 	
 	WriteLine TitleString, 1 	
@@ -48,13 +48,13 @@ instructions:
 	StringCompareInsensitive InputStringBuffer, YesString
 	je .yes_instructions
 
-	cmp byte [InputStringBuffer], 'Y'
+	cmp byte [InputStringBuffer + 2], 'Y'
 	je .yes_instructions
 
 	StringCompareInsensitive InputStringBuffer, NoString
 	je .no_instructions
 	
-	cmp byte [InputStringBuffer], 'N'
+	cmp byte [InputStringBuffer + 2], 'N'
 	je .no_instructions
 
 	call invalid_input

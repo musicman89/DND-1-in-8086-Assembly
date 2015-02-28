@@ -1,9 +1,8 @@
-SECTION .data
-		Success db "Success",13,10,0
-		Fail 	db "Fail",13,10,0
+section .data
+		Success NewString "Success"
+		Fail 	NewString "Fail"
 
-
-SECTION .text
+section .text
 		RunTests:
 			; call clear_screen
 			; call test_disk_save

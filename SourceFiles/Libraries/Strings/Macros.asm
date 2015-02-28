@@ -1,25 +1,11 @@
-SECTION .text
-struc string
-	.value resb 68
-	.length resw 1
-endstruc
-
+section .text
 %macro NewString 1+
 	%strlen len %1
-	;Define each string
 	%rep %0
-		dw len
-		db %1
+		dw len + 1
+		db %1, 0
 	%endrep
 %endmacro
-
-; %macro NewString 1+
-; 	%strlen len %1
-; 	istruc string
-; 		at string.value, db %1
-; 		at string.length, db len
-; 	iend
-; %endmacro
 
 %macro StringToLower 1 
 	mov bx, %1 
@@ -34,10 +20,13 @@ endstruc
 %macro StringCompare 2-3 0 
 	push cx
 	push dx
+	push bx
+	GetString %2, %3
 	mov cx, %1 
-	mov dx, %2 + %3 * string_size
+	mov dx, bx
 	call string_compare
 	test ax, ax
+	pop bx
 	pop dx
 	pop cx
 %endmacro
@@ -45,20 +34,34 @@ endstruc
 %macro StringCompareInsensitive 2-3 0 
 	push cx
 	push dx
+	push bx
+	GetString %2, %3
 	mov cx, %1 
-	mov dx, %2 + %3 * string_size
+	mov dx, bx
 	call string_compare_insensitive
 	test ax, ax
+	pop bx
 	pop dx
 	pop cx
+%endmacro
+
+%macro GetString 1-2 0
+	mov ax, %2
+	mov bx, %1
+	call get_string
 %endmacro
 
 %macro StringCopy 2-3 0
 	push cx
 	push dx
+	push bx
+	push ax
+	GetString %2, %3
 	mov cx, %1 
-	mov dx, %2 + %3 * string_size
+	mov dx, bx
 	call string_copy
+	pop ax
+	pop bx
 	pop dx
 	pop cx
 %endmacro
