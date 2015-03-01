@@ -28,18 +28,22 @@ fight:
 	cmp bl, 0
 	jg .not_fists
 		call fist_fight
+		jmp .return
 	.not_fists:
 	cmp bl, 1
 	jg .not_sword
 		call attack_with_sword
+		jmp .return
 	.not_sword:
 	cmp bl, 2
 	jg .no_2_hand
 		call attack_with_2_handed_sword
+		jmp .return
 	.no_2_hand:
 	cmp bl, 3
 	jg .no_dagger
 		call attack_with_dagger
+		jmp .return
 	.no_dagger:
 	cmp bl, 4
 	jg .other
@@ -175,31 +179,29 @@ ret
 
 check_hit:
 	call roll_d20
-	cmp bx, 20
+	mov cx, bx
+	call get_current_monster
+
+	cmp cx, 20
 	jne .no_crit
 		WriteLine CheckHitStrings, 1
 		mov ax, [Character.str]
-		mov bx, 6
-		div bx
-		call get_current_monster
+		mov dx, 6
+		div dx
+
 		sub [Monsters + bx + monster.hp], ax
 		jmp .return
 
 	.no_crit:
-		mov cx, bx
-		call get_current_monster
-
 		mov ax, [Character.dex]
 		mov dx, 3
 		div dx
 
 		mov dx, [Monsters + bx + monster.dex]
-		
 		sub dx, ax
 
-	cmp bx, cx
+	cmp cx, dx
 	jle .no_damage
-
 		WriteLine CheckHitStrings, 2	
 		mov ax, [Character.str]
 		mov dx, 8
@@ -208,9 +210,9 @@ check_hit:
 		jmp .return
 
 	.no_damage:
-		mov bx, 10
-		sub bx, ax
-	cmp bx, cx
+		mov dx, 10
+		sub dx, ax
+	cmp cx, dx
 	jle .total_miss
 
 		WriteLine CheckHitStrings, 3
@@ -249,6 +251,7 @@ fist_fight:
 			div dx
 
 			sub [Monsters + bx + monster.hp], ax
+		jmp .return
 	.no_good:
 		WriteLine FistFightStrings + 3
 		call new_line
@@ -281,7 +284,7 @@ attack_with_sword:
 			call get_current_monster
 
 			sub [Monsters + bx + monster.hp], ax
-
+			jmp .return
 		.hit:
 			WriteLine AttackWithSwordStrings, 3
 			mov ax, [Character.str]
@@ -294,9 +297,10 @@ attack_with_sword:
 			call get_current_monster
 
 			sub [Monsters + bx + monster.hp], ax
-
+			jmp .return
 		.not_good_enough:
 			WriteLine AttackWithSwordStrings, 4
+			jmp .return
 		.total_miss:
 			WriteLine AttackWithSwordStrings, 5
 		.return:
@@ -325,6 +329,7 @@ attack_with_2_handed_sword:
 			call get_current_monster
 
 			sub [Monsters + bx + monster.hp], ax
+			jmp .return
 
 		.hit:
 			WriteLine AttackWith2HandSwordStrings, 3
@@ -338,9 +343,11 @@ attack_with_2_handed_sword:
 			call get_current_monster
 
 			sub [Monsters + bx + monster.hp], ax
+			jmp .return
 
 		.not_good_enough:
 			WriteLine AttackWith2HandSwordStrings, 4
+			jmp .return
 		.total_miss:
 			WriteLine AttackWith2HandSwordStrings, 5
 		.return:
@@ -385,6 +392,7 @@ attack_with_dagger:
 			call get_current_monster
 
 			sub [Monsters + bx + monster.hp], ax
+			jmp .return
 
 		.hit:
 			WriteLine DaggerFightStrings, 3
@@ -395,9 +403,11 @@ attack_with_dagger:
 			call get_current_monster
 
 			sub [Monsters + bx + monster.hp], ax
+			jmp .return
 
 		.not_good_enough:
 			WriteLine DaggerFightStrings, 4
+			jmp .return
 		.total_miss:
 			WriteLine DaggerFightStrings, 5
 		.return:
@@ -432,6 +442,7 @@ atack_with_mace:
 			call get_current_monster
 
 			sub [Monsters + bx + monster.hp], ax
+			jmp .return
 
 		.hit:
 			WriteLine AttackWithMaceStrings, 3
@@ -445,9 +456,11 @@ atack_with_mace:
 			call get_current_monster
 
 			sub [Monsters + bx + monster.hp], ax
+			jmp .return
 
 		.not_good_enough:
 			WriteLine AttackWithMaceStrings, 4
+			jmp .return
 		.total_miss:
 			WriteLine AttackWithMaceStrings, 5
 		.return:
@@ -568,6 +581,7 @@ attack_with_cross:
 				jne .no_crit
 				.crit:
 					mov byte [CurrentMonster.hit], 3
+					jmp .return
 
 				.no_crit:
 					mov byte [CurrentMonster.hit], 1

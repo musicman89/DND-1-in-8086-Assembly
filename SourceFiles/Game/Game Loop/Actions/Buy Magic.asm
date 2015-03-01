@@ -129,7 +129,7 @@ buy_wizard_spells:
 			mov [Character.wizardSpells + bx], dx
 			inc byte [Character.wizardSpellCount]
 			WriteLine BuyWizardSpellsStrings, 7
-
+			jmp .return
 		.nope:
 			WriteLine BuyWizardSpellsStrings, 8
 	.return:
@@ -248,6 +248,7 @@ buy_cleric_spells:
 			mov [Character.clericSpells + bx], dx
 			inc byte [Character.clericSpellCount]
 			WriteLine BuyClericSpellsStrings, 6
+			jmp .return
 		.nope:
 			WriteLine BuyClericSpellsStrings, 7
 	.return:

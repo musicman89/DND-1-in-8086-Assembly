@@ -114,11 +114,14 @@ ret
 ;   Exit:
 ;       None
 ;   Uses:
-;       BX
+;       AX, BX
 ;   Exceptions:
 ;       
 ;*******************************************************************************
 use_cleric_spell:
+	push ax
+	push bx
+
 	WriteLine UseMagicStrings, 3
 	ReadLine
 	call parse_int
@@ -128,42 +131,53 @@ use_cleric_spell:
 	cmp bx, 1
 	jne .no_kill
 		call cleric_kill
+		jmp .return
 	.no_kill:
 	cmp bx, 2
 	jne .no_mm2
 		call cleric_magic_missile_2
+		jmp .return
 	.no_mm2:
 	cmp bx, 3
 	jne .no_cl1
 		call cleric_cure_light_1
+		jmp .return
 	.no_cl1:
 	cmp bx, 4
 	jne .no_fat
 		call find_all_traps
+		jmp .return
 	.no_fat:
 	cmp bx, 5
 	jne .no_mm1
 		call cleric_magic_missile_1
+		jmp .return
 	.no_mm1:
 	cmp bx, 6
 	jne .no_mm3
 		call cleric_magic_missile_3
+		jmp .return
 	.no_mm3:
 	cmp bx, 7
 	jne .no_cl2
 		call cleric_cure_light_2
+		jmp .return
 	.no_cl2:
 	cmp bx, 8
 	jne .no_fasd
 		call find_all_secret_doors
+		jmp .return
 	.no_fasd:
 	cmp bx, 9
 	jne .nope
 		call cleric_repel_undead
+		jmp .return
 	.nope:
 		WriteLine UseMagicStrings, 4
 		call pass
 	.return:
+	pop bx
+	pop ax
 ret
 
 ;********************************************************************************
@@ -189,11 +203,14 @@ ret
 ;   Exit:
 ;       None
 ;   Uses:
-;       BX
+;       AX, BX
 ;   Exceptions:
 ;       
 ;*******************************************************************************
 cleric_repel_undead:
+	push ax
+	push bx
+
 	cmp byte [CurrentMonster.type], 4
 	je .undead
 	cmp byte [CurrentMonster.type], 10
@@ -209,10 +226,13 @@ cleric_repel_undead:
 		call move_monster
 		call wait_key
 		call pass
+		jmp .return
 	.not:
 		WriteLine FailedString
 		call wait_key
 	.return:
+	pop bx
+	pop ax
 ret
 
 ;********************************************************************************
@@ -239,11 +259,14 @@ ret
 ;   Exit:
 ;       None
 ;   Uses:
-;       BX
+;       BX, CX
 ;   Exceptions:
 ;       
 ;*******************************************************************************
 cleric_kill:
+	push bx
+	push cx
+
 	mov cx, 3
 	call random_int
 	cmp bx, 2
@@ -252,10 +275,13 @@ cleric_kill:
 		mov byte [CurrentMonster.status], -1
 		call wait_key
 		call pass
+		jmp .return
 	.fail:
 		WriteLine FailedString
 		call wait_key
 		call pass
+	.return:
+
 ret
 
 ;********************************************************************************
@@ -608,42 +634,52 @@ user_wizard_spell:
 	cmp bx, 1
 	jne .no_push
 		call wizard_push
+		jmp .return
 	.no_push:
 	cmp bx, 2
 	jne .no_kill
 		call wizard_kill
+		jmp .return
 	.no_kill:
 	cmp bx, 3
 	jne .no_fat
 		call find_all_traps
+		jmp .return
 	.no_fat:
 	cmp bx, 4
 	jne .no_teleport
 		call wizard_teleport
+		jmp .return
 	.no_teleport:
 	cmp bx, 5
 	jne .no_change_1
 		call wizard_change_1_0
+		jmp .return
 	.no_change_1:
 	cmp bx, 6
 	jne .no_mm1
 		call wizard_magic_missile_1
+		jmp .return
 	.no_mm1:
 	cmp bx, 7
 	jne .no_mm2
 		call wizard_magic_missile_2
+		jmp .return
 	.no_mm2:
 	cmp bx, 8
 	jne .no_mm3
 		call wizard_magic_missile_3
+		jmp .return
 	.no_mm3:
 	cmp bx, 9
 	jne .no_fasd
 		call find_all_secret_doors
+		jmp .return
 	.no_fasd:
 	cmp bx, 10
 	jne .nope
 		call wizard_change_0_1
+		jmp .return
 	.nope:
 		WriteLine UseMagicStrings, 10
 		call pass

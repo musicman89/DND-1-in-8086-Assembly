@@ -40,6 +40,10 @@ section .text
 ;       
 ;*******************************************************************************
 range_and_hit_check:
+	push ax
+	push bx
+	push cx
+	push dx
 	cmp byte [CurrentMonster.type], 0
 	je .no_monster
 	mov cl, [CurrentMonster.y]
@@ -112,11 +116,21 @@ range_and_hit_check:
 		.complete_miss:
 			mov byte [CurrentMonster.hit], 0
 	.return:
+	pop dx
+	pop cx
+	pop bx
+	pop ax
 ret
 
 
 monster_attack:
+	push ax
+	push bx
+	push cx
+	push dx
+
 	call get_current_monster
+
 	add bx, [Monsters + bx + monster.name]
 	Write bx
 	WriteLine WatchItString
@@ -158,23 +172,32 @@ monster_attack:
 		jl .no_hit
 			call monster_hit
 			jmp .return
-		.no_hit:
+	.no_hit:
 		mov cx, 2
 		call random_int
-		cmp bx, 1
-		jg .miss
-			call monster_hit_no_damage
-			jmp .return
-		.miss:
-			call monster_miss
-		.return:
+	cmp bx, 1
+	jg .miss
+		call monster_hit_no_damage
+		jmp .return
+	.miss:
+		call monster_miss
+	.return:
+	pop dx
+	pop cx
+	pop bx
+	pop ax	
 ret
 
 monster_killed:
+	push ax
+	push bx
+	push cx
+	push dx
+
 	mov byte [CurrentMonster.status], 0
 	call get_current_monster	
 	add bx, Monsters
-	
+
 	push bx 													;We need to get the current monsters attributes
 
 	mov dx, [bx + monster.gold]
@@ -220,6 +243,10 @@ monster_killed:
 		mov [bx + monster.gold], cx
 	.no_revive:
 		mov byte [CurrentMonster.type], 0
+	pop dx
+	pop cx
+	pop bx
+	pop ax
 ret
 
 survive_with_constitution:
@@ -253,6 +280,7 @@ hp_check:
 ret
 
 hp_low:
+	push bx
 	cmp word[Character.hp], 1
 	jge .watch_it
 		call hp_check
@@ -264,9 +292,15 @@ hp_low:
 		call print_dec
 		call new_line
 	.return:
+	pop bx
 ret
 
 check_for_random_encounter:
+	push ax
+	push bx
+	push cx
+	push dx
+
 	inc bx
 	mov [CurrentMonster.type], bx
 	mov cx, 7
@@ -345,9 +379,18 @@ check_for_random_encounter:
 		cmp cl, ch
 	jle .y_loop
 	.return:
+	pop dx
+	pop cx
+	pop bx
+	pop ax
 ret
 
 reset_monsters:
+	push ax
+	push bx
+	push cx
+	push dx
+
 	inc byte[Difficulty]
 	mov cl, 10
 	.loop:
@@ -371,9 +414,18 @@ reset_monsters:
 	dec cl
 	jnz .loop
 	add word[Character.hp], 5
+	pop dx
+	pop cx
+	pop bx
+	pop ax
 ret
 
 check_for_monsters:
+	push ax
+	push bx
+	push cx
+	push dx
+
 	mov cl, 50
 	.zloop:
 		mov ch, 9
@@ -411,9 +463,15 @@ check_for_monsters:
 	.reset:
 		call reset_monsters
 	.return:
+	pop dx
+	pop cx
+	pop bx
+	pop ax
 ret
 
 monster_hit:
+	push bx
+	push cx
 	WriteLine MonsterHitStrings, 0
 	call get_current_monster
 	mov cx, [Monsters + bx + monster.str]
@@ -423,6 +481,8 @@ monster_hit:
 	Write MonsterHitStrings, 1
 	mov bx, [Character.hp]
 	call print_dec
+	pop cx
+	pop bx
 ret
 
 monster_hit_no_damage:
@@ -434,108 +494,106 @@ monster_miss:
 ret
 
 monster_trapped:
+	push bx
 	WriteLine MonsterTrappedString
 	mov byte[CurrentMonster.status], -1
 	call get_current_monster
 	mov word[Monsters + bx + monster.gold], 0
+	pop bx
 ret
 
 monster_battle:
+	push bx
 	call range_and_hit_check
+
 	call get_current_monster
 
 	cmp word[Monsters + bx + monster.hp], 1
 	jge .itLives
 		call monster_killed
+		jmp .return
 	.itLives:
 	cmp word[CurrentMonster.range], 2
 	jge .outOfRange
 		call monster_attack
+		jmp .return
 	.outOfRange:
 		call monster_moves
+	.return:
+	pop bx
 ret
 
 monster_moves:
-	mov cl, [CurrentMonster.distance_x]
-	mov ch, [CurrentMonster.distance_y]
-	cmp cx, 0
-	je .return
+	push ax
+	push bx
+	push cx
+	push dx
+	mov dh, 0
+	mov ch, 0
+	mov dl, [CurrentMonster.distance_x]
+	mov cl, [CurrentMonster.distance_y]
 
-	cmp cl, ch
-	jg .move_x
-		mov ah, 0
-		mov al, ch
-		mov bx, ax
-		call abs_int
-		div bx
-		mov dl, 0
-		mov dh, al
-
-	.move_x:
-		mov ah, 0
-		mov al, cl 
-		mov bx, ax 
-		call abs_int
-		div bx
-		mov dh, 0
-		mov dl, al
-
-	.check:
-		mov cl, [CurrentMonster.x]
-		mov ch, [CurrentMonster.y]
-		add cl, dl
-		add ch, dh
-
-		mov bh, 0
-		mov bl, ch 
-		mov bx, [rows + bx]
-		mov dh, 0
-		mov dl, cl
-		add bx, dx
-
-		mov dl, [CurrentDungeon + bx]
+	cmp cl, dl
+	jg .move_y
+		mov cl, [CurrentMonster.y]
 		cmp dl, 0
+		jl .up
+			mov dl, [CurrentMonster.x]
+			dec dl
+			jmp .check
+		.up:
+			mov dl, [CurrentMonster.x]
+			inc dl
+			jmp .check
+
+	.move_y:
+		mov dl, [CurrentMonster.x]
+		cmp cl, 0
+		jl .right
+			mov cl, [CurrentMonster.y]
+			dec cl
+			jmp .check
+		.right:
+			mov cl, [CurrentMonster.y]
+			dec cl 
+	.check:
+		call get_tile_number
+		mov al, [CurrentDungeon + bx]
+		cmp al, 0
 		je .closer 
 
-		cmp dl, 6
+		cmp al, 6
 		jge .closer
 
-		cmp dl, 3
+		cmp al, 3
 		je .door
 
-		cmp dl, 4
+		cmp al, 4
 		je .door
 
 
-		cmp dl, 2
+		cmp al, 2
 		je .return
 			call monster_trapped
 		jmp .return
 		.closer:
-			mov byte [bx], 0
-			mov bh, 0
-			mov bl, [CurrentMonster.y]
-			mov bx, [rows + bx]
-			add bx, [CurrentMonster.x]
-
 			mov byte [CurrentDungeon + bx], 0
 
-			mov [CurrentMonster.x], cl
-			mov [CurrentMonster.y], ch
+			mov [CurrentMonster.x], dl
+			mov [CurrentMonster.y], cl
 			jmp .return
 
 		.door:
-			mov bx, 2
-			mov ah, 0
-
-			mov al, dl
-			mul bx
-			mov dl, al
-
-			mov al, dh
-			mul bx
-			mov dh, al
-
-			jmp .check
-		.return:
+			cmp cl, [CurrentMonster.y]
+			jne .door_x
+				inc cl
+				jmp .check
+			.door_x:
+				inc dl
+				jmp .check
+	.return:
+	pop dx
+	pop cx
+	pop bx
+	pop ax
 ret
