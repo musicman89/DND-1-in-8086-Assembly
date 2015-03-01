@@ -25,6 +25,10 @@ section .text
 ;       
 ;*******************************************************************************
 cheat:
+	push bx
+	push cx 
+	push dx 
+
 	mov dh, 0
 	mov ch, 0
 	mov cl, 0
@@ -43,4 +47,7 @@ cheat:
 	inc cl
 	cmp cl, 25
 	jl .loopy
+	pop dx
+	pop cx
+	pop bx
 ret

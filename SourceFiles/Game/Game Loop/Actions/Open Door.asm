@@ -79,13 +79,17 @@ open_door:
 	jmp .loop
 	.right:
 		inc cl
+		jmp .check
 	.left:
 		dec cl
+		jmp .check
 	.up:
 		inc dl
+		jmp .check
 	.down:
 		dec dl
-
+		jmp .check
+	.check:
 	call check_door
 ret
 

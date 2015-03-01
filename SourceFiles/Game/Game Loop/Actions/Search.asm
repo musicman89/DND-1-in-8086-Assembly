@@ -37,11 +37,16 @@ section .text
 ;   Exit:
 ;       None
 ;   Uses:
-;       BX, CX, DX
+;       AX, BX, CX, DX
 ;   Exceptions:
 ;       
 ;*******************************************************************************
 search:
+	push ax
+	push bx
+	push cx
+	push dx
+
 	WriteLine SearchForTrapStrings, 0
 	call roll_d20
 	mov ax, bx 
@@ -103,11 +108,16 @@ search:
 			.noDoor:
 			inc dl
 			cmp dl, dh
-			jl .loopx
+			jle .loopx
 		pop dx
 	inc cl
 	cmp cl, ch
-	jl .loopy
+	jle .loopy
 	.return:
-		call pass
+	pop dx
+	pop cx
+	pop bx
+	pop ax
+
+	call pass
 ret

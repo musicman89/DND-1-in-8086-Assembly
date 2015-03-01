@@ -39,12 +39,17 @@ boot:
 	%include "Data/Constants/Structures.asm"
 	%include "Data/Constants/Macros.asm"
 
+	%include "Game/Libraries/Player.asm"
+	%include "Game/Libraries/Dungeon.asm"
+	%include "Game/Libraries/Magic.asm"
+	%include "Game/Libraries/Inventory.asm"
+
 	%include "Game/Intro.asm"
 	%include "Game/Roll Character.asm"
 	%include "Game/Shop.asm"
 	%include "Game/Load Game.asm"
 	%include "Game/Game Loop.asm"
-	%include "Game/Game Loop/Player.asm"
+
 	%include "Game/Game Loop/Get Command.asm"
 	%include "Game/Game Loop/Actions/Buy HP.asm"
 	%include "Game/Game Loop/Actions/Buy Magic.asm"
@@ -82,3 +87,4 @@ section .data
 	%include "Data/Constants/Spells.asm"
 	%include "Data/Constants/Dungeons.asm"
 	%include "Data/Strings/ErrorStrings.asm"
+	%include "Data/Constants/LookupTables.asm"

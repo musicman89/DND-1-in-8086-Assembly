@@ -274,7 +274,7 @@ hit_wall:
 		WriteLine HitWallStrings, 1
 
 	.return:
-	;call pass
+	call pass
 ret
 
 ;********************************************************************************
