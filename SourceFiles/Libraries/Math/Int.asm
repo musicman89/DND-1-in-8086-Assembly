@@ -269,7 +269,7 @@ ret
 ;               }
 ;               
 ;   Entry:
-;       Int number in register bx
+;       Int number in register BX
 ;   Exit:
 ;       Int result in register BX
 ;   Uses:
@@ -296,6 +296,7 @@ get_root:
         jg .highest4Power           ;If it is still greater repeat
 
     .loop:
+
         mov cx, ax                  ;We are going put our result in cx
         add cx, dx                  ;Add our bit to it
         cmp cx, bx                  ;Compare our bit to our number
@@ -316,10 +317,18 @@ get_root:
             jne .loop               ;If we have not hit 0 go for another round
 
     mov bx, ax                      ;Now that we have finished lets move the result into bx
-
+    
     pop dx
     pop cx
     pop ax
+ret
+
+abs_int_8:
+    cmp al, 0
+    jge .return
+        xor al, 0xFF          ;Make our number positive
+        inc al                  ;Adjust for the twos compliment switch
+    .return:
 ret
 
 abs_int:
@@ -327,6 +336,7 @@ abs_int:
     jge .return
         xor ax, 0xFFFF          ;Make our number positive
         inc ax                  ;Adjust for the twos compliment switch
+
     .return:
 ret
 

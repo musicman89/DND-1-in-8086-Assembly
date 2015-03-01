@@ -43,6 +43,8 @@ ret
 
 get_current_monster:
 	push ax
+	push cx
+	push dx
 		mov bh, 0
 		mov bl, [CurrentMonster.type]
 		dec bl
@@ -50,6 +52,8 @@ get_current_monster:
 		mul bx
 
 		mov bx, ax
+	pop dx
+	pop cx
 	pop ax
 ret
 
