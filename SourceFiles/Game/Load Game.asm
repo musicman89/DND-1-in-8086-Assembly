@@ -85,6 +85,7 @@ load_game:
 	mov bx, CurrentDungeon
 	mov cx, 625
 	call mem_copy
+
 ret
 
 save_game:

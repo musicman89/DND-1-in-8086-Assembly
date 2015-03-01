@@ -24,7 +24,6 @@ section .text
 			call StringFunctionTests
 			call wait_key
 			call clear_screen
-
 		ret
 			
 		%include "../Test/Libraries/Math/Int.asm"
