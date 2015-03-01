@@ -47,19 +47,22 @@ section .text
 ;*******************************************************************************
 move:
 	Write MoveStrings, 0
-	mov bx, [Character.x]
+	mov bh, 0
+	mov ch, 0
+	mov dh, 0
+	mov cl, [Character.x]
+	mov dl, [Character.y]
+
+	mov bl, cl
 	call print_dec
 
 	Write MoveStrings, 1
-	mov bx, [Character.y]
+	mov bl, dl
 	call print_dec
+	call new_line
 
-	WriteLine MoveStrings, 2
-
-	mov cl, [Character.x]
-	mov dl, [Character.y]
 	.loop:
-		Write MoveStrings, 3
+		WriteLine MoveStrings, 2
 		ReadLine
 		call to_upper
 		
@@ -91,13 +94,18 @@ move:
 	jmp .loop
 	.right:
 		inc cl
+		jmp .check
 	.left:
 		dec cl
+		jmp .check
 	.up:
 		inc dl
+		jmp .check
 	.down:
 		dec dl
+		jmp .check
 
+	.check:
 	call check_tile
 ret
 
@@ -147,7 +155,8 @@ ret
 ;*******************************************************************************
 check_tile:
 	call get_tile_number
-	mov bx, [CurrentDungeon + bx]
+	mov al, [CurrentDungeon + bx]
+
 	cmp al, 8
 	jne .noCon
 		call increase_con
@@ -187,7 +196,7 @@ check_tile:
 	cmp al, 0
 	jne .oops
 		call advance_position
-
+		jmp .return
 	.oops:
 		call hit_wall
 	.return:
@@ -265,7 +274,7 @@ hit_wall:
 		WriteLine HitWallStrings, 1
 
 	.return:
-	call pass
+	;call pass
 ret
 
 ;********************************************************************************

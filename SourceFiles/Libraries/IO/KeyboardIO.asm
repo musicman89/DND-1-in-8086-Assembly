@@ -85,6 +85,7 @@ ret
 ;		
 ;*******************************************************************************
 get_user_input:
+	push cx
     mov bx, 2 			
     .loop:
         call get_key 					;Get input from the user
@@ -116,6 +117,7 @@ get_user_input:
     mov bx, InputStringBuffer 			;Point BX back to the start of the string buffer
     call string_length
     call new_line
+    pop cx
 ret
 
 invalid_input:

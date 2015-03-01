@@ -1,7 +1,7 @@
 [BITS 16]
-[ORG 0x9000]
+[ORG 0x8000]
 [CPU 8086]
-[map all]
+;[map all]
 jmp boot
 
 ;%define DEBUG
@@ -15,7 +15,7 @@ boot:
 	xor ax, ax								;clear ax
 	mov ds, ax								;clear ds
 	mov ss, ax								;start the stack at 0
-	mov bp, 0x8FFF							;move the stack pointer to 1 before the start
+	mov bp, 0x7FFF							;move the stack pointer to 1 before the start
 	mov sp, bp
 	mov es, ax
 	call get_seed 							;Initialize our random seed
@@ -82,5 +82,3 @@ section .data
 	%include "Data/Constants/Spells.asm"
 	%include "Data/Constants/Dungeons.asm"
 	%include "Data/Strings/ErrorStrings.asm"
-
-	times 51688-($-$$) db 0

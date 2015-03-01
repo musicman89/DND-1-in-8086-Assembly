@@ -43,6 +43,8 @@ ret
 
 get_current_monster:
 	push ax
+	push cx
+	push dx
 		mov bh, 0
 		mov bl, [CurrentMonster.type]
 		dec bl
@@ -50,6 +52,8 @@ get_current_monster:
 		mul bx
 
 		mov bx, ax
+	pop dx
+	pop cx
 	pop ax
 ret
 
@@ -208,11 +212,10 @@ remove_gold:
 ret
 
 get_tile_number:
-	mov ax, dx
-	mov bx, 25
-	mul bx
-	add ax, cx
-	mov bx, ax
+	mov bx, dx
+	shl bx, 1
+	mov bx, [rows + bx]
+	add bx, cx
 ret
 
 
@@ -425,14 +428,12 @@ get_y_bounds:
 	sub bl, ch
 	cmp bl, 0
 	jl .lower_x
-	mov bl, cl
-	add bl, ch
-	cmp bl, 25
+		mov bl, cl
+		add bl, ch
+		cmp bl, 25
 	jg .upper_x
-		sub ch, ch
-		mov bl, ch
-		mov ch, cl
-		add ch, bl
+		mov bl, cl
+		sub cl, ch
 		add ch, bl
 		jmp .return
 	.upper_x:
@@ -487,14 +488,12 @@ get_x_bounds:
 	sub bl, dh
 	cmp bl, 0
 	jl .lower_x
-	mov bl, dl
-	add bl, dh
-	cmp bl, 25
+		mov bl, dl
+		add bl, dh
+		cmp bl, 25
 	jg .upper_x
+		mov bl, dl
 		sub dl, dh
-		mov bl, dh
-		mov dh, dl
-		add dh, bl
 		add dh, bl
 		jmp .return
 	.upper_x:

@@ -1,4 +1,4 @@
-section .text
+section .data
 struc monster
 	.name resb 16
 	.str resw 1

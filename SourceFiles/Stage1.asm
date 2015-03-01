@@ -8,7 +8,7 @@ main:
 	xor ax, ax						;clear ax
 	mov ds, ax						;clear ds
 	mov ss, ax						;start the stack at 0
-	mov bp, 0x8000					;move the stack pointer to 0x2000 past the start
+	mov bp, 0x7F00					;move the stack pointer to 0x2000 past the start
 	mov sp, bp
 	push es
 	call clear_screen
@@ -19,8 +19,8 @@ main:
 	mov bx, LoadingSectors
 	call print_string
 	pop es
-	mov bx, 0x9000 					;Set our starting address to 0x9000
-	mov dh, 99 						;Load 99 more sectors
+	mov bx, 0x8000 					;Set our starting address to 0x9000
+	mov dh, 60 						;Load 99 more sectors
 	mov dl, [BOOT_DRIVE] 			;Set our drive to the boot drive
 	call disk_load 					;Perform the load operation
 
@@ -28,7 +28,7 @@ main:
 	call print_string
 
 	mov dl, [BOOT_DRIVE]
-	jmp 0x9000					;Jump to our newly loaded code
+	jmp 0x8000					;Jump to our newly loaded code
 
 	cli								;Disable Interrupts
 	hlt								;Halt the Processor

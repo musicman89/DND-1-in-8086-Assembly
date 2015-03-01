@@ -42,7 +42,6 @@ section .text
 range_and_hit_check:
 	cmp byte [CurrentMonster.type], 0
 	je .no_monster
-
 	mov cl, [CurrentMonster.y]
 	mov dl, [CurrentMonster.x]
 
@@ -57,21 +56,21 @@ range_and_hit_check:
 	.getRange:
 		mov ah, 0
 		mov al, [CurrentMonster.distance_y]
-		call abs_int
-		mov dx, ax
-		mul dx
-		mov dx, ax
-
-		mov ah, 0
-		mov al, [CurrentMonster.distance_x]
-		call abs_int
+		call abs_int_8
 		mov cx, ax
 		mul cx
 		mov cx, ax
 
-		mov bx, dx
+		mov ah, 0
+		mov al, [CurrentMonster.distance_x]
+		call abs_int_8
+		mov dx, ax
+		mul dx
+		mov bx, ax
 		add bx, cx
+
 		call get_root
+
 		mov [CurrentMonster.range], bx
 		jmp .hit_check
 
@@ -89,15 +88,17 @@ range_and_hit_check:
 		.no_crit:
 			push bx 									;We need to get the current monsters attributes
 			call get_current_monster
-			mov bx, [Monsters + bx + monster.dex]  		;Now we can get the dextarity of the monster
+			mov cx, [Monsters + bx + monster.dex]  		;Now we can get the dextarity of the monster
 
 			mov ax, [Character.dex] 					;In ax we will load our character's dextarity
-			mov dx, 3 									;Put 3 in dx 
-			div dx 										;Divide our dextarity by 3
-			sub bx, ax 									;Now subtract this from the monster's dextarity
-			mov dx, bx 									;Move the final value into dx
+
+			mov bx, 3 									;Put 3 in dx 
+			div bx 										;Divide our dextarity by 3
+
+			sub cx, ax 									;Now subtract this from the monster's dextarity
 			pop bx
-		cmp bx, dx 										;Check if our chance roll was greater than the value we just calculated
+		
+		cmp bx, cx 										;Check if our chance roll was greater than the value we just calculated
 		jl .no_hit
 			mov byte [CurrentMonster.hit], 2
 			jmp .return
@@ -172,11 +173,14 @@ ret
 monster_killed:
 	mov byte [CurrentMonster.status], 0
 	call get_current_monster	
+	add bx, Monsters
+	
 	push bx 													;We need to get the current monsters attributes
 
 	mov dx, [bx + monster.gold]
 	mov [Character.gold], dx
 	Write MonsterKilledStrings, 0
+
 	WriteLine bx + monster.name
 	mov bx, dx
 	Write MonsterKilledStrings, 1
@@ -268,30 +272,56 @@ check_for_random_encounter:
 	mov cx, 7
 	call random_int
 	inc bx
-	mov dh, bl
+
 	mov ch, bl
 	call get_y_bounds
+
+	mov dh, bl
 	call get_x_bounds
+
 	.y_loop:
 		mov bh, 0
 		mov bl, cl
+		shl bx, 1
 		mov ax, [rows + bx]
+
+		mov bl, [Character.y]
+		cmp bl, cl
+
+		jg .py
+			sub bl, cl
+			cmp bl, 2 
+			jle .return_x_loop
+			jmp .continue_x
+		.py:
+			push ax
+				mov al, bl
+				mov bl, cl
+				sub bl, al
+			pop ax
+			cmp bl, 2
+			jle .return_y_loop
+
 		.x_loop:
 			mov bl, [Character.x]
-			cmp bl, cl
+			cmp bl, dl
 			jg .px
-				sub bl, cl
-				cmp cl, 2 
+				sub bl, dl
+				cmp bl, 2 
 				jle .return_x_loop
 				jmp .continue_x
 			.px:
-				sub cl, bl
-				cmp cl, 2
+				push ax
+					mov al, bl
+					mov bl, dl
+					sub bl, al
+				pop ax
+				cmp bl, 2
 				jle .return_x_loop
 			.continue_x:
 				push cx
-				mov cx, 10
-				call random_int
+					mov cx, 10
+					call random_int
 				pop cx
 				cmp bx, 7
 				jg .return_x_loop
@@ -303,16 +333,17 @@ check_for_random_encounter:
 			cmp byte[CurrentDungeon + bx], 0
 			jne .return_x_loop
 				mov byte[CurrentDungeon + bx], 5
-				mov [CurrentMonster.x], cl
-				mov [CurrentMonster.y], dl
+				mov [CurrentMonster.x], dl
+				mov [CurrentMonster.y], cl
 				jmp .return
 			.return_x_loop:
-				inc cl
-				cmp cl, ch
-				jl .x_loop
-		inc dl
-		cmp dl, dh
-	jl .y_loop
+				inc dl
+				cmp dl, dh
+				jle .x_loop
+		.return_y_loop:
+		inc cl
+		cmp cl, ch
+	jle .y_loop
 	.return:
 ret
 
@@ -345,16 +376,17 @@ ret
 check_for_monsters:
 	mov cl, 50
 	.zloop:
-		mov ch, 10
+		mov ch, 9
 		.mloop:
 			mov bh, 0
 			mov bl, ch
-			dec bl
+
 			mov ax, monster_size
 			mul bx
 			mov bx, ax
+
 			cmp word[Monsters + bx + monster.hp], 1
-			jne .loopm
+			jle .loopm
 				push cx
 				mov cx, 1000
 				call random_int
@@ -366,7 +398,7 @@ check_for_monsters:
 			.loopm:
 			dec ch
 
-			jnz .mloop
+			jge .mloop
 	dec cl
 	jnz .zloop
 	WriteLine CheckForMonstersStrings, 0
