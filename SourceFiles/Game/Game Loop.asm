@@ -46,7 +46,6 @@ game_loop_welcome:
 	mov bl, [Character.y]
 	call print_dec
 	WriteLine WelcomeStrings, 3 
-	call wait_key
 ret
 
 

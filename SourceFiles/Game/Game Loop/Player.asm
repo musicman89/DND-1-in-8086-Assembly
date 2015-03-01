@@ -208,11 +208,10 @@ remove_gold:
 ret
 
 get_tile_number:
-	mov ax, dx
-	mov bx, 25
-	mul bx
-	add ax, cx
-	mov bx, ax
+	mov bx, dx
+	shl bx, 1
+	mov bx, [rows + bx]
+	add bx, cx
 ret
 
 

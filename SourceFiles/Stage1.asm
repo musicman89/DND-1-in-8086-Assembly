@@ -20,7 +20,7 @@ main:
 	call print_string
 	pop es
 	mov bx, 0x8000 					;Set our starting address to 0x9000
-	mov dh, 30 						;Load 99 more sectors
+	mov dh, 60 						;Load 99 more sectors
 	mov dl, [BOOT_DRIVE] 			;Set our drive to the boot drive
 	call disk_load 					;Perform the load operation
 

@@ -354,7 +354,7 @@ check_for_monsters:
 			mul bx
 			mov bx, ax
 			cmp word[Monsters + bx + monster.hp], 1
-			jne .loopm
+			jle .loopm
 				push cx
 				mov cx, 1000
 				call random_int

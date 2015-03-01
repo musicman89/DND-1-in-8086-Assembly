@@ -25,27 +25,20 @@ section .text
 ;       
 ;*******************************************************************************
 cheat:
+	mov dh, 0
+	mov ch, 0
 	mov cl, 0
-	mov dl, 0
 	.loopy:
-		push dx
+		mov dl, 0
 		.loopx:
+			call get_tile_number
+			mov bl, [CurrentDungeon + bx]
 			mov bh, 0
-
-			add bl, cl
-			shl bx, 1
-			mov bx, [rows + bx]
-
-			mov al, cl
-			mov ah, 0
-			add bx, ax
-
-			mov bx, [CurrentDungeon + bx]
 			call print_dec
+			Write Space
 			inc dl
 			cmp dl, 25
 			jl .loopx
-		pop dx
 		call new_line
 	inc cl
 	cmp cl, 25
