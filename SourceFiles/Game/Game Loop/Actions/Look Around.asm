@@ -40,17 +40,17 @@ look_around:
 	.loopy:
 		push dx
 		.loopx:
+			push dx
+			push cx
+			mov ch, 0
+			mov dh, 0
+
+			call get_tile_number
+			pop cx
+			pop dx
+
+			mov bl, [CurrentDungeon + bx]
 			mov bh, 0
-
-			add bl, cl
-			shl bx, 1
-			mov bx, [rows + bx]
-
-			mov al, cl
-			mov ah, 0
-			add bx, ax
-
-			mov bx, [CurrentDungeon + bx]
 			cmp bx, 7
 			jne .not7
 				mov bx, 9
@@ -68,13 +68,14 @@ look_around:
 				mov bx, 1
 			.not3:
 			call print_dec
+			Write Space
 			inc dl
 			cmp dl, dh
-			jl .loopx
-			jl .loopx
+			jle .loopx
+		call new_line
 	pop dx
 	inc cl
 	cmp cl, ch
-	jl .loopy
+	jle .loopy
 	call pass
 ret

@@ -94,13 +94,18 @@ move:
 	jmp .loop
 	.right:
 		inc cl
+		jmp .check
 	.left:
 		dec cl
+		jmp .check
 	.up:
 		inc dl
+		jmp .check
 	.down:
 		dec dl
+		jmp .check
 
+	.check:
 	call check_tile
 ret
 
@@ -225,7 +230,7 @@ advance_position:
 	mov [Character.x], cl
 	mov [Character.y], dl
 	WriteLine DoneString
-	;call pass
+	call pass
 ret
 
 ;********************************************************************************
