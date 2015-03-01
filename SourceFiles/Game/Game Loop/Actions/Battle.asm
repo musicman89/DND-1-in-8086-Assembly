@@ -130,6 +130,7 @@ monster_attack:
 	push dx
 
 	call get_current_monster
+
 	add bx, [Monsters + bx + monster.name]
 	Write bx
 	WriteLine WatchItString
@@ -504,6 +505,7 @@ ret
 monster_battle:
 	push bx
 	call range_and_hit_check
+
 	call get_current_monster
 
 	cmp word[Monsters + bx + monster.hp], 1
@@ -526,88 +528,69 @@ monster_moves:
 	push bx
 	push cx
 	push dx
+	mov dh, 0
+	mov ch, 0
+	mov dl, [CurrentMonster.distance_x]
+	mov cl, [CurrentMonster.distance_y]
 
-	mov cl, [CurrentMonster.distance_x]
-	mov ch, [CurrentMonster.distance_y]
-	cmp cx, 0
-	je .return
-
-	cmp cl, ch
-	jg .move_x
-		mov ah, 0
-		mov al, ch
-		mov bx, ax
-		call abs_int
-		div bx
-		mov dl, 0
-		mov dh, al
-
-	.move_x:
-		mov ah, 0
-		mov al, cl 
-		mov bx, ax 
-		call abs_int
-		div bx
-		mov dh, 0
-		mov dl, al
-
-	.check:
-		mov cl, [CurrentMonster.x]
-		mov ch, [CurrentMonster.y]
-		add cl, dl
-		add ch, dh
-
-		mov bh, 0
-		mov bl, ch 
-		mov bx, [rows + bx]
-		mov dh, 0
-		mov dl, cl
-		add bx, dx
-
-		mov dl, [CurrentDungeon + bx]
+	cmp cl, dl
+	jg .move_y
+		mov cl, [CurrentMonster.y]
 		cmp dl, 0
+		jl .up
+			mov dl, [CurrentMonster.x]
+			dec dl
+			jmp .check
+		.up:
+			mov dl, [CurrentMonster.x]
+			inc dl
+			jmp .check
+
+	.move_y:
+		mov dl, [CurrentMonster.x]
+		cmp cl, 0
+		jl .right
+			mov cl, [CurrentMonster.y]
+			dec cl
+			jmp .check
+		.right:
+			mov cl, [CurrentMonster.y]
+			dec cl 
+	.check:
+		call get_tile_number
+		mov al, [CurrentDungeon + bx]
+		cmp al, 0
 		je .closer 
 
-		cmp dl, 6
+		cmp al, 6
 		jge .closer
 
-		cmp dl, 3
+		cmp al, 3
 		je .door
 
-		cmp dl, 4
+		cmp al, 4
 		je .door
 
 
-		cmp dl, 2
+		cmp al, 2
 		je .return
 			call monster_trapped
 		jmp .return
 		.closer:
-			mov byte [bx], 0
-			mov bh, 0
-			mov bl, [CurrentMonster.y]
-			mov bx, [rows + bx]
-			add bx, [CurrentMonster.x]
-
 			mov byte [CurrentDungeon + bx], 0
 
-			mov [CurrentMonster.x], cl
-			mov [CurrentMonster.y], ch
+			mov [CurrentMonster.x], dl
+			mov [CurrentMonster.y], cl
 			jmp .return
 
 		.door:
-			mov bx, 2
-			mov ah, 0
-
-			mov al, dl
-			mul bx
-			mov dl, al
-
-			mov al, dh
-			mul bx
-			mov dh, al
-
-			jmp .check
+			cmp cl, [CurrentMonster.y]
+			jne .door_x
+				inc cl
+				jmp .check
+			.door_x:
+				inc dl
+				jmp .check
 	.return:
 	pop dx
 	pop cx
