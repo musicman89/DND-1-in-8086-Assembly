@@ -50,36 +50,125 @@ print_attributes:
 		call wait_key
 ret
 
+;********************************************************************************
+;   lose_hp
+;   Purpose:
+;      To reduce a player's hp
+;           Prototype:
+;               void lose_hp(int amount);
+;           Algorithm:
+;               void lose_hp(int amount){
+;					Chracter.hp -= amount;
+;               }
+;               
+;   Entry:
+;       Amount in AX
+;   Exit:
+;       None
+;   Uses:
+;       AX, BX
+;   Exceptions:
+;       
+;*******************************************************************************
 lose_hp:
-	mov bx, [Character.hp]
-	sub bx, ax
-	mov [Character.hp], bx
+	sub [Character.hp], ax
 ret
 
+;********************************************************************************
+;   add_hp
+;   Purpose:
+;      To increase a player's hp
+;           Prototype:
+;               void add_hp(int amount);
+;           Algorithm:
+;               void add_hp(int amount){
+;					Chracter.hp += amount;
+;               }
+;               
+;   Entry:
+;       Amount in AX
+;   Exit:
+;       None
+;   Uses:
+;       AX, BX
+;   Exceptions:
+;       
+;*******************************************************************************
 add_hp:
-	mov bx, [Character.hp]
-	add bx, ax
-	mov [Character.hp], bx
+	add [Character.hp], ax
 ret
 
+;********************************************************************************
+;   lose_one_hp
+;   Purpose:
+;      To reduce a player's hp by one
+;           Prototype:
+;               void lose_one_hp();
+;           Algorithm:
+;               void lose_one_hp(){
+;					Chracter.hp--;
+;               }
+;               
+;   Entry:
+;       None
+;   Exit:
+;       None
+;   Uses:
+;       AX, BX
+;   Exceptions:
+;       
+;*******************************************************************************
 lose_one_hp:
-	mov bx, [Character.hp]
-	dec bx
-	mov [Character.hp], bx
+	dec word [Character.hp]
 ret
 
+;********************************************************************************
+;   add_gold
+;   Purpose:
+;      To increase a player's gold
+;           Prototype:
+;               void add_gold(int amount);
+;           Algorithm:
+;               void add_gold(int amount){
+;					Chracter.gold += amount;
+;               }
+;               
+;   Entry:
+;       Amount in AX
+;   Exit:
+;       None
+;   Uses:
+;       AX, BX
+;   Exceptions:
+;       
+;*******************************************************************************
 add_gold:
-	mov bx, [Character.gold]
-	add bx, ax
-	mov [Character.gold], bx
+	add [Character.gold], ax
 ret
 
+;********************************************************************************
+;   remove_gold
+;   Purpose:
+;      To reduce a player's gold
+;           Prototype:
+;               void remove_gold(int amount);
+;           Algorithm:
+;               void remove_gold(int amount){
+;					Chracter.gold -= amount;
+;               }
+;               
+;   Entry:
+;       Amount in AX
+;   Exit:
+;       None
+;   Uses:
+;       AX, BX
+;   Exceptions:
+;       
+;*******************************************************************************
 remove_gold:
-	mov bx, [Character.gold]
-	sub bx, ax
-	mov [Character.gold], bx
+	sub [Character.gold], ax
 ret
-
 
 ;********************************************************************************
 ;   show_gold
@@ -135,6 +224,26 @@ show_hp:
 	call new_line
 ret
 
+;********************************************************************************
+;   die
+;   Purpose:
+;      To handle a player's death
+;           Prototype:
+;               void die();
+;           Algorithm:
+;               void die(){
+;					dead();
+;               }
+;               
+;   Entry:
+;       None
+;   Exit:
+;       None
+;   Uses:
+;       None
+;   Exceptions:
+;       
+;*******************************************************************************
 die:
 	call dead
 ret

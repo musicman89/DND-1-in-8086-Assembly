@@ -7,9 +7,9 @@ section .text
 ;               void cheat();
 ;           Algorithm:
 ;               void cheat(){
-;					for(int y = 0; y < 525; y+=25){
+;					for(int y = 0; y < 625; y+=25){
 ;						for(int x = 0; x < 25; x++){
-;							Console.Write(CurrentDungeon[y + x]);
+;							Console.Write(CurrentDungeon[y + x] + " ");
 ;						}
 ;						Console.NewLine();
 ;					}

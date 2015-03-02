@@ -15,8 +15,8 @@ section .text
 ;					else{
 ;						get_y_bounds(1);
 ;						get_x_bounds(1);
-;						for(int y = yMin; y <  yMax; y++){
-;							for(int x = xMin; x < xMax; x++){
+;						for(int y = yMin; y <=  yMax; y++){
+;							for(int x = xMin; x <= xMax; x++){
 ;								int tile = CurrentDungeon[y + x];
 ;								if(tile == 2){
 ;									Console.WriteLine(SearchForTrapStrings[2]);

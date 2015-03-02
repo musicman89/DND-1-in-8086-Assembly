@@ -1,4 +1,5 @@
 section .text
+
 ;********************************************************************************
 ;   check_inventory
 ;   Purpose:
@@ -8,7 +9,7 @@ section .text
 ;           Algorithm:
 ;               Byte check_inventory(Byte item){
 ;					for(int x = Character.itemCount; x > 0; x--){
-;						if(Character.inventory[x] == item) return x
+;						if(Character.inventory[x] == item - 1) return x
 ;					}
 ;					return -1;
 ;               }
@@ -50,7 +51,7 @@ ret
 ;           Algorithm:
 ;               void remove_from_inventory(Byte item){
 ;					int temp = Character.inventory[Character.itemCount -1];
-;					Character.inventory[item] = temp;
+;					Character.inventory[item - 1] = temp;
 ;					Character.itemCount--;
 ;               }
 ;               
@@ -87,7 +88,7 @@ ret
 ;           Algorithm:
 ;               void add_to_inventory(Byte item){
 ;					Character.itemCount++;
-;					Character.inventory[Character.itemCount] = item;
+;					Character.inventory[Character.itemCount] = item + 1;
 ;               }
 ;               
 ;   Entry:

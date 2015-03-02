@@ -471,7 +471,7 @@ ret
 ;					var gp = random_int(500) + 10;
 ;					Console.WriteLine(gp + FoundGoldStrings[1])
 ;					add_gold(gp);
-;					hit_wall();
+;					clear_tile();
 ;               }
 ;               
 ;   Entry:
@@ -495,7 +495,7 @@ find_gold:
 	call add_gold
 	WriteLine FoundGoldStrings, 1
 
-	call hit_wall
+	call clear_tile
 ret
 
 ;********************************************************************************
@@ -520,9 +520,7 @@ ret
 ;       
 ;*******************************************************************************
 increase_strength:
-	mov bx, [Character.str]
-	inc bx
-	mov [Character.str], bx
+	inc word [Character.str]
 	call clear_tile
 ret
 
@@ -548,9 +546,7 @@ ret
 ;       
 ;*******************************************************************************
 increase_con:
-	mov bx, [Character.con]
-	inc bx
-	mov [Character.con], bx
+	inc word [Character.con]
 	call clear_tile
 ret
 

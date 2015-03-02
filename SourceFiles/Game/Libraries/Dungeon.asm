@@ -1,5 +1,25 @@
 section .text
 
+;********************************************************************************
+;   get_current_monster
+;   Purpose:
+;      To return the offset to the current monster in our array of monsters
+;           Prototype:
+;               Void get_current_monster(byte range);
+;           Algorithm:
+;               Void get_current_monster(byte range){
+;					return (CurrentMonster.type - 1) * monster_size;
+;               }
+;               
+;   Entry:
+;       None
+;   Exit:
+;       Monster Offset in bx
+;   Uses:
+;       AX, BX, CX, DX
+;   Exceptions:
+;       
+;*******************************************************************************
 get_current_monster:
 	push ax
 	push cx
@@ -33,12 +53,12 @@ ret
 ;							endy = starty + range * 2;
 ;						}
 ;						else{
-;							starty = (starty - range) ;
+;							starty -= range ;
 ;							endy = 25;
 ;						}
 ;					}
 ;					else{
-;						endy = (starty + range) ;
+;						endy += range ;
 ;						starty = 0;
 ;					}
 ;               }
@@ -93,12 +113,12 @@ ret
 ;							endx = startx + range * 2;
 ;						}
 ;						else{
-;							startx = startx - range;
+;							startx -= range;
 ;							endx = 25;
 ;						}
 ;					}
 ;					else{
-;						endx = startx + range;
+;						endx += range;
 ;						startx = 0;
 ;					}
 ;               }
@@ -137,6 +157,26 @@ get_x_bounds:
 	.return:
 ret
 
+;********************************************************************************
+;   get_tile_number
+;   Purpose:
+;      To get the tile number at specific coordinates
+;           Prototype:
+;               int get_tile_number(int x, int y);
+;           Algorithm:
+;               int get_tile_number(int x, int y){
+;					return rows[dx << 1] + cx;
+;               }
+;               
+;   Entry:
+;       int y in DX, int x in CX
+;   Exit:
+;       Tile Number in BX
+;   Uses:
+;       BX, CX, DX
+;   Exceptions:
+;       
+;*******************************************************************************
 get_tile_number:
 	mov bx, dx
 	shl bx, 1

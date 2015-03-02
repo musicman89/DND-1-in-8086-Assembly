@@ -9,13 +9,13 @@ section .text
 ;               void look_around(){
 ;					get_y_bounds(5);
 ;					get_x_bounds(5);
-;					for(int y = yMin; y <  yMax; y++){
-;						for(int x = xMin; x < xMax; x++){
+;					for(int y = yMin; y <=  yMax; y++){
+;						for(int x = xMin; x <= xMax; x++){
 ;								int tile = CurrentDungeon[rows[y] + x];
 ;								if(tile == 7 || tile == 8) tile = 9;
 ;								if(tile == 2) tile = 0;
 ;								if(tile == 3) tile = 1;
-;								Console.Write(tile);
+;								Console.Write(tile + " ");
 ;						}
 ;						Console.NewLine();
 ;					}

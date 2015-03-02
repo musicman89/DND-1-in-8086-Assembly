@@ -1,4 +1,5 @@
 section .text
+
 game_loop:
 	call save_game
 	call game_loop_welcome

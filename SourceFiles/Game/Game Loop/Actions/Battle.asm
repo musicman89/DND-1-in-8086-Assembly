@@ -49,15 +49,15 @@ range_and_hit_check:
 	mov cl, [CurrentMonster.y]
 	mov dl, [CurrentMonster.x]
 
-	.monster:
+	.get_x_offset:
 		sub dl, [Character.x]
 		mov [CurrentMonster.distance_x], dl
 
-	.getY:
+	.get_y_offset:
 		sub cl, [Character.y]
 		mov [CurrentMonster.distance_y], cl
 
-	.getRange:
+	.get_range:
 		mov ah, 0
 		mov al, [CurrentMonster.distance_y]
 		call abs_int_8
@@ -79,8 +79,7 @@ range_and_hit_check:
 		jmp .hit_check
 
 	.no_monster:
-	mov bx, 1000
-	mov [CurrentMonster.range], bx
+		mov word [CurrentMonster.range], 1000
 
 	.hit_check:
 		call roll_d20
