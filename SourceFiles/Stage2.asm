@@ -4,7 +4,7 @@
 ;[map all]
 jmp boot
 
-;%define DEBUG
+%define DEBUG
 %define Stage2
 %include "Libraries/Graphics/Macros.asm"
 %include "Libraries/Strings/Macros.asm"

@@ -43,6 +43,36 @@ check_inventory:
 ret
 
 ;********************************************************************************
+;   get_weapon
+;   Purpose:
+;      To get the item offset for the player's weapon
+;           Prototype:
+;               Byte get_weapon();
+;           Algorithm:
+;               Byte get_weapon(){
+;					return Character.weapon * item_size;
+;               }
+;               
+;   Entry:
+;       Byte item number in AX
+;   Exit:
+;       Byte inventory number in AX
+;   Uses:
+;       AX, BX
+;   Exceptions:
+;       
+;*******************************************************************************
+get_weapon:
+	push bx
+	mov bh, 0
+	mov bl, [Character.weapon]
+	mov ax, item_size
+	mul bx
+	mov bx, ax
+	pop bx
+ret
+
+;********************************************************************************
 ;   remove_from_inventory
 ;   Purpose:
 ;      To remove an item from the player's inventory

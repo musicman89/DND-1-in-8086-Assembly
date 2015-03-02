@@ -1,62 +1,108 @@
 section .text
+;********************************************************************************
+;   fight
+;   Purpose:
+;      To initiate the fight action
+;           Prototype:
+;               void fight();
+;           Algorithm:
+;               void fight(){
+;					Console.WriteLine(FightStrings[0])
+;					int weapon = get_weapon();
+;					Console.WriteLine(Items[weapon].name);
+;
+;					if(CurrentMonster.type > 0){
+;						Console.WriteLine(Monsters[CurrentMonster.type].name);
+;						Console.WriteLine(FightStrings[1] + Character.hp);
+;						if(Character.weapon == 0){
+;							call fist_fight();
+;						}
+;						else if(Character.weapon == 1){
+;							call attack_with_sword();
+;						}
+;						else if(Character.weapon == 2){
+;							call attack_with_2_handed_sword();
+;						}
+;						else if(Character.weapon == 3){
+;							call attack_with_dagger();
+;						}
+;						else if(Character.weapon == 4){
+;							call attack_with_mace();
+;						}
+;						else {
+;							call check_other_weapon();
+;						}
+;
+;						if(CurrentMonster.hit == 0){
+;							call pass();
+;						}
+;					}
+;				}
+;               
+;   Entry:
+;       None
+;   Exit:
+;       None
+;   Uses:
+;       BX
+;   Exceptions:
+;       
+;*******************************************************************************
 fight:
 	WriteLine FightStrings, 0
-	mov bh, 0
-	mov bl, [Character.weapon]
-	mov ax, item_size
-	mul bx
-	mov bx, ax
+	call get_weapon
 	add bx, Items + item.name
 	WriteLine bx
 
 	mov bh, 0
 	mov bl, [CurrentMonster.type]
+
 	cmp bx, 0
 	je .return
-	mov ax, monster_size
-	mul bx
-	add bx,  Monsters + monster.name
+		mov ax, monster_size
+		mul bx
+		add bx,  Monsters + monster.name
 
-	WriteLine bx
+		WriteLine bx
 
-	Write FightStrings, 1
-	mov bx, [Character.hp]
-	call print_dec
-	call new_line
+		Write FightStrings, 1
+		mov bx, [Character.hp]
+		call print_dec
+		call new_line
 
-	mov bl, [Character.weapon]
-	cmp bl, 0
-	jg .not_fists
-		call fist_fight
-		jmp .return
-	.not_fists:
-	cmp bl, 1
-	jg .not_sword
-		call attack_with_sword
-		jmp .return
-	.not_sword:
-	cmp bl, 2
-	jg .no_2_hand
-		call attack_with_2_handed_sword
-		jmp .return
-	.no_2_hand:
-	cmp bl, 3
-	jg .no_dagger
-		call attack_with_dagger
-		jmp .return
-	.no_dagger:
-	cmp bl, 4
-	jg .other
-		call food_fight
-		jmp .return
-	.other:
-	cmp bl, 15
-	jg .return
-		call check_other_weapon
+		mov bl, [Character.weapon]
+		cmp bl, 0
+		jg .not_fists
+			call fist_fight
+			jmp .return
+		.not_fists:
+		cmp bl, 1
+		jg .not_sword
+			call attack_with_sword
+			jmp .return
+		.not_sword:
+		cmp bl, 2
+		jg .no_2_hand
+			call attack_with_2_handed_sword
+			jmp .return
+		.no_2_hand:
+		cmp bl, 3
+		jg .no_dagger
+			call attack_with_dagger
+			jmp .return
+		.no_dagger:
+		cmp bl, 4
+		jg .other
+			call attack_with_mace
+			jmp .return
+		.other:
+		cmp bl, 15
+		jg .return
+			call check_other_weapon
 	.return:
 		cmp byte [CurrentMonster.hit], 0
 		jg .no_pass
-		call pass
+			call pass
 	.no_pass:
 ret
 
@@ -174,6 +220,7 @@ monster_trapped_and_killed:
 	mov ax, monster_size
 	mul bx
 
+	mov word[Monsters + bx + monster.hp], 0
 	mov word[Monsters + bx + monster.gold], 0
 ret
 
@@ -413,7 +460,7 @@ attack_with_dagger:
 		.return:
 ret
 
-atack_with_mace:
+attack_with_mace:
 	WriteLine AttackWithMaceStrings, 0
 
 	call range_and_hit_check
@@ -485,6 +532,12 @@ user_other_weapon:
 	call range_and_hit_check
 	mov ah, 0
 	mov al, [Character.weapon]
+	cmp al, 15
+	jl .not_food
+		call food_fight
+		jmp .return
+
+	.not_food:
 	cmp al, 5
 	jne .no_spear
 		call throw_spear
