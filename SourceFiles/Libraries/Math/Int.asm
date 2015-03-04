@@ -326,16 +326,16 @@ ret
 abs_int_8:
     cmp al, 0
     jge .return
-        xor al, 0xFF          ;Make our number positive
-        inc al                  ;Adjust for the twos compliment switch
+        xor al, 0xFF                ;Make our number positive
+        inc al                      ;Adjust for the twos compliment switch
     .return:
 ret
 
 abs_int:
     cmp ax, 0
     jge .return
-        xor ax, 0xFFFF          ;Make our number positive
-        inc ax                  ;Adjust for the twos compliment switch
+        xor ax, 0xFFFF              ;Make our number positive
+        inc ax                      ;Adjust for the twos compliment switch
 
     .return:
 ret
